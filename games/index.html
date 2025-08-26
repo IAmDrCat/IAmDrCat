@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games - IAmDrCat.com</title>
+    <meta name="description" content="Play games created by IAmDrCat - from companion clickers to interactive adventures">
+
+    <!-- Open Graph for Discord/Facebook/etc -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://iamdrcat.com/games/">
+    <meta property="og:title" content="Games - IAmDrCat.com">
+    <meta property="og:description" content="Play games created by IAmDrCat - from companion clickers to interactive adventures">
+    <meta property="og:image" content="https://iamdrcat.com/games/FurryClicker.png">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a, #0f3460);
+            color: #fff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Particles Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #a0a0e0;
+            border-radius: 50%;
+            animation: float 10s infinite;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Header/Nav */
+        header {
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-weight: bold;
+            color: #8b5cf6;
+        }
+
+        .logo a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-links li {
+            margin: 0;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover, .nav-links a:focus {
+            color: #8b5cf6;
+            outline: 2px solid rgba(139, 92, 246, 0.5);
+            outline-offset: 2px;
+        }
+
+        /* Page Header */
+        .page-header {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 80px 20px 60px;
+        }
+
+        .page-header h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 3s ease-in-out infinite alternate;
+            margin-bottom: 20px;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
+            }
+            to {
+                filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
+            }
+        }
+
+        .page-header p {
+            color: #a0a0b0;
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Games Grid */
+        .games-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 100px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            align-items: start;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.05));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        .game-banner {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .game-card:hover .game-banner img {
+            transform: scale(1.1);
+        }
+
+        .game-banner-placeholder {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .game-content {
+            padding: 25px;
+            position: relative;
+        }
+
+        .game-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 12px;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .game-description {
+            color: #a0a0b0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .game-status {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        .status-available {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-coming-soon {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .status-beta {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .play-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .play-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .play-button:disabled {
+            background: rgba(139, 92, 246, 0.3);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Overlay effects */
+        .game-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .game-card:hover::after {
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 10;
+            padding: 60px 20px 40px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.05));
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #a0a0b0;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .footer-links a:hover {
+            color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .footer-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), transparent);
+            margin: 20px 0;
+        }
+
+        .footer-copyright {
+            color: #a0a0b0;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .nav-links {
+                justify-content: center;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .game-card {
+                margin: 0 10px;
+            }
+
+            .footer-links {
+                gap: 15px;
+            }
+
+            .footer-links a {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        *:focus {
+            outline: 2px solid rgba(139, 92, 246, 0.7);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+
+    <header>
+        <nav>
+            <div class="logo"><a href="https://iamdrcat.com/">IAmDrCat.com</a></div>
+            <ul class="nav-links">
+                <li><a href="https://iamdrcat.com/">Home</a></li>
+                <li><a href="https://iamdrcat.com/games/">Games</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="page-header">
+        <h1>Games</h1>
+        <p>Interactive experiences and adventures created by IAmDrCat</p>
+    </section>
+
+    <main class="games-container">
+        <div class="games-grid">
+            <!-- Furry Clicker - Featured Game -->
+            <div class="game-card" onclick="window.open('https://iamdrcat.com/FurryClicker/', '_blank')">
+                <div class="game-banner">
+                    <img src="FurryClicker.png" alt="Furry Clicker Banner" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=game-banner-placeholder>🎮<br>Companion Clicker</div>'">
+                </div>
+                <div class="game-content">
+                    <div class="game-status status-available">Available Now</div>
+                    <h2 class="game-title">Companion Clicker</h2>
+                    <p class="game-description">An addictive incremental clicker game featuring adorable companions. Build your energy empire through clicking, upgrades, and strategic progression systems.</p>
+                    <a href="https://iamdrcat.com/FurryClicker/" class="play-button" target="_blank">Play Now</a>
+                </div>
+            </div>
+
+            <!-- Minesweeper -->
+            <div class="game-card" onclick="window.open('https://iamdrcat.com/minesweeper/', '_blank')">
+                <div class="game-banner">
+                    <img src="Minesweeper.png" alt="Minesweeper Banner" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=game-banner-placeholder>💣<br>Minesweeper</div>'">
+                </div>
+                <div class="game-content">
+                    <div class="game-status status-available">Available Now</div>
+                    <h2 class="game-title">Minesweeper</h2>
+                    <p class="game-description">The classic puzzle game with a modern twist. Clear the field without hitting any mines using logic and deduction. Features multiple difficulty levels.</p>
+                    <a href="https://iamdrcat.com/minesweeper/" class="play-button" target="_blank">Play Now</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://discord.com/users/1186509879687528528" target="_blank">Discord</a>
+                <a href="https://www.instagram.com/iamdrcat/" target="_blank">Instagram</a>
+                <a href="mailto:contact@iamdrcat.com">Email</a>
+                <a href="https://github.com/iamdrcat" target="_blank">GitHub</a>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-copyright">
+                &copy; 2025 IAmDrCat.com
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Particles with staggered timing
+        const container = document.querySelector('.particles');
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = Math.random() * 10 + 5 + 's';
+            p.style.animationDelay = Math.random() * 20 + 's';
+            container.appendChild(p);
+        }
+
+        // Mouse tracking for card hover effects
+        document.querySelectorAll('.game-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mouse-x', x + '%');
+                card.style.setProperty('--mouse-y', y + '%');
+            });
+        });
+    </script>
+</body>
+</html>
