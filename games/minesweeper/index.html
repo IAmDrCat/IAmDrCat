@@ -150,7 +150,62 @@
             }
         }
 
-        /* Game Controls */
+        /* Settings Panel */
+        .settings-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .settings-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .setting-group {
+            text-align: center;
+        }
+
+        .setting-label {
+            color: #8b5cf6;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .setting-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .setting-btn {
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            color: #a0a0b0;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .setting-btn:hover {
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+            transform: translateY(-1px);
+        }
+
+        .setting-btn.active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            color: #06b6d4;
+        }
+
+        /* Game Info */
         .game-info {
             display: flex;
             justify-content: space-around;
@@ -177,43 +232,6 @@
             color: #a0a0b0;
             font-size: 0.9em;
             margin-top: 5px;
-        }
-
-        /* Difficulty Selection */
-        .difficulty-selector {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .difficulty-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        .difficulty-btn {
-            background: rgba(139, 92, 246, 0.1);
-            border: 2px solid rgba(139, 92, 246, 0.3);
-            border-radius: 10px;
-            color: #a0a0b0;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .difficulty-btn:hover {
-            border-color: #8b5cf6;
-            color: #8b5cf6;
-            transform: translateY(-2px);
-        }
-
-        .difficulty-btn.active {
-            background: rgba(139, 92, 246, 0.2);
-            border-color: #8b5cf6;
-            color: #06b6d4;
         }
 
         /* Game Board */
@@ -313,8 +331,8 @@
         .status-won { color: #22c55e; }
         .status-lost { color: #ef4444; }
 
-        /* Reset Button */
-        .reset-btn {
+        /* Start/Reset Button */
+        .control-btn {
             display: block;
             margin: 20px auto;
             background: linear-gradient(45deg, #8b5cf6, #3b82f6);
@@ -328,7 +346,7 @@
             transition: all 0.3s ease;
         }
 
-        .reset-btn:hover {
+        .control-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
         }
@@ -379,9 +397,13 @@
                 font-size: 0.8rem;
             }
 
-            .difficulty-buttons {
+            .settings-row {
                 flex-direction: column;
-                align-items: center;
+                gap: 15px;
+            }
+
+            .setting-buttons {
+                flex-wrap: wrap;
             }
         }
 
@@ -408,10 +430,30 @@
     <div class="game-container">
         <h1>Minesweeper</h1>
         
+        <div class="settings-panel">
+            <div class="settings-row">
+                <div class="setting-group">
+                    <div class="setting-label">Grid Size</div>
+                    <div class="setting-buttons">
+                        <button class="setting-btn active" data-size="9x9">9x9</button>
+                        <button class="setting-btn" data-size="16x16">16x16</button>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <div class="setting-label">Difficulty</div>
+                    <div class="setting-buttons">
+                        <button class="setting-btn active" data-difficulty="easy">Easy</button>
+                        <button class="setting-btn" data-difficulty="medium">Medium</button>
+                        <button class="setting-btn" data-difficulty="hard">Hard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="game-info">
             <div class="info-item">
                 <div class="info-value" id="mines-count">10</div>
-                <div class="info-label">Mines Left</div>
+                <div class="info-label">Mines</div>
             </div>
             <div class="info-item">
                 <div class="info-value" id="timer">000</div>
@@ -423,24 +465,15 @@
             </div>
         </div>
 
-        <div class="difficulty-selector">
-            <h3 style="color: #8b5cf6; margin-bottom: 10px;">Difficulty</h3>
-            <div class="difficulty-buttons">
-                <button class="difficulty-btn active" data-difficulty="easy">Easy (9x9, 10 mines)</button>
-                <button class="difficulty-btn" data-difficulty="medium">Medium (16x16, 40 mines)</button>
-                <button class="difficulty-btn" data-difficulty="hard">Hard (16x30, 99 mines)</button>
-            </div>
-        </div>
-
         <div style="text-align: center;">
             <div class="game-board">
                 <div class="board" id="game-board"></div>
             </div>
         </div>
 
-        <div class="game-status" id="game-status">Click a cell to start</div>
+        <div class="game-status" id="game-status">Choose settings and click Start Game</div>
         
-        <button class="reset-btn" id="reset-btn">New Game</button>
+        <button class="control-btn" id="control-btn">Start Game</button>
 
         <div class="instructions">
             <h3>How to Play</h3>
@@ -468,14 +501,22 @@
 
         class Minesweeper {
             constructor() {
-                this.difficulties = {
-                    easy: { rows: 9, cols: 9, mines: 10 },
-                    medium: { rows: 16, cols: 16, mines: 40 },
-                    hard: { rows: 16, cols: 30, mines: 99 }
+                this.configs = {
+                    '9x9': {
+                        easy: { rows: 9, cols: 9, mines: 10 },
+                        medium: { rows: 9, cols: 9, mines: 15 },
+                        hard: { rows: 9, cols: 9, mines: 20 }
+                    },
+                    '16x16': {
+                        easy: { rows: 16, cols: 16, mines: 40 },
+                        medium: { rows: 16, cols: 16, mines: 65 },
+                        hard: { rows: 16, cols: 16, mines: 90 }
+                    }
                 };
-                
-                this.currentDifficulty = 'easy';
-                this.gameState = 'waiting'; // waiting, playing, won, lost
+
+                this.selectedSize = '9x9';
+                this.selectedDifficulty = 'easy';
+                this.gameState = 'setup';
                 this.board = [];
                 this.revealedCount = 0;
                 this.flaggedCount = 0;
@@ -485,7 +526,7 @@
 
                 this.initElements();
                 this.bindEvents();
-                this.resetGame();
+                this.updateInfo();
             }
 
             initElements() {
@@ -494,43 +535,86 @@
                 this.timerElement = document.getElementById('timer');
                 this.minesElement = document.getElementById('mines-count');
                 this.cellsElement = document.getElementById('cells-left');
-                this.resetBtn = document.getElementById('reset-btn');
-                this.difficultyBtns = document.querySelectorAll('.difficulty-btn');
+                this.controlBtn = document.getElementById('control-btn');
             }
 
             bindEvents() {
-                this.resetBtn.addEventListener('click', () => this.resetGame());
+                this.controlBtn.addEventListener('click', () => this.handleControlButton());
                 
-                this.difficultyBtns.forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        this.difficultyBtns.forEach(b => b.classList.remove('active'));
+                // Size selection
+                document.querySelectorAll('[data-size]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('[data-size]').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
-                        this.currentDifficulty = btn.dataset.difficulty;
-                        this.resetGame();
+                        this.selectedSize = btn.dataset.size;
+                        this.updateInfo();
                     });
                 });
 
-                // Prevent context menu on the board
+                // Difficulty selection
+                document.querySelectorAll('[data-difficulty]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('[data-difficulty]').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.selectedDifficulty = btn.dataset.difficulty;
+                        this.updateInfo();
+                    });
+                });
+
                 this.boardElement.addEventListener('contextmenu', (e) => e.preventDefault());
             }
 
-            resetGame() {
+            handleControlButton() {
+                if (this.gameState === 'setup') {
+                    this.startGame();
+                } else {
+                    this.resetGame();
+                }
+            }
+
+            startGame() {
+                const config = this.configs[this.selectedSize][this.selectedDifficulty];
                 this.gameState = 'waiting';
                 this.revealedCount = 0;
                 this.flaggedCount = 0;
                 this.timer = 0;
                 this.firstClick = true;
-                
+
                 if (this.timerInterval) {
                     clearInterval(this.timerInterval);
                     this.timerInterval = null;
                 }
 
-                const config = this.difficulties[this.currentDifficulty];
                 this.createBoard(config.rows, config.cols, config.mines);
-                this.updateDisplay();
+                this.controlBtn.textContent = 'New Game';
                 this.statusElement.textContent = 'Click a cell to start';
                 this.statusElement.className = 'game-status status-playing';
+                this.updateDisplay();
+            }
+
+            resetGame() {
+                this.gameState = 'setup';
+                this.boardElement.innerHTML = '';
+                this.controlBtn.textContent = 'Start Game';
+                this.statusElement.textContent = 'Choose settings and click Start Game';
+                this.statusElement.className = 'game-status status-playing';
+                
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+                
+                this.timer = 0;
+                this.timerElement.textContent = '000';
+                this.updateInfo();
+            }
+
+            updateInfo() {
+                if (this.gameState === 'setup') {
+                    const config = this.configs[this.selectedSize][this.selectedDifficulty];
+                    this.minesElement.textContent = config.mines;
+                    this.cellsElement.textContent = (config.rows * config.cols) - config.mines;
+                }
             }
 
             createBoard(rows, cols, mines) {
@@ -539,7 +623,6 @@
                 this.totalMines = mines;
                 this.totalCells = rows * cols;
                 
-                // Initialize empty board
                 this.board = [];
                 for (let r = 0; r < rows; r++) {
                     this.board[r] = [];
@@ -562,7 +645,6 @@
                     const r = Math.floor(Math.random() * this.rows);
                     const c = Math.floor(Math.random() * this.cols);
                     
-                    // Don't place mine on first click or if already a mine
                     if ((r === excludeRow && c === excludeCol) || this.board[r][c].isMine) {
                         continue;
                     }
@@ -571,7 +653,6 @@
                     minesPlaced++;
                 }
 
-                // Calculate neighbor counts
                 for (let r = 0; r < this.rows; r++) {
                     for (let c = 0; c < this.cols; c++) {
                         if (!this.board[r][c].isMine) {
@@ -662,7 +743,6 @@
 
                 this.updateCellDisplay(row, col);
 
-                // If cell has no neighboring mines, reveal neighbors
                 if (cell.neighborMines === 0) {
                     for (let r = Math.max(0, row - 1); r <= Math.min(this.rows - 1, row + 1); r++) {
                         for (let c = Math.max(0, col - 1); c <= Math.min(this.cols - 1, col + 1); c++) {
@@ -711,7 +791,6 @@
                     this.timerInterval = null;
                 }
 
-                // Reveal all mines
                 for (let r = 0; r < this.rows; r++) {
                     for (let c = 0; c < this.cols; c++) {
                         if (this.board[r][c].isMine) {
@@ -743,7 +822,6 @@
             }
         }
 
-        // Start the game
         window.addEventListener('load', () => {
             new Minesweeper();
         });
