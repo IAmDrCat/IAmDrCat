@@ -169,7 +169,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px;
-            align-items: start;
+            align-items: stretch;
         }
 
         .game-card {
@@ -181,6 +181,9 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .game-card:hover {
@@ -247,6 +250,9 @@
         .game-content {
             padding: 25px;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
         .game-title {
@@ -264,6 +270,7 @@
             line-height: 1.6;
             margin-bottom: 20px;
             font-size: 0.95rem;
+            flex: 1;
         }
 
         .game-status {
@@ -447,12 +454,11 @@
     <main class="games-container">
         <div class="games-grid">
             <!-- Furry Clicker - Featured Game -->
-            <div class="game-card" onclick="window.open('https://iamdrcat.com/FurryClicker/', '_blank')">
+            <div class="game-card">
                 <div class="game-banner">
                     <img src="FurryClicker.png" alt="Furry Clicker Banner" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=game-banner-placeholder>🎮<br>Companion Clicker</div>'">
                 </div>
                 <div class="game-content">
-                    <div class="game-status status-available">Available Now</div>
                     <h2 class="game-title">Companion Clicker</h2>
                     <p class="game-description">An addictive incremental clicker game featuring adorable companions. Build your energy empire through clicking, upgrades, and strategic progression systems.</p>
                     <a href="https://iamdrcat.com/FurryClicker/" class="play-button" target="_blank">Play Now</a>
@@ -460,14 +466,14 @@
             </div>
 
             <!-- Minesweeper -->
+            <div class="game-card">
                 <div class="game-banner">
                     <img src="Minesweeper.png" alt="Minesweeper Banner" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=game-banner-placeholder>💣<br>Minesweeper</div>'">
                 </div>
                 <div class="game-content">
-                    <div class="game-status status-available">Available Now</div>
                     <h2 class="game-title">Minesweeper</h2>
                     <p class="game-description">The classic puzzle game with a modern twist. Clear the field without hitting any mines using logic and deduction. Features multiple difficulty levels.</p>
-                    <a href="https://iamdrcat.com/games/minesweeper/" class="play-button" target="_blank">Play Now</a>
+                    <a href="https://iamdrcat.com/minesweeper/" class="play-button" target="_blank">Play Now</a>
                 </div>
             </div>
         </div>
@@ -500,7 +506,7 @@
             container.appendChild(p);
         }
 
-        // Mouse tracking for card hover effects
+        // Mouse tracking for card hover effects (removed onclick handlers)
         document.querySelectorAll('.game-card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
