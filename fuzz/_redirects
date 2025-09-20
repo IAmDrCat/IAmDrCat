@@ -1,2 +1,4 @@
 /fuzz /fuzz/index.html 200
+  X-Robots-Tag: noindex, nofollow, nosnippet, noarchive
+  X-Frame-Options: DENY
 /fuzz   https://discord.gg/fuzz   301
