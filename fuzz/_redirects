@@ -1,4 +1,2 @@
-# Let Discord bot crawl the actual invite link, redirect users to our page
-/fuzz   https://discord.gg/fuzz   302   User-Agent=*Discordbot*
-/fuzz   /fuzz/   200
+/fuzz https://discord.gg/fuzz 302
 /fuzz   https://discord.gg/fuzz   301
