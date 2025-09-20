@@ -1,1 +1,3 @@
+# Redirect /fuzz to the index.html page which handles Discord embeds and redirects
+/fuzz   /fuzz/   301
 /fuzz   https://discord.gg/fuzz   301
