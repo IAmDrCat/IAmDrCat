@@ -3,101 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Fuzz - IAmDrCat.com</title>
-  <meta name="description" content="Join The Fuzz Discord community! ^ω^" />
-
-  <!-- Discord embed meta tags -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://discord.gg/fuzz" />
-  <meta property="og:title" content="You've been invited to join a server" />
-  <meta property="og:description" content="^ω^ The fuzz ^ω^" />
-  <meta property="og:site_name" content="Discord" />
-  <meta name="theme-color" content="#5865F2" />
+  <title>Redirecting...</title>
   
-  <!-- Canonical link pointing to Discord -->
-  <link rel="canonical" href="https://discord.gg/fuzz" />
+  <!-- Block all social media embeds -->
+  <meta name="robots" content="noindex, nofollow, nosnippet, noarchive" />
+  <meta property="og:type" content="object" />
+  <meta property="og:title" content="" />
+  <meta property="og:description" content="" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="" />
+  <meta name="twitter:description" content="" />
+  <meta name="twitter:image" content="" />
   
   <!-- Immediate redirect -->
   <meta http-equiv="refresh" content="0;url=https://discord.gg/fuzz" />
   
   <style>
-    /* Reset & Base */
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Arial',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f3460);color:#fff;overflow-x:hidden;min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;}
-    
-    /* Particles - Staggered Animation */
-    .particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;}
-    .particle{position:absolute;width:3px;height:3px;background:#a0a0e0;border-radius:50%;animation:float 10s infinite;opacity:0;}
-    @keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:0.8;}90%{opacity:0.8;}100%{transform:translateY(-100px) rotate(360deg);opacity:0;}}
-    
-    /* Main Content */
-    .container{position:relative;z-index:10;padding:40px 20px;max-width:600px;margin:0 auto;}
-    
-    .fuzz-title{font-size:clamp(2.5rem, 8vw, 4rem);line-height:1.2;background:linear-gradient(45deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glow 3s ease-in-out infinite alternate;margin-bottom:20px;}
-    
-    @keyframes glow{from{filter:drop-shadow(0 0 10px rgba(139,92,246,0.5));}to{filter:drop-shadow(0 0 20px rgba(59,130,246,0.8));}}
-    
-    .description{font-size:1.2rem;margin-bottom:30px;color:#a0a0e0;}
-    
-    .redirect-info{font-size:1rem;color:#8b5cf6;margin-bottom:20px;}
-    
-    .discord-link{display:inline-block;background:linear-gradient(45deg,#5865F2,#7289DA);color:white;text-decoration:none;padding:15px 30px;border-radius:25px;font-weight:bold;font-size:1.1rem;transition:all 0.3s ease;box-shadow:0 4px 15px rgba(88,101,242,0.3);}
-    
-    .discord-link:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(88,101,242,0.4);background:linear-gradient(45deg,#4752C4,#5865F2);}
-    
-    .countdown{margin-top:20px;font-size:0.9rem;color:#a0a0b0;}
-    
-    /* Loading animation */
-    .loading{margin-top:20px;}
-    .loading-dots{display:inline-block;}
-    .loading-dots:after{content:'...';animation:dots 2s infinite;}
-    @keyframes dots{0%,20%{color:rgba(0,0,0,0);text-shadow:.25em 0 0 rgba(255,255,255,0),0.5em 0 0 rgba(255,255,255,0);}40%{color:white;text-shadow:.25em 0 0 rgba(0,0,0,0),0.5em 0 0 rgba(0,0,0,0);}60%{text-shadow:.25em 0 0 white,0.5em 0 0 rgba(0,0,0,0);}80%,100%{text-shadow:.25em 0 0 white,0.5em 0 0 white;}}
+    body { 
+      margin: 0; 
+      padding: 20px; 
+      font-family: Arial, sans-serif; 
+      background: #000; 
+      color: #fff; 
+      text-align: center; 
+    }
   </style>
 </head>
 <body>
-  <div class="particles"></div>
-  
-  <div class="container">
-    <h1 class="fuzz-title">^ω^ The Fuzz ^ω^</h1>
-    <p class="description">Join The Fuzz Discord community!</p>
-    <p class="redirect-info">Redirecting to Discord in <span id="countdown">2</span> seconds...</p>
-    <a href="https://discord.gg/fuzz" class="discord-link">Join Now!</a>
-    <div class="loading">
-      <span class="loading-dots">Loading</span>
-    </div>
-  </div>
-  
+  <p>Redirecting to Discord...</p>
   <script>
-    // Particles with staggered timing
-    const container = document.querySelector('.particles');
-    for(let i=0;i<60;i++){
-      const p=document.createElement('div');
-      p.className='particle';
-      p.style.left=Math.random()*100+'vw';
-      p.style.animationDuration=Math.random()*10+5+'s';
-      p.style.animationDelay=Math.random()*15+'s';
-      container.appendChild(p);
-    }
-    
-    // Countdown timer
-    let timeLeft = 2;
-    const countdownElement = document.getElementById('countdown');
-    
-    const timer = setInterval(() => {
-      timeLeft--;
-      countdownElement.textContent = timeLeft;
-      
-      if (timeLeft <= 0) {
-        clearInterval(timer);
-        countdownElement.textContent = 'now';
-        window.location.href = 'https://discord.gg/fuzz';
-      }
-    }, 1000);
-    
-    // Immediate redirect if user clicks the link
-    document.querySelector('.discord-link').addEventListener('click', () => {
-      clearInterval(timer);
-    });
+    // Immediate redirect
+    window.location.replace('https://discord.gg/fuzz');
   </script>
 </body>
 </html>
