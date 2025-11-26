@@ -260,7 +260,7 @@
     <div class="particles"></div>
 
     <div class="game-container">
-        <h1>🐾 Furry Minesweeper 🐾</h1>
+        <h1>🐾 Cosmic Minesweeper 🐾</h1>
 
         <div class="stats-bar">
             <div class="stat">
@@ -646,7 +646,7 @@
 
             saveWins() {
                 try {
-                    localStorage.setItem('furryMinesweeperWins', this.gamesWon.toString());
+                    localStorage.setItem('CosmicMinesweeperWins', this.gamesWon.toString());
                 } catch (e) {
                     console.log('Could not save wins');
                 }
@@ -654,7 +654,7 @@
 
             loadWins() {
                 try {
-                    const wins = localStorage.getItem('furryMinesweeperWins');
+                    const wins = localStorage.getItem('CosmicMinesweeperWins');
                     return wins ? parseInt(wins) : 0;
                 } catch (e) {
                     return 0;
@@ -670,6 +670,7 @@
     </script>
 </body>
 </html>
+
 
 
 
