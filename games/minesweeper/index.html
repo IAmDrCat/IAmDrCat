@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Furry Minesweeper - IAmDrCat.com</title>
+
+        <div id="nav"></div>
+<script>
+fetch("/navbar.html")
+  .then(r => r.text())
+  .then(t => document.getElementById("nav").innerHTML = t);
+</script>
+    
     <style>
         * {
             margin: 0;
@@ -703,3 +711,4 @@
     </script>
 </body>
 </html>
+
