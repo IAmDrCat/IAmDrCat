@@ -3,18 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <div id="nav"></div>
-<script>
-fetch("/navbar.html")
-  .then(r => r.text())
-  .then(t => document.getElementById("nav").innerHTML = t);
-</script>
-
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5658369692346701"
-     crossorigin="anonymous"></script>
-
-    
+    <title>Furry Minesweeper - IAmDrCat.com</title>
     <style>
         * {
             margin: 0;
@@ -23,696 +12,694 @@ fetch("/navbar.html")
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a, #0f3460);
+            color: #fff;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
         }
 
-        .header {
+        /* Particles Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 800px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
         }
-
-        .logo {
-            color: #8B5CF6;
-            font-size: 24px;
-            font-weight: bold;
+        
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #a0a0e0;
+            border-radius: 50%;
+            animation: float 10s infinite;
+            opacity: 0.8;
         }
-
-        .nav {
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav a {
-            color: #94A3B8;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav a:hover {
-            color: #8B5CF6;
-        }
-
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 40px;
-            color: #8B5CF6;
-            text-align: center;
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         .game-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            padding: 30px;
             max-width: 800px;
             width: 100%;
+            margin: 20px auto;
         }
 
-        .settings {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 12px;
-            padding: 25px;
+        h1 {
+            text-align: center;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            font-size: clamp(2rem, 6vw, 3rem);
+            animation: glow 3s ease-in-out infinite alternate;
         }
 
-        .setting-group {
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
+            }
+            to {
+                filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
+            }
+        }
+
+        .stats-bar {
             display: flex;
-            flex-direction: column;
+            justify-content: space-around;
             align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
             gap: 15px;
         }
 
-        .setting-label {
-            color: #8B5CF6;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .setting-btn {
-            padding: 8px 16px;
-            border: 1px solid #4C1D95;
-            background: transparent;
-            color: #94A3B8;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        .setting-btn.active {
-            background: #8B5CF6;
-            color: white;
-            border-color: #8B5CF6;
-        }
-
-        .setting-btn:hover:not(.active) {
-            border-color: #8B5CF6;
-            color: white;
-        }
-
-        .stats {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-around;
-            text-align: center;
-        }
-
         .stat {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+            text-align: center;
         }
 
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
-            color: #8B5CF6;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .stat-label {
-            color: #94A3B8;
+            color: #a0a0b0;
+            font-size: 0.9em;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
             font-size: 0.9rem;
         }
 
-        .game-board-container {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            min-height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
         }
 
-        .no-game {
-            color: #64748B;
-            font-size: 1.1rem;
+        .btn.active {
+            background: linear-gradient(45deg, #06b6d4, #8b5cf6);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
         }
 
         .game-board {
-            display: grid;
+            display: inline-grid;
             gap: 2px;
-            background: #334155;
+            background: rgba(0, 0, 0, 0.3);
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 10px;
+            margin: 0 auto;
+            justify-content: center;
         }
 
         .cell {
-            width: 30px;
-            height: 30px;
-            background: #475569;
-            border: 2px solid #64748B;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(6, 182, 212, 0.3));
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            font-size: 1.2em;
             font-weight: bold;
-            font-size: 14px;
-            transition: all 0.1s;
+            transition: all 0.2s ease;
+            user-select: none;
         }
 
         .cell:hover:not(.revealed):not(.flagged) {
-            background: #64748B;
-            border-color: #8B5CF6;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(6, 182, 212, 0.5));
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
         }
 
         .cell.revealed {
-            background: #1e293b;
-            border-color: #334155;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(139, 92, 246, 0.2);
             cursor: default;
         }
 
-        .cell.mine {
-            background: #ef4444;
-            color: white;
-        }
-
         .cell.flagged {
-            background: #f59e0b;
-            color: white;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 140, 0, 0.3));
+            border-color: #ffd700;
         }
 
-        .cell.mine-count-1 { color: #3b82f6; }
-        .cell.mine-count-2 { color: #10b981; }
-        .cell.mine-count-3 { color: #ef4444; }
-        .cell.mine-count-4 { color: #8b5cf6; }
-        .cell.mine-count-5 { color: #f59e0b; }
-        .cell.mine-count-6 { color: #ec4899; }
-        .cell.mine-count-7 { color: #000; }
-        .cell.mine-count-8 { color: #6b7280; }
-
-        .game-controls {
-            text-align: center;
-            margin-bottom: 20px;
+        .cell.mine {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.5), rgba(220, 38, 38, 0.5));
+            border-color: #ef4444;
         }
 
-        .start-text {
-            color: #60A5FA;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
+        .cell.mine-hit {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            animation: explode 0.5s ease-out;
         }
 
-        .start-btn {
-            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        @keyframes explode {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
         }
 
-        .start-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
-        }
+        .number-1 { color: #06b6d4; }
+        .number-2 { color: #8b5cf6; }
+        .number-3 { color: #10b981; }
+        .number-4 { color: #f59e0b; }
+        .number-5 { color: #ef4444; }
+        .number-6 { color: #ec4899; }
+        .number-7 { color: #6366f1; }
+        .number-8 { color: #a855f7; }
 
-        .instructions {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 12px;
-            padding: 25px;
-        }
-
-        .instructions h3 {
-            color: #8B5CF6;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-
-        .instruction-item {
-            margin-bottom: 10px;
-            color: #CBD5E1;
-        }
-
-        .instruction-item strong {
-            color: #8B5CF6;
-        }
-
-        .game-over {
+        .game-over-overlay {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(15, 23, 42, 0.95);
-            border: 2px solid #8B5CF6;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
             z-index: 1000;
         }
 
-        .game-over h2 {
-            margin-bottom: 15px;
-            font-size: 2rem;
+        .game-over-overlay.show {
+            display: flex;
         }
 
-        .game-over.win h2 {
-            color: #10b981;
+        .game-over-content {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(6, 182, 212, 0.9));
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
-        .game-over.lose h2 {
-            color: #ef4444;
+        .game-over-content h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
         }
 
-        .game-over button {
-            margin-top: 15px;
-            background: #8B5CF6;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
+        .game-over-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         @media (max-width: 768px) {
-            .settings {
-                flex-direction: column;
-                gap: 20px;
+            .cell {
+                width: 35px;
+                height: 35px;
+                font-size: 1em;
             }
             
-            .stats {
-                flex-direction: column;
-                gap: 15px;
+            .game-container {
+                padding: 15px;
             }
             
             h1 {
                 font-size: 2rem;
             }
         }
+
+        @media (max-width: 480px) {
+            .cell {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9em;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">iamdrcat.com</div>
-        <nav class="nav">
-            <a href="#">Home</a>
-            <a href="#">Games</a>
-        </nav>
-    </div>
-
-    <h1>Minesweeper</h1>
+    <div class="particles"></div>
 
     <div class="game-container">
-        <div class="settings">
-            <div class="setting-group">
-                <div class="setting-label">Grid Size</div>
-                <div class="button-group">
-                    <button class="setting-btn active" data-grid="9x9">9×9</button>
-                    <button class="setting-btn" data-grid="16x16">16×16</button>
-                </div>
-            </div>
-            <div class="setting-group">
-                <div class="setting-label">Difficulty</div>
-                <div class="button-group">
-                    <button class="setting-btn active" data-difficulty="easy">Easy</button>
-                    <button class="setting-btn" data-difficulty="medium">Medium</button>
-                    <button class="setting-btn" data-difficulty="hard">Hard</button>
-                </div>
-            </div>
-        </div>
+        <h1>🐾 Furry Minesweeper 🐾</h1>
 
-        <div class="stats">
+        <div class="stats-bar">
             <div class="stat">
                 <div class="stat-value" id="mine-count">10</div>
-                <div class="stat-label">Mines</div>
+                <div class="stat-label">💣 Mines Left</div>
             </div>
             <div class="stat">
-                <div class="stat-value" id="timer">000</div>
-                <div class="stat-label">Time</div>
+                <div class="stat-value" id="timer">0</div>
+                <div class="stat-label">⏱️ Time</div>
             </div>
             <div class="stat">
-                <div class="stat-value" id="cells-left">71</div>
-                <div class="stat-label">Cells Left</div>
+                <div class="stat-value" id="games-won">0</div>
+                <div class="stat-label">🏆 Wins</div>
             </div>
         </div>
 
-        <div class="game-board-container">
-            <div class="no-game" id="no-game">No game board</div>
-            <div class="game-board" id="game-board" style="display: none;"></div>
+        <div class="difficulty-selector">
+            <button class="btn active" onclick="game.setDifficulty('easy')">Easy (8x8)</button>
+            <button class="btn" onclick="game.setDifficulty('medium')">Medium (12x12)</button>
+            <button class="btn" onclick="game.setDifficulty('hard')">Hard (16x16)</button>
         </div>
 
-        <div class="game-controls">
-            <div class="start-text">Choose settings and click Start Game</div>
-            <button class="start-btn" id="start-btn">Start Game</button>
+        <div class="controls">
+            <button class="btn" onclick="game.newGame()">🔄 New Game</button>
+            <button class="btn" onclick="game.toggleFlagMode()">
+                <span id="flag-mode-text">🚩 Flag Mode: OFF</span>
+            </button>
         </div>
 
-        <div class="instructions">
-            <h3>How to Play</h3>
-            <div class="instruction-item"><strong>Left Click:</strong> Reveal a cell</div>
-            <div class="instruction-item"><strong>Right Click:</strong> Flag/unflag a mine</div>
-            <div class="instruction-item"><strong>Goal:</strong> Reveal all cells that don't contain mines. Numbers show how many mines are adjacent to that cell.</div>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div id="game-board" class="game-board"></div>
+        </div>
+
+        <div style="text-align: center; color: #a0a0b0; font-size: 0.9em;">
+            <p>Left Click: Reveal | Right Click: Flag/Unflag</p>
+            <p>Or use Flag Mode button above!</p>
+        </div>
+    </div>
+
+    <div class="game-over-overlay" id="game-over">
+        <div class="game-over-content">
+            <h2 id="game-over-title">💥 Game Over!</h2>
+            <p id="game-over-message">You hit a mine!</p>
+            <button class="btn" onclick="game.closeGameOver()">Play Again</button>
         </div>
     </div>
 
     <script>
-        class Minesweeper {
+        // Create particles
+        const container = document.querySelector('.particles');
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = Math.random() * 10 + 5 + 's';
+            p.style.animationDelay = Math.random() * 20 + 's';
+            container.appendChild(p);
+        }
+
+        class MinesweeperGame {
             constructor() {
-                this.gridSize = { width: 9, height: 9 };
-                this.difficulty = 'easy';
-                this.mineCount = 10;
+                this.difficulties = {
+                    easy: { rows: 8, cols: 8, mines: 10 },
+                    medium: { rows: 12, cols: 12, mines: 25 },
+                    hard: { rows: 16, cols: 16, mines: 50 }
+                };
+                
+                this.currentDifficulty = 'easy';
+                this.rows = 8;
+                this.cols = 8;
+                this.totalMines = 10;
                 this.board = [];
-                this.gameState = 'waiting';
+                this.revealed = [];
+                this.flagged = [];
+                this.gameOver = false;
+                this.gameWon = false;
+                this.firstClick = true;
                 this.timer = 0;
                 this.timerInterval = null;
-                this.revealedCells = 0;
-                this.flaggedCells = 0;
+                this.flagMode = false;
+                this.gamesWon = this.loadWins();
                 
-                this.initializeEventListeners();
-                this.updateStats();
+                this.boardElement = document.getElementById('game-board');
+                this.mineCountElement = document.getElementById('mine-count');
+                this.timerElement = document.getElementById('timer');
+                this.gamesWonElement = document.getElementById('games-won');
+                this.gameOverElement = document.getElementById('game-over');
+                
+                this.updateWinsDisplay();
+                this.newGame();
             }
 
-            initializeEventListeners() {
-                // Setting buttons
-                document.querySelectorAll('.setting-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const group = e.target.closest('.setting-group');
-                        group.querySelectorAll('.setting-btn').forEach(b => b.classList.remove('active'));
-                        e.target.classList.add('active');
-                        
-                        if (e.target.dataset.grid) {
-                            const [width, height] = e.target.dataset.grid.split('x');
-                            this.gridSize = { width: parseInt(width), height: parseInt(height) };
-                        } else if (e.target.dataset.difficulty) {
-                            this.difficulty = e.target.dataset.difficulty;
-                        }
-                        
-                        this.updateMineCount();
-                        this.updateStats();
-                    });
+            setDifficulty(difficulty) {
+                this.currentDifficulty = difficulty;
+                const config = this.difficulties[difficulty];
+                this.rows = config.rows;
+                this.cols = config.cols;
+                this.totalMines = config.mines;
+                
+                // Update active button
+                document.querySelectorAll('.difficulty-selector .btn').forEach(btn => {
+                    btn.classList.remove('active');
                 });
-
-                // Start button
-                document.getElementById('start-btn').addEventListener('click', () => {
-                    this.startGame();
-                    document.getElementById('start-btn').textContent = 'Restart Game';
-                    document.querySelector('.start-text').style.display = 'none';
-                    document.getElementById('first-click-hint').style.display = 'block';
-                });
+                event.target.classList.add('active');
+                
+                this.newGame();
             }
 
-            updateMineCount() {
-                const totalCells = this.gridSize.width * this.gridSize.height;
-                
-                if (this.gridSize.width === 9) {
-                    this.mineCount = this.difficulty === 'easy' ? 10 : 
-                                   this.difficulty === 'medium' ? 15 : 20;
-                } else {
-                    this.mineCount = this.difficulty === 'easy' ? 40 : 
-                                   this.difficulty === 'medium' ? 60 : 80;
-                }
-            }
-
-            startGame() {
-                this.gameState = 'playing';
-                this.timer = 0;
-                this.revealedCells = 0;
-                this.flaggedCells = 0;
-                this.updateMineCount();
-                
-                this.createBoard();
-                this.renderBoard();
-                this.startTimer();
-                
-                document.getElementById('no-game').style.display = 'none';
-                document.getElementById('game-board').style.display = 'grid';
-                
-                this.updateStats();
-            }
-
-            createBoard() {
-                const { width, height } = this.gridSize;
+            newGame() {
                 this.board = [];
+                this.revealed = [];
+                this.flagged = [];
+                this.gameOver = false;
+                this.gameWon = false;
+                this.firstClick = true;
+                this.timer = 0;
                 
-                // Initialize empty board
-                for (let y = 0; y < height; y++) {
-                    this.board[y] = [];
-                    for (let x = 0; x < width; x++) {
-                        this.board[y][x] = {
-                            isMine: false,
-                            isRevealed: false,
-                            isFlagged: false,
-                            adjacentMines: 0
-                        };
-                    }
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
                 }
                 
-                // Place mines randomly
+                this.initializeBoard();
+                this.renderBoard();
+                this.updateMineCount();
+                this.updateTimer();
+            }
+
+            initializeBoard() {
+                // Create empty board
+                for (let r = 0; r < this.rows; r++) {
+                    this.board[r] = [];
+                    this.revealed[r] = [];
+                    this.flagged[r] = [];
+                    for (let c = 0; c < this.cols; c++) {
+                        this.board[r][c] = 0;
+                        this.revealed[r][c] = false;
+                        this.flagged[r][c] = false;
+                    }
+                }
+            }
+
+            placeMines(excludeRow, excludeCol) {
                 let minesPlaced = 0;
-                while (minesPlaced < this.mineCount) {
-                    const x = Math.floor(Math.random() * width);
-                    const y = Math.floor(Math.random() * height);
+                while (minesPlaced < this.totalMines) {
+                    const r = Math.floor(Math.random() * this.rows);
+                    const c = Math.floor(Math.random() * this.cols);
                     
-                    if (!this.board[y][x].isMine) {
-                        this.board[y][x].isMine = true;
-                        minesPlaced++;
+                    // Don't place mine on first click or adjacent cells
+                    if (Math.abs(r - excludeRow) <= 1 && Math.abs(c - excludeCol) <= 1) {
+                        continue;
                     }
-                }
-                
-                // Calculate adjacent mine counts
-                for (let y = 0; y < height; y++) {
-                    for (let x = 0; x < width; x++) {
-                        if (!this.board[y][x].isMine) {
-                            this.board[y][x].adjacentMines = this.countAdjacentMines(x, y);
+                    
+                    if (this.board[r][c] !== -1) {
+                        this.board[r][c] = -1;
+                        minesPlaced++;
+                        
+                        // Update adjacent numbers
+                        for (let dr = -1; dr <= 1; dr++) {
+                            for (let dc = -1; dc <= 1; dc++) {
+                                const nr = r + dr;
+                                const nc = c + dc;
+                                if (this.isValid(nr, nc) && this.board[nr][nc] !== -1) {
+                                    this.board[nr][nc]++;
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            countAdjacentMines(x, y) {
-                let count = 0;
-                for (let dy = -1; dy <= 1; dy++) {
-                    for (let dx = -1; dx <= 1; dx++) {
-                        if (dx === 0 && dy === 0) continue;
-                        
-                        const nx = x + dx;
-                        const ny = y + dy;
-                        
-                        if (nx >= 0 && nx < this.gridSize.width && 
-                            ny >= 0 && ny < this.gridSize.height && 
-                            this.board[ny][nx].isMine) {
-                            count++;
-                        }
-                    }
-                }
-                return count;
+            isValid(r, c) {
+                return r >= 0 && r < this.rows && c >= 0 && c < this.cols;
             }
 
             renderBoard() {
-                const boardElement = document.getElementById('game-board');
-                boardElement.innerHTML = '';
-                boardElement.style.gridTemplateColumns = `repeat(${this.gridSize.width}, 30px)`;
-                boardElement.style.gridTemplateRows = `repeat(${this.gridSize.height}, 30px)`;
+                this.boardElement.innerHTML = '';
+                this.boardElement.style.gridTemplateColumns = `repeat(${this.cols}, 40px)`;
+                this.boardElement.style.gridTemplateRows = `repeat(${this.rows}, 40px)`;
                 
-                for (let y = 0; y < this.gridSize.height; y++) {
-                    for (let x = 0; x < this.gridSize.width; x++) {
+                for (let r = 0; r < this.rows; r++) {
+                    for (let c = 0; c < this.cols; c++) {
                         const cell = document.createElement('div');
                         cell.className = 'cell';
-                        cell.dataset.x = x;
-                        cell.dataset.y = y;
+                        cell.dataset.row = r;
+                        cell.dataset.col = c;
                         
-                        cell.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            this.handleLeftClick(parseInt(e.target.dataset.x), parseInt(e.target.dataset.y));
-                        });
-                        
+                        cell.addEventListener('click', (e) => this.handleClick(r, c, e));
                         cell.addEventListener('contextmenu', (e) => {
                             e.preventDefault();
-                            this.handleRightClick(parseInt(e.target.dataset.x), parseInt(e.target.dataset.y));
+                            this.handleRightClick(r, c);
                         });
                         
-                        boardElement.appendChild(cell);
+                        this.updateCell(cell, r, c);
+                        this.boardElement.appendChild(cell);
                     }
                 }
             }
 
-            handleLeftClick(x, y) {
-                if (this.gameState !== 'playing') return;
+            updateCell(cell, r, c) {
+                cell.className = 'cell';
+                cell.textContent = '';
                 
-                const cell = this.board[y][x];
-                if (cell.isRevealed || cell.isFlagged) return;
-                
-                this.revealCell(x, y);
-                this.updateDisplay();
-                this.checkGameEnd();
+                if (this.flagged[r][c]) {
+                    cell.classList.add('flagged');
+                    cell.textContent = '🚩';
+                } else if (this.revealed[r][c]) {
+                    cell.classList.add('revealed');
+                    
+                    if (this.board[r][c] === -1) {
+                        cell.textContent = '💣';
+                        if (this.gameOver) {
+                            cell.classList.add('mine');
+                        }
+                    } else if (this.board[r][c] > 0) {
+                        cell.textContent = this.board[r][c];
+                        cell.classList.add(`number-${this.board[r][c]}`);
+                    }
+                } else if (this.gameOver && this.board[r][c] === -1) {
+                    cell.classList.add('mine');
+                    cell.textContent = '💣';
+                }
             }
 
-            handleRightClick(x, y) {
-                if (this.gameState !== 'playing') return;
-                
-                const cell = this.board[y][x];
-                if (cell.isRevealed) return;
-                
-                cell.isFlagged = !cell.isFlagged;
-                this.flaggedCells += cell.isFlagged ? 1 : -1;
-                
-                this.updateDisplay();
-                this.updateStats();
-            }
-
-            revealCell(x, y) {
-                const cell = this.board[y][x];
-                if (cell.isRevealed || cell.isFlagged) return;
-                
-                cell.isRevealed = true;
-                this.revealedCells++;
-                
-                if (cell.isMine) {
-                    this.gameState = 'lost';
+            handleClick(r, c, event) {
+                if (this.gameOver || this.gameWon || this.revealed[r][c]) {
                     return;
                 }
-                
-                // If no adjacent mines, reveal all adjacent cells
-                if (cell.adjacentMines === 0) {
-                    for (let dy = -1; dy <= 1; dy++) {
-                        for (let dx = -1; dx <= 1; dx++) {
-                            if (dx === 0 && dy === 0) continue;
-                            
-                            const nx = x + dx;
-                            const ny = y + dy;
-                            
-                            if (nx >= 0 && nx < this.gridSize.width && 
-                                ny >= 0 && ny < this.gridSize.height) {
-                                this.revealCell(nx, ny);
-                            }
-                        }
-                    }
-                }
-            }
 
-            updateDisplay() {
-                const cells = document.querySelectorAll('.cell');
-                
-                for (let y = 0; y < this.gridSize.height; y++) {
-                    for (let x = 0; x < this.gridSize.width; x++) {
-                        const cellElement = cells[y * this.gridSize.width + x];
-                        const cell = this.board[y] && this.board[y][x];
-                        
-                        if (!cell || !cellElement) continue;
-                        
-                        cellElement.className = 'cell';
-                        cellElement.textContent = '';
-                        
-                        if (cell.isFlagged) {
-                            cellElement.classList.add('flagged');
-                            cellElement.textContent = '🚩';
-                        } else if (cell.isRevealed) {
-                            cellElement.classList.add('revealed');
-                            
-                            if (cell.isMine) {
-                                cellElement.classList.add('mine');
-                                cellElement.textContent = '💣';
-                            } else if (cell.adjacentMines > 0) {
-                                cellElement.textContent = cell.adjacentMines;
-                                cellElement.classList.add(`mine-count-${cell.adjacentMines}`);
-                            }
-                        }
-                    }
+                if (this.flagMode) {
+                    this.handleRightClick(r, c);
+                    return;
                 }
-            }
 
-            checkGameEnd() {
-                if (this.gameState === 'lost') {
-                    this.stopTimer();
+                if (this.flagged[r][c]) {
+                    return;
+                }
+
+                if (this.firstClick) {
+                    this.placeMines(r, c);
+                    this.firstClick = false;
+                    this.startTimer();
+                }
+
+                if (this.board[r][c] === -1) {
+                    this.revealCell(r, c);
+                    this.gameOver = true;
+                    const cell = event.target;
+                    cell.classList.add('mine-hit');
                     this.revealAllMines();
-                    this.showGameOver(false);
+                    setTimeout(() => this.showGameOver(false), 500);
                 } else {
-                    const totalCells = this.gridSize.width * this.gridSize.height;
-                    const cellsToReveal = totalCells - this.mineCount;
-                    
-                    if (this.revealedCells >= cellsToReveal) {
-                        this.gameState = 'won';
-                        this.stopTimer();
-                        this.showGameOver(true);
+                    this.revealCell(r, c);
+                    this.checkWin();
+                }
+            }
+
+            handleRightClick(r, c) {
+                if (this.gameOver || this.gameWon || this.revealed[r][c]) {
+                    return;
+                }
+
+                this.flagged[r][c] = !this.flagged[r][c];
+                const cell = this.boardElement.children[r * this.cols + c];
+                this.updateCell(cell, r, c);
+                this.updateMineCount();
+            }
+
+            revealCell(r, c) {
+                if (!this.isValid(r, c) || this.revealed[r][c] || this.flagged[r][c]) {
+                    return;
+                }
+
+                this.revealed[r][c] = true;
+                const cell = this.boardElement.children[r * this.cols + c];
+                this.updateCell(cell, r, c);
+
+                if (this.board[r][c] === 0) {
+                    // Reveal adjacent cells
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            if (dr !== 0 || dc !== 0) {
+                                this.revealCell(r + dr, c + dc);
+                            }
+                        }
                     }
                 }
-                
-                this.updateStats();
             }
 
             revealAllMines() {
-                for (let y = 0; y < this.gridSize.height; y++) {
-                    for (let x = 0; x < this.gridSize.width; x++) {
-                        if (this.board[y][x].isMine) {
-                            this.board[y][x].isRevealed = true;
+                for (let r = 0; r < this.rows; r++) {
+                    for (let c = 0; c < this.cols; c++) {
+                        if (this.board[r][c] === -1) {
+                            const cell = this.boardElement.children[r * this.cols + c];
+                            this.updateCell(cell, r, c);
                         }
                     }
                 }
-                this.updateDisplay();
+            }
+
+            checkWin() {
+                let revealedCount = 0;
+                for (let r = 0; r < this.rows; r++) {
+                    for (let c = 0; c < this.cols; c++) {
+                        if (this.revealed[r][c]) {
+                            revealedCount++;
+                        }
+                    }
+                }
+
+                if (revealedCount === this.rows * this.cols - this.totalMines) {
+                    this.gameWon = true;
+                    this.gamesWon++;
+                    this.saveWins();
+                    this.updateWinsDisplay();
+                    if (this.timerInterval) {
+                        clearInterval(this.timerInterval);
+                    }
+                    setTimeout(() => this.showGameOver(true), 300);
+                }
             }
 
             showGameOver(won) {
-                const gameOverDiv = document.createElement('div');
-                gameOverDiv.className = `game-over ${won ? 'win' : 'lose'}`;
+                const title = document.getElementById('game-over-title');
+                const message = document.getElementById('game-over-message');
                 
-                gameOverDiv.innerHTML = `
-                    <h2>${won ? 'You Won!' : 'Game Over'}</h2>
-                    <p>Time: ${this.formatTime(this.timer)}</p>
-                    <button onclick="this.parentElement.remove()">Close</button>
-                `;
+                if (won) {
+                    title.textContent = '🎉 You Win! 🎉';
+                    message.textContent = `You cleared the board in ${this.timer} seconds!`;
+                } else {
+                    title.textContent = '💥 Game Over!';
+                    message.textContent = 'You hit a mine! Better luck next time!';
+                }
                 
-                document.body.appendChild(gameOverDiv);
+                this.gameOverElement.classList.add('show');
+            }
+
+            closeGameOver() {
+                this.gameOverElement.classList.remove('show');
+                this.newGame();
+            }
+
+            toggleFlagMode() {
+                this.flagMode = !this.flagMode;
+                const text = document.getElementById('flag-mode-text');
+                const btn = text.parentElement;
+                
+                if (this.flagMode) {
+                    text.textContent = '🚩 Flag Mode: ON';
+                    btn.classList.add('active');
+                } else {
+                    text.textContent = '🚩 Flag Mode: OFF';
+                    btn.classList.remove('active');
+                }
             }
 
             startTimer() {
                 this.timerInterval = setInterval(() => {
                     this.timer++;
-                    this.updateStats();
+                    this.updateTimer();
                 }, 1000);
             }
 
-            stopTimer() {
-                if (this.timerInterval) {
-                    clearInterval(this.timerInterval);
-                    this.timerInterval = null;
+            updateTimer() {
+                this.timerElement.textContent = this.timer;
+            }
+
+            updateMineCount() {
+                let flagCount = 0;
+                for (let r = 0; r < this.rows; r++) {
+                    for (let c = 0; c < this.cols; c++) {
+                        if (this.flagged[r][c]) {
+                            flagCount++;
+                        }
+                    }
+                }
+                this.mineCountElement.textContent = this.totalMines - flagCount;
+            }
+
+            updateWinsDisplay() {
+                this.gamesWonElement.textContent = this.gamesWon;
+            }
+
+            saveWins() {
+                try {
+                    localStorage.setItem('furryMinesweeperWins', this.gamesWon.toString());
+                } catch (e) {
+                    console.log('Could not save wins');
                 }
             }
 
-            formatTime(seconds) {
-                return seconds.toString().padStart(3, '0');
-            }
-
-            updateStats() {
-                document.getElementById('mine-count').textContent = this.mineCount - this.flaggedCells;
-                this.updateTimerDisplay();
-                
-                const totalCells = this.gridSize.width * this.gridSize.height;
-                const cellsLeft = totalCells - this.revealedCells - this.mineCount;
-                document.getElementById('cells-left').textContent = Math.max(0, cellsLeft);
+            loadWins() {
+                try {
+                    const wins = localStorage.getItem('furryMinesweeperWins');
+                    return wins ? parseInt(wins) : 0;
+                } catch (e) {
+                    return 0;
+                }
             }
         }
 
-        // Initialize the game
-        const game = new Minesweeper();
+        // Start the game
+        let game;
+        window.addEventListener('load', () => {
+            game = new MinesweeperGame();
+        });
     </script>
 </body>
 </html>
-
-
