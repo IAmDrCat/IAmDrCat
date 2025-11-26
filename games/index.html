@@ -6,6 +6,9 @@
   <title>Games - IAmDrCat.com</title>
   <meta name="description" content="Play games created by IAmDrCat - including Cosmic Minesweeper and more!" />
 
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5658369692346701" crossorigin="anonymous"></script>
+
   <!-- Open Graph for Discord/Facebook/etc -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://iamdrcat.com/games/" />
@@ -14,75 +17,39 @@
   <meta property="og:image" content="https://iamdrcat.com/pop_drcat.gif" />
   
   <style>
-    /* Reset & Base */
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'Arial',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f3460);color:#fff;overflow-x:hidden;min-height:100vh;position:relative;}
-    
-    /* Particles - Staggered Animation */
     .particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;}
     .particle{position:absolute;width:3px;height:3px;background:#a0a0e0;border-radius:50%;animation:float 10s infinite;opacity:0;}
     @keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:0.8;}90%{opacity:0.8;}100%{transform:translateY(-100px) rotate(360deg);opacity:0;}}
-    
-    /* Header/Nav - Mobile Responsive */
     header{position:relative;z-index:10;padding:20px;background:rgba(0,0,0,0.4);}    
     nav{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 20px;}    
     .logo{font-size:clamp(1.2rem, 4vw, 1.5rem);font-weight:bold;color:#8b5cf6;}    
-    
-    /* Mobile Navigation */
     .nav-links{list-style:none;display:flex;flex-wrap:wrap;gap:10px;}    
-    .nav-links li{margin:0;}    
-    .nav-links a{color:#fff;text-decoration:none;font-size:clamp(0.8rem, 2vw, 1rem);cursor:pointer;transition:all 0.3s;padding:8px 12px;border-radius:8px;white-space:nowrap;}    
-    .nav-links a:hover, .nav-links a:focus{color:#8b5cf6;outline:2px solid rgba(139,92,246,0.5);outline-offset:2px;}
-    
-    /* Main Content */
+    .nav-links a{color:#fff;text-decoration:none;font-size:clamp(0.8rem, 2vw, 1rem);padding:8px 12px;border-radius:8px;transition:0.3s;}    
+    .nav-links a:hover{color:#8b5cf6;}    
     .main-content{position:relative;z-index:10;min-height:70vh;padding:40px 20px;}
     .games-container{max-width:1200px;margin:0 auto;}
-    
-    /* Page Header */
     .page-header{text-align:center;margin-bottom:60px;}
-    .page-header h1{font-size:clamp(2.5rem, 8vw, 4rem);line-height:1.2;background:linear-gradient(45deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glow 3s ease-in-out infinite alternate;margin-bottom:20px;}
+    .page-header h1{font-size:clamp(2.5rem, 8vw, 4rem);background:linear-gradient(45deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glow 3s infinite alternate;margin-bottom:20px;}
     @keyframes glow{from{filter:drop-shadow(0 0 10px rgba(139,92,246,0.5));}to{filter:drop-shadow(0 0 20px rgba(59,130,246,0.8));}}
     .page-header p{font-size:1.2rem;color:#a0a0e0;max-width:600px;margin:0 auto;}
-    
-    /* Games Grid */
     .games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:30px;margin-top:40px;}
-    
-    /* Game Card */
-    .game-card{background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);border-radius:20px;padding:30px;text-align:center;transition:all 0.4s ease;position:relative;overflow:hidden;}
-    .game-card:hover{transform:translateY(-10px);box-shadow:0 20px 40px rgba(139,92,246,0.3);border-color:rgba(139,92,246,0.5);}
-    .game-card:before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,rgba(139,92,246,0.05),rgba(6,182,212,0.05));z-index:-1;transition:opacity 0.4s ease;}
-    .game-card:hover:before{opacity:1;}
-    
-    .game-title{font-size:1.8rem;color:#fff;margin-bottom:15px;font-weight:bold;}
-    .game-description{color:#a0a0e0;line-height:1.6;margin-bottom:25px;font-size:1rem;}
+    .game-card{background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);border-radius:20px;padding:30px;text-align:center;transition:0.4s;position:relative;}
+    .game-card:hover{transform:translateY(-10px);box-shadow:0 20px 40px rgba(139,92,246,0.3);}
+    .game-title{font-size:1.8rem;margin-bottom:15px;font-weight:bold;}
+    .game-description{color:#a0a0e0;margin-bottom:25px;}
     .game-status{display:inline-block;padding:5px 12px;border-radius:15px;font-size:0.8rem;font-weight:bold;margin-bottom:20px;}
     .status-available{background:rgba(34,197,94,0.2);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}
     .status-new{background:rgba(236,72,153,0.2);color:#ec4899;border:1px solid rgba(236,72,153,0.3);}
-    
-    .play-button{display:inline-block;background:linear-gradient(45deg,#8b5cf6,#06b6d4);color:#fff;text-decoration:none;padding:12px 30px;border-radius:25px;font-weight:bold;font-size:1rem;transition:all 0.3s ease;border:none;cursor:pointer;}
-    .play-button:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(139,92,246,0.4);filter:brightness(1.1);}
-    
-    /* Footer */
-    footer{position:relative;z-index:10;padding:60px 20px 40px;background:linear-gradient(135deg, rgba(139,92,246,0.1), rgba(6,182,212,0.05));backdrop-filter:blur(10px);border-top:1px solid rgba(139,92,246,0.2);text-align:center;}
-    .footer-content{max-width:800px;margin:0 auto;}
-    .footer-links{display:flex;justify-content:center;gap:30px;margin-bottom:20px;flex-wrap:wrap;}
-    .footer-links a{color:#a0a0b0;text-decoration:none;font-size:0.9rem;padding:8px 16px;border-radius:20px;transition:all 0.3s ease;border:1px solid transparent;}
-    .footer-links a:hover{color:#8b5cf6;background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3);transform:translateY(-2px);}
-    .footer-divider{height:1px;background:linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent);margin:20px 0;}
-    .footer-copyright{color:#a0a0b0;font-size:0.8rem;opacity:0.7;}
-
-    /* Mobile Responsive */
-    @media (max-width: 768px) {
-      .games-grid{grid-template-columns:1fr;gap:20px;}
-      .game-card{padding:25px;}
-      .nav-links{justify-content:center;}
-      .footer-links{gap:15px;}
-      .footer-links a{padding:6px 12px;font-size:0.8rem;}
-    }
-
-    /* Focus styles for better accessibility */
-    *:focus{outline:2px solid rgba(139,92,246,0.7);outline-offset:2px;}
+    .play-button{display:inline-block;background:linear-gradient(45deg,#8b5cf6,#06b6d4);color:#fff;text-decoration:none;padding:12px 30px;border-radius:25px;font-weight:bold;transition:0.3s;}
+    .play-button:hover{transform:translateY(-2px);}    
+    footer{padding:60px 20px 40px;text-align:center;background:rgba(139,92,246,0.1);border-top:1px solid rgba(139,92,246,0.2);}    
   </style>
+<style>
+.game-card{height:350px;display:flex;flex-direction:column;justify-content:space-between;}
+.game-card button{margin-top:auto;}
+</style>
 </head>
 <body>
   <div class="particles"></div>
@@ -108,22 +75,24 @@
         <div class="game-card">
           <h2 class="game-title">🌟 Cosmic Minesweeper</h2>
           <div class="game-status status-new">✨ NEW</div>
-          <p class="game-description">
-            The classic puzzle game with a cosmic twist! Clear the field without hitting any mines using logic and deduction. 
-            Features beautiful space-themed graphics, smooth animations, and multiple difficulty levels.
-          </p>
+          <p class="game-description">Classic puzzle game with a cosmic twist.</p>
           <a href="./minesweeper/" class="play-button">🚀 Play Now</a>
         </div>
         
         <div class="game-card">
           <h2 class="game-title">🐱 Furry Clicker</h2>
           <div class="game-status status-available">Available</div>
-          <p class="game-description">
-            A fun incremental clicker game with adorable furry characters! Click to earn points, unlock upgrades, 
-            and watch your furry friends grow. Perfect for casual gaming sessions.
-          </p>
+          <p class="game-description">Incremental clicker with furry characters.</p>
           <a href="./furryclicker/" class="play-button">🎮 Play Now</a>
         </div>
+
+        <div class="game-card">
+          <h2 class="game-title">🐍 Snake</h2>
+          <div class="game-status status-available">Available</div>
+          <p class="game-description">Simple, fast snake game. Classic arcade fun.</p>
+          <a href="./snake/" class="play-button">🟩 Play Now</a>
+        </div>
+
       </div>
     </div>
   </main>
@@ -137,23 +106,20 @@
         <a href="https://github.com/iamdrcat" target="_blank">GitHub</a>
       </div>
       <div class="footer-divider"></div>
-      <div class="footer-copyright">
-        &copy; 2025 IAmDrCat.com
-      </div>
+      <div class="footer-copyright">© 2025 IAmDrCat.com</div>
     </div>
   </footer>
-  
+
   <script>
-    // Particles with staggered timing
-    const container = document.querySelector('.particles');
+    const container=document.querySelector('.particles');
     for(let i=0;i<80;i++){
       const p=document.createElement('div');
       p.className='particle';
       p.style.left=Math.random()*100+'vw';
       p.style.animationDuration=Math.random()*10+5+'s';
-      p.style.animationDelay=Math.random()*20+'s'; // Stagger the start times
+      p.style.animationDelay=Math.random()*20+'s';
       container.appendChild(p);
-    }    
+    }
   </script>
 </body>
 </html>
