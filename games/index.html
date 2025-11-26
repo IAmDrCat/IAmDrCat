@@ -55,13 +55,12 @@
   <div class="particles"></div>
   
   <header>
-    <nav>
-      <div class="logo">IAmDrCat.com</div>
-      <ul class="nav-links">
-        <li><a href="https://iamdrcat.com/">Home</a></li>
-        <li><a href="https://iamdrcat.com/fuzz">The Fuzz</a></li>
-      </ul>
-    </nav>
+<div id="nav"></div>
+<script>
+fetch("/navbar.html")
+  .then(r => r.text())
+  .then(t => document.getElementById("nav").innerHTML = t);
+</script>
   </header>
   
   <main class="main-content">
