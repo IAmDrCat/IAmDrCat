@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Companion Clicker - IAmDrCat.com</title>
+    <title>Furry Clicker - IAmDrCat.com</title>
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5658369692346701"
+     crossorigin="anonymous"></script>
+
+
     <style>
         * {
             margin: 0;
@@ -186,7 +191,7 @@
             text-align: center;
         }
 
-        .companion-character {
+        .Furry-character {
             width: 200px;
             height: 200px;
             border-radius: 50%;
@@ -208,12 +213,12 @@
             background-repeat: no-repeat;
         }
 
-        .companion-character:hover {
+        .Furry-character:hover {
             transform: scale(1.05);
             box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
         }
 
-        .companion-character:active {
+        .Furry-character:active {
             transform: scale(0.95);
         }
 
@@ -573,7 +578,7 @@
                 gap: 20px;
             }
             
-            .companion-character {
+            .Furry-character {
                 width: 150px;
                 height: 150px;
                 font-size: 4em;
@@ -622,7 +627,7 @@
     </header>
 
     <div class="game-container">
-        <h1>🐾 Companion Clicker 🐾</h1>
+        <h1>🐾 Furry Clicker 🐾</h1>
         
         <div class="stats">
             <div class="stat">
@@ -653,10 +658,10 @@
 
         <div class="main-area">
             <div class="clicker-area">
-                <div class="companion-character" id="main-character">
+                <div class="Furry-character" id="main-character">
                     🐱
                 </div>
-                <p style="color: #a0a0b0; margin-top: 15px;">Click your companion to generate energy!</p>
+                <p style="color: #a0a0b0; margin-top: 15px;">Click your Furry to generate energy!</p>
             </div>
 
             <div class="upgrades">
@@ -822,7 +827,7 @@
             container.appendChild(p);
         }
 
-        class CompanionClicker {
+        class FurryClicker {
             constructor() {
                 // Base stats
                 this.energy = 0;
@@ -875,13 +880,13 @@
                 };
                 
                 // Character system
-                this.companions = ['🐱', '🐶', '🐰', '🐻', '🦊', '🐼', '🐨', '🐯', '🦁', '🐸'];
-                this.currentCompanionIndex = 0;
+                this.Furrys = ['🐱', '🐶', '🐰', '🐻', '🦊', '🐼', '🐨', '🐯', '🦁', '🐸'];
+                this.currentFurryIndex = 0;
                 
-                this.companionImages = [
-                    'companion1.png', 'companion2.png', 'companion3.png', 'companion4.png',
-                    'companion5.png', 'companion6.png', 'companion7.png', 'companion8.png',
-                    'companion9.png', 'companion10.png'
+                this.FurryImages = [
+                    'Furry1.png', 'Furry2.png', 'Furry3.png', 'Furry4.png',
+                    'Furry5.png', 'Furry6.png', 'Furry7.png', 'Furry8.png',
+                    'Furry9.png', 'Furry10.png'
                 ];
                 this.imagesLoaded = false;
                 
@@ -926,7 +931,7 @@
             }
 
             bindEvents() {
-                this.mainCharacter.addEventListener('click', (e) => this.clickCompanion(e));
+                this.mainCharacter.addEventListener('click', (e) => this.clickFurry(e));
                 
                 Object.keys(this.upgradeElements).forEach(key => {
                     this.upgradeElements[key].addEventListener('click', () => this.buyUpgrade(key));
@@ -953,11 +958,11 @@
 
             preloadImages() {
                 let loadedCount = 0;
-                this.companionImages.forEach((src, index) => {
+                this.FurryImages.forEach((src, index) => {
                     const img = new Image();
                     img.onload = () => {
                         loadedCount++;
-                        if (loadedCount === this.companionImages.length) {
+                        if (loadedCount === this.FurryImages.length) {
                             this.imagesLoaded = true;
                             this.updateCharacterDisplay();
                         }
@@ -971,11 +976,11 @@
 
             updateCharacterDisplay() {
                 if (this.imagesLoaded) {
-                    this.mainCharacter.style.backgroundImage = `url('${this.companionImages[this.currentCompanionIndex]}')`;
+                    this.mainCharacter.style.backgroundImage = `url('${this.FurryImages[this.currentFurryIndex]}')`;
                     this.mainCharacter.textContent = '';
                 } else {
                     this.mainCharacter.style.backgroundImage = 'none';
-                    this.mainCharacter.textContent = this.companions[this.currentCompanionIndex];
+                    this.mainCharacter.textContent = this.Furrys[this.currentFurryIndex];
                 }
             }
 
@@ -1126,7 +1131,7 @@
                 return baseCosts[type];
             }
 
-            clickCompanion(e) {
+            clickFurry(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 
@@ -1146,9 +1151,9 @@
                 
                 this.createClickEffect(e, actualEnergyGain);
                 
-                // Change companion occasionally
+                // Change Furry occasionally
                 if (Math.random() < 0.08) {
-                    this.changeCompanion();
+                    this.changeFurry();
                 }
                 
                 this.checkLevelUp();
@@ -1180,8 +1185,8 @@
                 }, 1000);
             }
 
-            changeCompanion() {
-                this.currentCompanionIndex = (this.currentCompanionIndex + 1) % this.companions.length;
+            changeFurry() {
+                this.currentFurryIndex = (this.currentFurryIndex + 1) % this.Furrys.length;
                 
                 this.mainCharacter.style.transform = 'scale(0.8) rotate(360deg)';
                 
@@ -1402,13 +1407,13 @@
                     research: this.research,
                     upgrades: this.upgrades,
                     achievements: this.achievements,
-                    currentCompanionIndex: this.currentCompanionIndex,
+                    currentFurryIndex: this.currentFurryIndex,
                     lastSave: Date.now()
                 };
                 
                 try {
                     if (typeof(Storage) !== "undefined") {
-                        localStorage.setItem('companionClickerSave', JSON.stringify(saveData));
+                        localStorage.setItem('FurryClickerSave', JSON.stringify(saveData));
                     }
                 } catch(e) {
                     console.log('localStorage not available');
@@ -1424,7 +1429,7 @@
                 
                 try {
                     if (typeof(Storage) !== "undefined") {
-                        const localData = localStorage.getItem('companionClickerSave');
+                        const localData = localStorage.getItem('FurryClickerSave');
                         if (localData) {
                             savedData = localData;
                         }
@@ -1468,7 +1473,7 @@
             resetGame() {
                 try {
                     if (typeof(Storage) !== "undefined") {
-                        localStorage.removeItem('companionClickerSave');
+                        localStorage.removeItem('FurryClickerSave');
                     }
                 } catch(e) {
                     console.log('localStorage not available');
@@ -1522,7 +1527,7 @@
                 });
                 
                 this.ascensionSection.style.display = 'none';
-                this.currentCompanionIndex = 0;
+                this.currentFurryIndex = 0;
                 this.updateCharacterDisplay();
                 this.updateAllUpgradeDisplays();
                 this.updateDisplay();
@@ -1566,7 +1571,7 @@
         // Start the game
         let game;
         window.addEventListener('load', () => {
-            game = new CompanionClicker();
+            game = new FurryClicker();
         });
     </script>
 </body>
