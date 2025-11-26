@@ -3,29 +3,34 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your Game</title>
+    <title>Cosmic Minesweeper</title>
 
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: rgb(11, 11, 20);
             font-family: Arial, sans-serif;
+
+            /* cosmic gradient background */
+            background: radial-gradient(circle at 50% 20%, #1a1b3a, #0b0c18 70%);
             overflow: hidden;
+            color: white;
         }
 
+        /* particle layer */
         .particles {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
             z-index: -1;
+            pointer-events: none;
         }
 
-        /* --- your game container starts below this line --- */
+        /* ≈≈ game container section starts here ≈≈ */
         .game-container {
+
 
             position: relative;
             z-index: 10;
@@ -670,6 +675,7 @@
     </script>
 </body>
 </html>
+
 
 
 
