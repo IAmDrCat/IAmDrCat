@@ -1,6 +1,30 @@
-<div class="navbar">
-  <a href="/index.html">Home</a>
-  <a href="/games.html">Games</a>
-  <a href="/games.html">DiddyBlud</a>
-  <a href="/about.html">About</a>
+<div class="topbar">
+    <div class="brand">IAmDrCat.com</div>
+
+    <div class="links">
+        <a href="/index.html">Home</a>
+        <a href="/games.html">Games</a>
+    </div>
 </div>
+
+<style>
+.topbar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: rgba(0,0,0,0.4); 
+    backdrop-filter: blur(8px);
+}
+
+.topbar .brand {
+    font-size: 22px;
+    font-weight: bold;
+    color: #a971ff;  /* purple like your screenshot */
+}
+
+.topbar .links a {
+    margin-left: 20px;
+    font-size: 16px;
+    color: #dff6ff; /* light blue-ish like your screen*
