@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fortnite Item Shop - IAmDrCat</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Arial',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f3460);color:#fff;overflow-x:hidden;min-height:100vh;position:relative;}
+
+    .particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;}
+    .particle{position:absolute;width:3px;height:3px;background:#a0a0e0;border-radius:50%;animation:float 10s infinite;opacity:0;}
+    @keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:0.8;}90%{opacity:0.8;}100%{transform:translateY(-100px) rotate(360deg);opacity:0;}}
+
+    header{position:relative;z-index:10;padding:20px;background:rgba(0,0,0,0.4);}    
+    nav{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 20px;}    
+    .logo{font-size:clamp(1.2rem, 4vw, 1.5rem);font-weight:bold;color:#8b5cf6;}    
+    .nav-links{list-style:none;display:flex;flex-wrap:wrap;gap:10px;}    
+    .nav-links li{margin:0;}    
+    .nav-links a{color:#fff;text-decoration:none;font-size:clamp(0.8rem, 2vw, 1rem);cursor:pointer;transition:all 0.3s;padding:8px 12px;border-radius:8px;white-space:nowrap;}    
+    .nav-links a:hover,.nav-links a:focus{color:#8b5cf6;outline:2px solid rgba(139,92,246,0.5);outline-offset:2px;}
+
+    main{position:relative;z-index:10;max-width:1200px;margin:0 auto;padding:30px 20px 60px;}
+    h1{font-size:clamp(2rem,4vw,3rem);margin-bottom:10px;background:linear-gradient(45deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    p.subtitle{color:#cbd5f5;margin-bottom:20px;}
+
+    #status{margin:10px 0 20px;color:#cbd5f5;font-size:0.95rem;}
+
+    .shop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:10px;}
+    .shop-card{background:rgba(15,23,42,0.9);border-radius:16px;padding:12px;border:1px solid rgba(148,163,184,0.5);box-shadow:0 10px 30px rgba(15,23,42,0.7);display:flex;flex-direction:column;overflow:hidden;}
+    .shop-card img{width:100%;border-radius:12px;margin-bottom:10px;object-fit:cover;background:#020617;}
+    .shop-card-title{font-weight:bold;margin-bottom:4px;}
+    .shop-card-meta{font-size:0.85rem;color:#cbd5f5;margin-bottom:6px;}
+    .shop-card-price{font-weight:bold;color:#fbbf24;font-size:0.95rem;}
+
+    details.debug{margin-top:24px;font-size:0.85rem;color:#9ca3af;background:rgba(15,23,42,0.9);border-radius:12px;border:1px solid rgba(148,163,184,0.5);padding:12px;}
+    details.debug pre{max-height:300px;overflow:auto;font-size:0.8rem;background:#020617;padding:10px;border-radius:8px;color:#e5e7eb;}
+
+    @media(max-width:768px){
+      nav{flex-direction:column;align-items:flex-start;gap:10px;}
+      .nav-links{justify-content:flex-start;}
+    }
+  </style>
+</head>
+<body>
+  <div class="particles"></div>
+
+  <header>
+    <nav>
+      <div class="logo">IAmDrCat.com</div>
+      <ul class="nav-links">
+        <li><a href="https://iamdrcat.com/">Home</a></li>
+        <li><a href="https://iamdrcat.com/fuzz">The Fuzz</a></li>
+        <li><a href="https://iamdrcat.com/games/">Games</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Fortnite Item Shop</h1>
+    <p class="subtitle">Live shop data from FortniteAPI.io (requires your API key).</p>
+    <div id="status">Waiting for data...</div>
+    <div id="shop-grid" class="shop-grid"></div>
+
+    <details class="debug">
+      <summary>Debug raw API response</summary>
+      <pre id="debug-json">No data yet.</pre>
+      <p>Tip: Once this is working, you can hide this block by removing the &lt;details&gt; from the HTML.</p>
+    </details>
+  </main>
+
+  <script>
+    // SIMPLE PARTICLES
+    const container=document.querySelector('.particles');
+    for(let i=0;i<80;i++){
+      const p=document.createElement('div');
+      p.className='particle';
+      p.style.left=Math.random()*100+'vw';
+      p.style.animationDuration=Math.random()*10+5+'s';
+      p.style.animationDelay=Math.random()*20+'s';
+      container.appendChild(p);
+    }
+
+    // FORTNITE SHOP LOGIC
+    const API_KEY='YOUR_FORTNITEAPI_IO_KEY_HERE'; // TODO: replace with your key from dashboard.fortniteapi.io
+    const ENDPOINT='https://fortniteapi.io/v2/shop?lang=en';
+
+    async function loadShop(){
+      const status=document.getElementById('status');
+      const grid=document.getElementById('shop-grid');
+      const debug=document.getElementById('debug-json');
+
+      if(!API_KEY || API_KEY==='YOUR_FORTNITEAPI_IO_KEY_HERE'){
+        status.textContent='Set your FortniteAPI.io API key in the page source (API_KEY constant) to load live shop data.';
+        return;
+      }
+
+      try{
+        status.textContent='Loading item shop...';
+        const res=await fetch(ENDPOINT,{headers:{Authorization:API_KEY}});
+        if(!res.ok){
+          throw new Error('API error: '+res.status+' '+res.statusText);
+        }
+        const data=await res.json();
+        debug.textContent=JSON.stringify(data,null,2);
+
+        // FortniteAPI.io shop usually returns an array under data.shop
+        let entries=Array.isArray(data.shop)?data.shop:[];
+        if(!entries.length && Array.isArray(data.featured)) entries=data.featured;
+        if(!entries.length && Array.isArray(data.daily)) entries=data.daily;
+
+        if(!entries.length){
+          status.textContent='No shop entries found in the API response.';
+          return;
+        }
+
+        status.textContent=`Showing ${entries.length} shop entries.`;
+        grid.innerHTML='';
+
+        entries.forEach(entry=>{
+          const card=document.createElement('article');
+          card.className='shop-card';
+
+          // Choose an image
+          let imageUrl=null;
+          if(Array.isArray(entry.displayAssets)&&entry.displayAssets.length){
+            const asset=entry.displayAssets[0];
+            imageUrl=asset.full_background||asset.background||asset.icon||asset.url||null;
+          }else if(entry.images){
+            imageUrl=entry.images.featured||entry.images.icon||entry.images.smallIcon||null;
+          }
+
+          // Basic metadata
+          const name=(entry.displayName||
+                      (entry.items&&entry.items[0]&&entry.items[0].name)||
+                      entry.mainType||
+                      'Unknown item');
+          const rarity=(entry.rarity&&(entry.rarity.name||entry.rarity.id))||
+                        (entry.items&&entry.items[0]&&entry.items[0].rarity&&entry.items[0].rarity.name)||
+                        '';
+          const price=(entry.finalPrice||entry.fullPrice||
+                       (entry.price&& (entry.price.finalPrice||entry.price.regularPrice))||'');
+          const section=(entry.section&&entry.section.name)||'';
+
+          const metaParts=[];
+          if(rarity) metaParts.push(rarity);
+          if(section) metaParts.push(section);
+
+          card.innerHTML=`${imageUrl?`<img src="${imageUrl}" alt="${name}">`:''}
+            <div class="shop-card-title">${name}</div>
+            <div class="shop-card-meta">${metaParts.join(' • ')||'Fortnite Item'}</div>
+            <div class="shop-card-price">${price?price+' V-Bucks':'Price unknown'}</div>`;
+
+          grid.appendChild(card);
+        });
+      }catch(err){
+        console.error(err);
+        status.textContent='Failed to load item shop: '+err.message;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded',loadShop);
+  </script>
+</body>
+</html>
