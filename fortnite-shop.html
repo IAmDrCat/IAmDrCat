@@ -33,8 +33,13 @@
     .shop-card-meta{font-size:0.85rem;color:#cbd5f5;margin-bottom:6px;}
     .shop-card-price{font-weight:bold;color:#fbbf24;font-size:0.95rem;}
 
-    details.debug{margin-top:24px;font-size:0.85rem;color:#9ca3af;background:rgba(15,23,42,0.9);border-radius:12px;border:1px solid rgba(148,163,184,0.5);padding:12px;}
-    details.debug pre{max-height:300px;overflow:auto;font-size:0.8rem;background:#020617;padding:10px;border-radius:8px;color:#e5e7eb;}
+    .shop-section{margin-top:16px;border-radius:12px;background:rgba(15,23,42,0.9);border:1px solid rgba(148,163,184,0.4);overflow:hidden;}
+    .shop-section[open]{box-shadow:0 10px 30px rgba(15,23,42,0.7);}
+    .shop-section-title{font-size:clamp(1.1rem,2.3vw,1.5rem);color:#e5e7eb;}
+    .shop-section summary{cursor:pointer;list-style:none;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+    .shop-section summary::-webkit-details-marker{display:none;}
+    .shop-section-toggle{font-size:0.9rem;color:#9ca3af;}
+    .shop-section-content{padding:0 14px 12px;}
 
     @media(max-width:768px){
       nav{flex-direction:column;align-items:flex-start;gap:10px;}
@@ -45,28 +50,18 @@
 <body>
   <div class="particles"></div>
 
-  <header>
-    <nav>
-      <div class="logo">IAmDrCat.com</div>
-      <ul class="nav-links">
-        <li><a href="https://iamdrcat.com/">Home</a></li>
-        <li><a href="https://iamdrcat.com/fuzz">The Fuzz</a></li>
-        <li><a href="https://iamdrcat.com/games/">Games</a></li>
-      </ul>
-    </nav>
-  </header>
+  <div id="nav"></div>
+  <script>
+    fetch("/navbar.html")
+      .then(r => r.text())
+      .then(t => document.getElementById("nav").innerHTML = t);
+  </script>
 
   <main>
     <h1>Fortnite Item Shop</h1>
-    <p class="subtitle">Live shop data from FortniteAPI.io (requires your API key).</p>
+    <p class="subtitle">Live shop data from FortniteAPI.io.</p>
     <div id="status">Waiting for data...</div>
-    <div id="shop-grid" class="shop-grid"></div>
-
-    <details class="debug">
-      <summary>Debug raw API response</summary>
-      <pre id="debug-json">No data yet.</pre>
-      <p>Tip: Once this is working, you can hide this block by removing the &lt;details&gt; from the HTML.</p>
-    </details>
+    <div id="shop-sections"></div>
   </main>
 
   <script>
@@ -87,8 +82,7 @@
 
     async function loadShop(){
       const status=document.getElementById('status');
-      const grid=document.getElementById('shop-grid');
-      const debug=document.getElementById('debug-json');
+      const sectionsContainer=document.getElementById('shop-sections');
 
       if(!API_KEY || API_KEY==='YOUR_FORTNITEAPI_IO_KEY_HERE'){
         status.textContent='Set your FortniteAPI.io API key in the page source (API_KEY constant) to load live shop data.';
@@ -102,7 +96,6 @@
           throw new Error('API error: '+res.status+' '+res.statusText);
         }
         const data=await res.json();
-        debug.textContent=JSON.stringify(data,null,2);
 
         // FortniteAPI.io shop usually returns an array under data.shop
         let entries=Array.isArray(data.shop)?data.shop:[];
@@ -115,7 +108,101 @@
         }
 
         status.textContent=`Showing ${entries.length} shop entries.`;
-        grid.innerHTML='';
+
+        // Group items by section/category like the in-game shop, with a preferred order
+        sectionsContainer.innerHTML='';
+        const sectionsMap=new Map();
+
+        // Decide a category bucket for ordering: skins -> cars -> jamtracks -> other
+        function getCategoryBucket(entry){
+          const mainType=(entry.mainType||'').toLowerCase();
+          const sectionId=(entry.section&&entry.section.id||'').toLowerCase();
+          const sectionName=(entry.section&&entry.section.name||'').toLowerCase();
+
+          // Look inside first item if available
+          const firstItem=Array.isArray(entry.items)&&entry.items.length?entry.items[0]:null;
+          const itemTypeId=(firstItem&&firstItem.type&&firstItem.type.id||'').toLowerCase();
+          const itemTypeName=(firstItem&&firstItem.type&&firstItem.type.name||'').toLowerCase();
+
+          // Heuristics for skins
+          if(mainType.includes('outfit')||
+             itemTypeId.includes('outfit')||
+             itemTypeName.includes('outfit')){
+            return 'skins';
+          }
+
+          // Heuristics for cars
+          if(mainType.includes('car')||
+             sectionId.includes('car')||
+             sectionName.includes('car')||
+             itemTypeId.includes('car')||
+             itemTypeName.includes('car')){
+            return 'cars';
+          }
+
+          // Heuristics for Jam Tracks / music
+          if(mainType.includes('jam')||mainType.includes('music')||
+             sectionId.includes('jam')||sectionName.includes('jam')||
+             itemTypeId.includes('music')||itemTypeName.includes('music')){
+            return 'jamtracks';
+          }
+
+          return 'other';
+        }
+
+        function getSectionGrid(name, bucket){
+          const key=name||'Other';
+          if(!sectionsMap.has(key)){
+            const sectionEl=document.createElement('details');
+            sectionEl.className='shop-section';
+            sectionEl.open=true; // start expanded
+
+            const summaryEl=document.createElement('summary');
+            const titleEl=document.createElement('h2');
+            titleEl.className='shop-section-title';
+            titleEl.textContent=key;
+
+            const toggleEl=document.createElement('span');
+            toggleEl.className='shop-section-toggle';
+            toggleEl.textContent='Click to collapse';
+
+            summaryEl.appendChild(titleEl);
+            summaryEl.appendChild(toggleEl);
+
+            const contentEl=document.createElement('div');
+            contentEl.className='shop-section-content';
+
+            const gridEl=document.createElement('div');
+            gridEl.className='shop-grid';
+
+            contentEl.appendChild(gridEl);
+            sectionEl.appendChild(summaryEl);
+            sectionEl.appendChild(contentEl);
+
+            // Insert sections in preferred order by bucket
+            const bucketOrder=['skins','cars','jamtracks','other'];
+            const sections=[...sectionsContainer.querySelectorAll('.shop-section')];
+            const targetIndex=bucketOrder.indexOf(bucket);
+
+            let inserted=false;
+            for(let i=0;i<sections.length;i++){
+              const existingBucket=sections[i].getAttribute('data-bucket')||'other';
+              const existingIndex=bucketOrder.indexOf(existingBucket);
+              if(targetIndex<existingIndex){
+                sectionsContainer.insertBefore(sectionEl,sections[i]);
+                inserted=true;
+                break;
+              }
+            }
+            if(!inserted){
+              sectionsContainer.appendChild(sectionEl);
+            }
+
+            sectionEl.setAttribute('data-bucket',bucket);
+            sectionsMap.set(key,gridEl);
+          }
+          return sectionsMap.get(key);
+        }
 
         entries.forEach(entry=>{
           const card=document.createElement('article');
@@ -140,17 +227,21 @@
                         '';
           const price=(entry.finalPrice||entry.fullPrice||
                        (entry.price&& (entry.price.finalPrice||entry.price.regularPrice))||'');
-          const section=(entry.section&&entry.section.name)||'';
+          const sectionName=(entry.section&&(entry.section.name||entry.section.id))||
+                            entry.bannerText||
+                            entry.offerTag||
+                            'Other';
 
           const metaParts=[];
           if(rarity) metaParts.push(rarity);
-          if(section) metaParts.push(section);
+          if(sectionName) metaParts.push(sectionName);
 
           card.innerHTML=`${imageUrl?`<img src="${imageUrl}" alt="${name}">`:''}
             <div class="shop-card-title">${name}</div>
             <div class="shop-card-meta">${metaParts.join(' • ')||'Fortnite Item'}</div>
             <div class="shop-card-price">${price?price+' V-Bucks':'Price unknown'}</div>`;
 
+          const grid=getSectionGrid(sectionName);
           grid.appendChild(card);
         });
       }catch(err){
