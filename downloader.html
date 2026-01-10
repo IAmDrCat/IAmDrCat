@@ -1594,7 +1594,12 @@
                 playerTrackTitle.textContent = title;
                 playerTrackArtist.textContent = "IAmDrCat Stream";
 
-                const thumb = job.meta?.thumb || "";
+                let thumb = job.meta?.thumb || "";
+                // If local path (starts with /), prepend backend URL
+                if (thumb.startsWith('/')) {
+                    thumb = API_BASE_URL + thumb;
+                }
+
                 playerAlbumArt.src = thumb;
                 musicPlayerBg.style.backgroundImage = `url('${thumb}')`;
 
