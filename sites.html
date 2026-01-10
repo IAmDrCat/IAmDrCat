@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supported Sites - IAmDrCat.com</title>
+    <style>
+        /* Reusing Core Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a, #0f3460);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* Particles Reuse */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        main {
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+            margin: 80px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .search-container {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #06b6d4;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .sites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            perspective: 1000px;
+        }
+
+        .site-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .site-card:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.2);
+            color: #fff;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            padding: 40px;
+            color: #64748b;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="nav"></div>
+    <script>
+        fetch("/navbar.html").then(r => r.text()).then(t => document.getElementById("nav").innerHTML = t);
+    </script>
+
+    <main>
+        <h1>Supported Platforms</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search 1,000+ supported sites..." autofocus>
+        </div>
+        <div id="grid" class="sites-grid">
+            <div class="no-results">Loading sites database...</div>
+        </div>
+    </main>
+
+    <script>
+        const grid = document.getElementById('grid');
+        const searchInput = document.getElementById('searchInput');
+        let allSites = [];
+
+        // Fetch the JSON list
+        fetch('supported_sites.json')
+            .then(res => res.json())
+            .then(sites => {
+                // Filter out generic/boring ones slightly? No, show all.
+                // Sort uniquely and alphabetically (case insensitive)
+                allSites = [...new Set(sites)].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+                render(allSites);
+            })
+            .catch(err => {
+                grid.innerHTML = '<div class="no-results" style="color:#ef4444">Failed to load sites database.</div>';
+                console.error(err);
+            });
+
+        function render(items) {
+            grid.innerHTML = '';
+            if (items.length === 0) {
+                grid.innerHTML = '<div class="no-results">No matches found.</div>';
+                return;
+            }
+
+            // Limit initial render for performance if massive? 
+            // 1000 items is fine for modern DOM.
+            const fragment = document.createDocumentFragment();
+            items.forEach(site => {
+                const div = document.createElement('div');
+                div.className = 'site-card';
+                div.textContent = site;
+                fragment.appendChild(div);
+            });
+            grid.appendChild(fragment);
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allSites.filter(s => s.toLowerCase().includes(term));
+            render(filtered);
+        });
+    </script>
+</body>
+
+</html>
