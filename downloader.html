@@ -1578,9 +1578,12 @@
             const isAudio = job.is_audio || false;
             const streamUrl = `${API_BASE_URL}/api/serve/${jobId}`;
 
+            // Select the CONTAINER, not just the video element
+            const customVideoContainer = document.getElementById('customVideoContainer');
+
             if (isAudio) {
                 // Audio Path
-                videoPlayer.style.display = 'none';
+                customVideoContainer.style.display = 'none';
                 musicPlayerContainer.style.display = 'flex';
 
                 audioPlayer.src = streamUrl;
@@ -1631,7 +1634,7 @@
             } else {
                 // Video Path
                 musicPlayerContainer.style.display = 'none';
-                videoPlayer.style.display = 'block';
+                customVideoContainer.style.display = 'block';
                 videoPlayer.src = streamUrl;
             }
 
