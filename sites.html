@@ -133,7 +133,7 @@
         let allSites = [];
 
         // Fetch the JSON list
-        fetch('supported_sites.json')
+        fetch('/supported_sites.json')
             .then(res => res.json())
             .then(sites => {
                 // Filter out generic/boring ones slightly? No, show all.

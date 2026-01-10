@@ -578,10 +578,24 @@
     <main>
         <h1>Universal Downloader</h1>
         <p class="subtitle">
-            Download videos from YouTube, TikTok, Instagram, <a href="sites.html"
-                style="color: #8b5cf6; text-decoration: underline; text-decoration-style: dotted;">and 1,000+
-                more...</a>
+            Download videos from YouTube, TikTok, Instagram, <span id="moreTrigger" onclick="toggleSites()">and
+                more...</span>
         </p>
+
+        <div id="sitesDropdown" class="sites-dropdown">
+            <div class="sites-grid">
+                <span>YouTube</span><span>TikTok</span><span>Instagram</span><span>Twitter/X</span>
+                <span>Facebook</span><span>Twitch</span><span>Reddit</span><span>Vimeo</span>
+                <span>SoundCloud</span><span>Dailymotion</span><span>VK</span><span>Bilibili</span>
+                <span>Patreon</span><span>Tumblr</span><span>Pinterest</span><span>LinkedIn</span>
+                <span>Bandcamp</span><span>Mixcloud</span><span>Steam</span><span>Streamable</span>
+                <span>Kick</span><span>Rumble</span><span>Threads</span><span>Discord</span>
+            </div>
+            <p style="text-align: center; margin-top: 15px; color: #94a3b8;">
+                <a href="sites.html" style="color: #06b6d4; text-decoration: underline;">View all 1,000+ supported
+                    platforms →</a>
+            </p>
+        </div>
 
         <div class="downloader-box">
             <div class="input-group">
@@ -865,7 +879,29 @@
             link.remove();
         }
 
+        function toggleSites() {
+            const dropdown = document.getElementById('sitesDropdown');
+            const trigger = document.getElementById('moreTrigger');
+            const items = document.querySelectorAll('.sites-grid span');
 
+            dropdown.classList.toggle('show');
+
+            if (dropdown.classList.contains('show')) {
+                trigger.textContent = "show less";
+
+                // Add staggered delay
+                items.forEach((item, index) => {
+                    item.style.transitionDelay = `${index * 0.03}s`;
+                });
+
+            } else {
+                trigger.textContent = "and more...";
+                // Reset delay so they hide quickly
+                items.forEach((item) => {
+                    item.style.transitionDelay = '0s';
+                });
+            }
+        }
 
         // Preview Timer Countdown (10 minutes = 600 seconds)
         let timerInterval = null;
