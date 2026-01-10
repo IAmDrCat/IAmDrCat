@@ -101,11 +101,11 @@ def background_download(job_id, url, is_audio=False):
             # AUDIO CONFIGURATION
             ydl_opts.update({
                 'format': 'bestaudio/best',
-                'postprocessors': [{
-                    'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
-                    'preferredquality': '192',
-                }],
+                'writethumbnail': True,  # Download cover art
+                'postprocessors': [
+                    {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': '192'},
+                    {'key': 'EmbedThumbnail'}, # Embed in MP3
+                ],
             })
         else:
             # VIDEO CONFIGURATION (High Quality MP4)
@@ -118,34 +118,49 @@ def background_download(job_id, url, is_audio=False):
             info = ydl.extract_info(url, download=True)
             filename = ydl.prepare_filename(info)
             
-            # Store metadata for frontend UI (title and album art)
-            jobs[job_id]['meta']['title'] = info.get('title', 'Unknown Title')
-            jobs[job_id]['meta']['thumb'] = info.get('thumbnails', [{}])[-1].get('url') if info.get('thumbnails') else None
+            # Find the actual downloaded media file
+            base, ext = os.path.splitext(filename)
+            final_filename = filename
             
-            # Verify file exists
-            if not os.path.exists(filename):
-                # It might have been post-processed (e.g., converted to mp3)
-                base, ext = os.path.splitext(filename)
-                
-                possible_names = []
-                if is_audio:
-                    possible_names.append(base + '.mp3')
-                else:
-                    possible_names.append(base + '.mp4')
-                
-                found = False
-                for p in possible_names:
-                    if os.path.exists(p):
-                        filename = p
-                        found = True
-                        break
-                
-                if not found:
-                    raise Exception(f"File downloaded but not found. Expected: {filename}")
-                
-            jobs[job_id]['filename'] = filename
+            # Check for converted files
+            expected_exts = ['.mp3'] if is_audio else ['.mp4', '.mkv', '.webm']
+            for ext in expected_exts:
+                if os.path.exists(base + ext):
+                    final_filename = base + ext
+                    break
+            
+            if not os.path.exists(final_filename):
+                 # Fallback check original
+                 if not os.path.exists(filename):
+                     raise Exception(f"File downloaded but not found: {final_filename}")
+                 final_filename = filename
+
+            jobs[job_id]['filename'] = final_filename
             jobs[job_id]['status'] = 'finished'
             
+            # --- Handle Thumbnail (User Request: "Real" cover art & delete with song) ---
+            # yt-dlp writes thumbnail as base.jpg or base.webp
+            thumb_local_path = None
+            for ext in ['.jpg', '.jpeg', '.webp', '.png']:
+                t_path = base + ext
+                if os.path.exists(t_path):
+                    thumb_local_path = t_path
+                    break
+            
+            # Store metadata
+            jobs[job_id]['meta']['title'] = info.get('title', 'Unknown Title')
+            
+            if thumb_local_path:
+                # Use local path for speed & ensured deletion
+                # Convert absolute path to relative /Downloads/ route
+                thumb_basename = os.path.basename(thumb_local_path)
+                jobs[job_id]['meta']['thumb'] = f"/Downloads/{thumb_basename}"
+                
+                # Add to IP tracking for cleanup below
+            else:
+                # Fallback to remote URL
+                jobs[job_id]['meta']['thumb'] = info.get('thumbnails', [{}])[-1].get('url') if info.get('thumbnails') else None
+
             # Track file for this IP and cleanup old files
             client_ip = jobs[job_id].get('ip')
             if client_ip:
@@ -153,21 +168,23 @@ def background_download(job_id, url, is_audio=False):
                     if client_ip not in ip_files:
                         ip_files[client_ip] = []
                     
-                    ip_files[client_ip].append(filename)
-                    
-                    # If this IP has more than MAX_FILES_PER_IP, delete the oldest ones
+                    ip_files[client_ip].append(final_filename)
+                    if thumb_local_path:
+                        ip_files[client_ip].append(thumb_local_path)
+
+                    # Per-IP Limit Cleanup
                     if len(ip_files[client_ip]) > MAX_FILES_PER_IP:
+                        # Delete oldest (from start of list)
                         files_to_delete = ip_files[client_ip][:-MAX_FILES_PER_IP]
+                        ip_files[client_ip] = ip_files[client_ip][-MAX_FILES_PER_IP:]
+                        
                         for old_file in files_to_delete:
                             try:
                                 if os.path.exists(old_file):
                                     os.remove(old_file)
                                     print(f"[Cleanup] Deleted old file for IP {client_ip}: {os.path.basename(old_file)}")
                             except Exception as del_err:
-                                print(f"[Cleanup] Failed to delete {old_file}: {del_err}")
-                        
-                        # Keep only the most recent files in the list
-                        ip_files[client_ip] = ip_files[client_ip][-MAX_FILES_PER_IP:]
+                                print(f"Error deleting old file: {del_err}")
             
     except Exception as e:
         # Strip ANSI color codes
