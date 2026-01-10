@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, request, send_file, jsonify, Response
+from flask import Flask, send_from_directory, request, send_file, jsonify, Response, redirect
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -624,18 +624,13 @@ def serve_file_route(job_id):
     if not job or not job.get('filename'):
         return jsonify({'error': 'File not ready'}), 404
     
-    # Check if user wants to download as attachment or view inline
-    as_attachment = request.args.get('download') == 'true'
+    # Redirect to the Partial Content handler for better streaming support (seeking, etc.)
+    filename = os.path.basename(job['filename'])
+    safe_filename = urllib.parse.quote(filename)
     
-    # Explicitly set MIME type
-    mime_type = None
-    lower_name = job['filename'].lower()
-    if lower_name.endswith('.mp4'):
-        mime_type = 'video/mp4'
-    elif lower_name.endswith('.mp3'):
-        mime_type = 'audio/mpeg'
-        
-    return send_file(job['filename'], as_attachment=as_attachment, mimetype=mime_type)
+    # Construct the partial content URL
+    # We assume /Downloads/ is served by the serve_download function
+    return redirect(f"/Downloads/{safe_filename}")
 
 # Anti-Abuse Configuration
 MAX_CONCURRENT_JOBS = 2
