@@ -751,7 +751,18 @@
                         `;
                     }
 
-                    if (!matches.mv && !matches.lyrics) {
+                    // 4. Regular Video (for non-music content)
+                    if (matches.video) {
+                        selectionGrid.innerHTML += `
+                            <div class="select-card" onclick="startSelectionDownload('${matches.video.url}', false)">
+                                <span class="badge" style="background: #06b6d4;">Video</span>
+                                <img src="${matches.video.thumb || ''}" alt="Video">
+                                <h3>${matches.video.title}</h3>
+                            </div>
+                        `;
+                    }
+
+                    if (!matches.mv && !matches.lyrics && !matches.video) {
                         throw new Error("No results found. Try pasting the video URL directly.");
                     }
 
