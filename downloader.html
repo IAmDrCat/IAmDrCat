@@ -1120,18 +1120,7 @@
 
                         // HIDE PROGRESS & SHOW PREVIEW
                         progressContainer.style.display = 'none';
-                        const previewContainer = document.getElementById('previewContainer');
-                        const videoPlayer = document.getElementById('videoPlayer');
-
-                        // Set current Job ID globally so Save button knows what to grab
-                        window.currentJobId = job_id;
-
-                        videoPlayer.src = `${API_BASE_URL}/api/serve/${job_id}`; // Inline stream
-                        previewContainer.style.display = 'block';
-                        videoPlayer.play().catch(e => console.log("Auto-play blocked", e));
-
-                        // Start the countdown timer
-                        startPreviewTimer();
+                        showPreview(job_id, job);
 
                         status.textContent = "Ready for preview!";
                         status.className = "success";

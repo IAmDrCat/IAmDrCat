@@ -117,6 +117,10 @@ def background_download(job_id, url, is_audio=False):
             info = ydl.extract_info(url, download=True)
             filename = ydl.prepare_filename(info)
             
+            # Store metadata for frontend UI (title and album art)
+            jobs[job_id]['meta']['title'] = info.get('title', 'Unknown Title')
+            jobs[job_id]['meta']['thumb'] = info.get('thumbnails', [{}])[-1].get('url') if info.get('thumbnails') else None
+            
             # Verify file exists
             if not os.path.exists(filename):
                 # It might have been post-processed (e.g., converted to mp3)
