@@ -10,6 +10,7 @@ import re
 import threading
 import uuid
 import time
+import subprocess
 
 app = Flask(__name__, static_folder='.')
 
@@ -425,6 +426,82 @@ def get_progress(job_id):
     if not job:
         return jsonify({'error': 'Job not found'}), 404
     return jsonify(job)
+
+@app.route('/api/convert', methods=['POST'])
+def convert_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    target_format = request.form.get('format')
+    if not target_format:
+        return jsonify({'error': 'No target format specified'}), 400
+
+    # Sanitize input
+    target_format = target_format.lower().replace('.', '')
+    allowed_formats = ['mp4', 'mkv', 'avi', 'mov', 'webm', 'mp3', 'gif', 'wav', 'flac', 'aac', 'm4a', 'ogg', 'jpg', 'png', 'webp', 'bmp', 'tiff']
+    
+    if target_format not in allowed_formats:
+        return jsonify({'error': 'Unsupported format'}), 400
+
+    # Save Upload
+    temp_id = str(uuid.uuid4())
+    input_ext = os.path.splitext(file.filename)[1]
+    input_path = os.path.join(DOWNLOAD_FOLDER, f"temp_{temp_id}{input_ext}")
+    output_filename = f"{os.path.splitext(file.filename)[0]}.{target_format}"
+    output_path = os.path.join(DOWNLOAD_FOLDER, f"converted_{temp_id}.{target_format}")
+
+    file.save(input_path)
+
+    try:
+        # Build FFmpeg Command
+        # This is a basic universal converter logic
+        cmd = ['ffmpeg', '-y', '-i', input_path]
+
+        # Specific Logic
+        if target_format == 'mp3':
+            cmd.extend(['-vn', '-acodec', 'libmp3lame', '-q:a', '2'])
+        elif target_format == 'gif':
+            # Basic optimization for GIF
+            cmd.extend(['-vf', 'fps=10,scale=320:-1:flags=lanczos', '-c:v', 'gif'])
+        elif target_format in ['jpg', 'png', 'webp']:
+             # If video to image, take 1 frame?
+             # For now assume image to image or video to image (first frame)
+             # FFmpeg handles this automatically, but might need -vframes 1 if it's a video input to image output
+             # Let's just let FFmpeg decide default behavior for now (often extracts one frame or sequence)
+             # But for single file output from video, we usually want 1 thumbnail.
+             # However, if input is image, it works fine.
+             pass
+        
+        cmd.append(output_path)
+
+        # Run Conversion
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+
+        if not os.path.exists(output_path):
+             raise Exception("Conversion produced no output")
+
+        # Return file and cleanup input
+        # Note: We can't easily cleanup output after sending with flask send_file unless we use a cleanup callback or periodic task
+        # Current periodic task will clean it up later if we add it to ip_files or just leave it for the global cleanup
+        # Let's add it to ip_files if we have an IP, so it gets cleaned up
+        client_ip = request.headers.get('CF-Connecting-IP') or request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
+        
+        with ip_files_lock:
+             if client_ip not in ip_files: ip_files[client_ip] = []
+             ip_files[client_ip].append(input_path) # Clean input
+             ip_files[client_ip].append(output_path) # Clean output later
+
+        return send_file(output_path, as_attachment=True, download_name=output_filename)
+
+    except subprocess.CalledProcessError as e:
+        return jsonify({'error': f"FFmpeg failed: {e.stderr.decode()}"}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/api/serve/<job_id>', methods=['GET'])
 def serve_file_route(job_id):
