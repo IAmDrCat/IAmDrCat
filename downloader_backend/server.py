@@ -205,9 +205,17 @@ def background_download(job_id, url, is_audio=False):
             
             # iTunes Artwork Lookup (High Quality)
             if is_audio:
-                # Use the search title if available (from frontend search), otherwise use video title
-                search_query = info.get('title', '')
-                print(f"[Metadata] Extracted Title: {search_query}")
+                # 1. Try to build query from explicit metadata (most accurate)
+                artist = info.get('artist')
+                track = info.get('track')
+                
+                if artist and track:
+                    search_query = f"{artist} - {track}"
+                    print(f"[Metadata] Using explicit metadata: {search_query}")
+                else:
+                    # 2. Fallback to cleaned video title
+                    search_query = info.get('title', '')
+                    print(f"[Metadata] Using video title: {search_query}")
 
                 hq_art_url, clean_title, clean_artist = get_itunes_artwork(search_query)
                 
