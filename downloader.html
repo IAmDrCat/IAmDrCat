@@ -739,16 +739,19 @@
                             </div>
                         `;
 
-                        // 3. Audio Only (Uses Lyric Video Source)
-                        selectionGrid.innerHTML += `
-                            <div class="select-card audio" onclick="startSelectionDownload('${matches.lyrics.url}', true)">
-                                <span class="badge">Audio Only</span>
-                                <div class="icon-placeholder">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                        // 3. Audio Only (Uses Lyric Video Source, or Music Video if no lyrics)
+                        const audioSource = matches.lyrics || matches.audio_source;
+                        if (audioSource) {
+                            selectionGrid.innerHTML += `
+                                <div class="select-card audio" onclick="startSelectionDownload('${audioSource.url}', true)">
+                                    <span class="badge">Audio Only</span>
+                                    <div class="icon-placeholder">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                                    </div>
+                                    <h3>MP3 Audio</h3>
                                 </div>
-                                <h3>MP3 Audio</h3>
-                            </div>
-                        `;
+                            `;
+                        }
                     }
 
                     // 4. Regular Video (for non-music content)
