@@ -192,7 +192,7 @@ def background_download(job_id, url, is_audio=False):
                  final_filename = filename
 
             jobs[job_id]['filename'] = final_filename
-            jobs[job_id]['status'] = 'finished'
+            # MOVED: jobs[job_id]['status'] = 'finished' (Set at end of metadata block)
             
             # --- Handle Thumbnail (User Request: "Real" cover art & delete with song) ---
             # yt-dlp writes thumbnail as base.jpg or base.webp
@@ -284,6 +284,9 @@ def background_download(job_id, url, is_audio=False):
                             except Exception as del_err:
                                 print(f"Error deleting old file: {del_err}")
             
+            # DONE: Mark as finished AFTER all metadata/artwork logic
+            jobs[job_id]['status'] = 'finished'
+
     except Exception as e:
         # Strip ANSI color codes
         error_msg = re.sub(r'\x1b\[[0-9;]*m', '', str(e))
@@ -360,7 +363,9 @@ def serve_download(filename):
     
     if not range_header:
         # No range requested, send full file
-        return send_file(file_path)
+        # Check for forced download
+        as_attachment = request.args.get('download') == 'true'
+        return send_file(file_path, as_attachment=as_attachment)
     
     size = os.path.getsize(file_path)
     byte1, byte2 = 0, None
@@ -390,6 +395,10 @@ def serve_download(filename):
     rv.headers.add('Accept-Ranges', 'bytes')
     rv.headers.add('Content-Length', str(length))
     
+    # Check for forced download query param
+    if request.args.get('download') == 'true':
+        rv.headers.add('Content-Disposition', f'attachment; filename="{filename}"')
+        
     return rv
 
 @app.route('/<path:path>')
@@ -630,7 +639,12 @@ def serve_file_route(job_id):
     
     # Construct the partial content URL
     # We assume /Downloads/ is served by the serve_download function
-    return redirect(f"/Downloads/{safe_filename}")
+    # Propagate the 'download' query param if present
+    base_url = f"/Downloads/{safe_filename}"
+    if request.args.get('download') == 'true':
+        base_url += "?download=true"
+        
+    return redirect(base_url)
 
 # Anti-Abuse Configuration
 MAX_CONCURRENT_JOBS = 2
