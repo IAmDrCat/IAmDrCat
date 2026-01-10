@@ -87,6 +87,26 @@ jobs = {}
 # Track files per IP for cleanup
 ip_files = {}  # {ip: [filepath1, filepath2, ...]}
 ip_files_lock = threading.Lock()
+ip_last_request = {} # {ip: {type: timestamp}}
+
+def check_rate_limit(request_type='default', limit=3):
+    """
+    Checks if the IP is rate limited for the given request type.
+    Returns (is_limited, ip_address)
+    """
+    client_ip = request.headers.get('CF-Connecting-IP') or request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
+    now = time.time()
+    
+    if client_ip not in ip_last_request:
+        ip_last_request[client_ip] = {}
+        
+    last_req = ip_last_request[client_ip].get(request_type, 0)
+    
+    if now - last_req < limit:
+        return True, client_ip
+        
+    ip_last_request[client_ip][request_type] = now
+    return False, client_ip
 
 def sanitize_filename(filename):
     return re.sub(r'[\\/*?:"<>|]', "", filename)
@@ -412,6 +432,11 @@ def search_media():
     if not query:
         return jsonify({'error': 'No query provided'}), 400
 
+    # Rate Limit (Search is cheap but spam is bad: 2s)
+    is_limited, ip = check_rate_limit('search', 2)
+    if is_limited:
+        return jsonify({'error': 'Search rate limit exceeded. Please wait 2 seconds.'}), 429
+
     print(f"Searching for: {query}")
 
     def get_meta(search_query):
@@ -515,13 +540,10 @@ def start_download():
         url = f"ytsearch1:{url}"
 
     # 1. IP Rate Limiting
-    # Get real client IP from Cloudflare headers (tunnel masks real IP as 127.0.0.1)
-    client_ip = request.headers.get('CF-Connecting-IP') or request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
-    now = time.time()
-    last_req = ip_last_request.get(client_ip, 0)
-    if now - last_req < IP_RATE_LIMIT_SECONDS:
-        return jsonify({'error': f'Rate limit exceeded. Please wait {IP_RATE_LIMIT_SECONDS} seconds.'}), 429
-    ip_last_request[client_ip] = now
+    # Use helper
+    is_limited, ip = check_rate_limit('download', 5) # Increased to 5s for heavy lifting
+    if is_limited:
+        return jsonify({'error': f'Rate limit exceeded. Please wait 5 seconds.'}), 429
 
     # 2. Concurrency Limiting
     active_jobs = sum(1 for j in jobs.values() if j['status'] in ['starting', 'downloading', 'processing'])
@@ -535,7 +557,7 @@ def start_download():
         'filename': None,
         'error': None,
         'is_audio': is_audio,
-        'ip': client_ip
+        'ip': ip
     }
     
     thread = threading.Thread(target=background_download, args=(job_id, url, is_audio))
@@ -579,6 +601,14 @@ def convert_file():
     output_path = os.path.join(DOWNLOAD_FOLDER, f"converted_{temp_id}.{target_format}")
 
     file.save(input_path)
+
+    # Rate Limit (Conversion is CPU heavy: 5s)
+    is_limited, ip = check_rate_limit('convert', 5)
+    if is_limited:
+        # Cleanup upload if blocked
+        if os.path.exists(input_path):
+             os.remove(input_path)
+        return jsonify({'error': 'Conversion rate limit exceeded. Please wait 5 seconds.'}), 429
 
     try:
         # Build FFmpeg Command
@@ -650,7 +680,7 @@ def serve_file_route(job_id):
 MAX_CONCURRENT_JOBS = 2
 IP_RATE_LIMIT_SECONDS = 3  # Reduced from 10 to 3 seconds
 MAX_FILES_PER_IP = 3  # Keep only the 3 most recent files per IP
-ip_last_request = {} # {ip: timestamp}
+# ip_last_request moved to top
 
 def cleanup_monitor():
     """Background thread to clean up old files and jobs"""
