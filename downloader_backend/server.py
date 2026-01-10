@@ -11,6 +11,62 @@ import threading
 import uuid
 import time
 import subprocess
+import urllib.request
+import urllib.parse
+import json
+import ssl
+
+# iTunes Search API (No key required)
+ITUNES_API_URL = "https://itunes.apple.com/search"
+
+def get_itunes_artwork(query):
+    """
+    Searches iTunes for a song and returns the high-res artwork URL.
+    """
+    try:
+        # Clean query: Remove (Official Video), [Lyrics], etc.
+        # 1. Remove content in brackets/parentheses
+        clean_query = re.sub(r'[\(\[\{].*?[\)\]\}]', '', query)
+        # 2. Remove common junk words (case insensitive)
+        clean_query = re.sub(r'(?i)(official|video|lyrics|audio|hq|hd|4k|mv|music)', '', clean_query)
+        # 3. Collapse spaces
+        clean_query = " ".join(clean_query.split())
+        
+        print(f"[Artwork] Searching iTunes for: {clean_query}")
+        
+        params = {
+            'term': clean_query,
+            'media': 'music',
+            'entity': 'song',
+            'limit': 1
+        }
+        
+        url = f"{ITUNES_API_URL}?{urllib.parse.urlencode(params)}"
+        
+        # Create context to ignore SSL verification if needed (simpler for some envs)
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        
+        with urllib.request.urlopen(url, context=ctx, timeout=5) as response:
+            data = json.load(response)
+            
+        if data['resultCount'] > 0:
+            track = data['results'][0]
+            # Get artwork URL
+            artwork_url = track.get('artworkUrl100')
+            if artwork_url:
+                # Upgrade resolution: 100x100 -> 600x600 or 1000x1000
+                hq_art = artwork_url.replace('100x100', '600x600')
+                title = track.get('trackName')
+                artist = track.get('artistName')
+                print(f"[Artwork] Found: {title} by {artist}")
+                return hq_art, title, artist
+                
+    except Exception as e:
+        print(f"[Artwork] Search failed: {e}")
+    
+    return None, None, None
 
 app = Flask(__name__, static_folder='.')
 
@@ -146,6 +202,28 @@ def background_download(job_id, url, is_audio=False):
                 if os.path.exists(t_path):
                     thumb_local_path = t_path
                     break
+            
+            # iTunes Artwork Lookup (High Quality)
+            if is_audio:
+                hq_art_url, clean_title, clean_artist = get_itunes_artwork(info.get('title', ''))
+                if hq_art_url:
+                    try:
+                        # Overwrite existing or create new
+                        if thumb_local_path:
+                            target_thumb_path = thumb_local_path
+                        else:
+                            target_thumb_path = os.path.splitext(final_filename)[0] + ".jpg"
+                        
+                        print(f"[Artwork] Downloading HQ cover to {target_thumb_path}")
+                        
+                        req = urllib.request.Request(hq_art_url, headers={'User-Agent': 'Mozilla/5.0'})
+                        with urllib.request.urlopen(req) as r, open(target_thumb_path, 'wb') as f:
+                            f.write(r.read())
+                        
+                        thumb_local_path = target_thumb_path
+                        
+                    except Exception as art_err:
+                        print(f"[Artwork] Failed to download HQ cover: {art_err}")
             
             # Store metadata
             jobs[job_id]['meta']['title'] = info.get('title', 'Unknown Title')
