@@ -14,6 +14,8 @@ COPY requirements.txt .
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
+# Force upgrade yt-dlp to latest (crucial for 403 fixes)
+RUN pip install --no-cache-dir -U yt-dlp
 
 # Copy the rest of the application code
 COPY . .

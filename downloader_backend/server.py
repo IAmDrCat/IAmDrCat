@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, request, send_file, jsonify
+from flask import Flask, send_from_directory, request, send_file, jsonify, Response
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -13,19 +13,23 @@ import time
 
 app = Flask(__name__, static_folder='.')
 
-# Enable CORS for API routes
-# This allows your Cloudflare Pages site to make requests to the API
-# Replace '*' with your specific CF Pages domain for better security
-# Example: CORS(app, resources={r"/api/*": {"origins": "https://iamdcat.pages.dev"}})
-CORS(app, resources={r"/api/*": {"origins": os.getenv('CORS_ORIGINS', '*')}})
+# Enable CORS for API routes and Downloads
+CORS(app, resources={
+    r"/api/*": {"origins": os.getenv('CORS_ORIGINS', '*')},
+    r"/Downloads/*": {"origins": os.getenv('CORS_ORIGINS', '*')}
+})
 
 # Ensure downloads folder exists
 DOWNLOAD_FOLDER = os.path.join(os.getcwd(), 'Downloads')
 if not os.path.exists(DOWNLOAD_FOLDER):
     os.makedirs(DOWNLOAD_FOLDER)
 
-# Global jobs dictionary: { job_id: { status, meta, filename, error } }
+# Global jobs dictionary: { job_id: { status, meta, filename, error, ip } }
 jobs = {}
+
+# Track files per IP for cleanup
+ip_files = {}  # {ip: [filepath1, filepath2, ...]}
+ip_files_lock = threading.Lock()
 
 def sanitize_filename(filename):
     return re.sub(r'[\\/*?:"<>|]', "", filename)
@@ -64,6 +68,8 @@ def background_download(job_id, url, is_audio=False):
             jobs[job_id]['meta']['raw'] = msg
             jobs[job_id]['status'] = 'processing'
 
+
+
     try:
         ydl_opts = {
             'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
@@ -71,18 +77,24 @@ def background_download(job_id, url, is_audio=False):
             'no_warnings': True,
             'restrictfilenames': True,
             'progress_hooks': [progress_hook],
-            'ffmpeg_location': os.getcwd()
+            'ffmpeg_location': os.getcwd(),
+            # SPOOF USER AGENT (Standard Windows Chrome)
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         }
         
-        # Check for cookies.txt
+        # 1. Try cookies.txt (Best for stability)
         cookie_file = os.path.join(os.getcwd(), 'cookies.txt')
         if os.path.exists(cookie_file):
             print(f"Using cookies from: {cookie_file}")
             ydl_opts['cookiefile'] = cookie_file
         else:
-            browser = os.getenv('COOKIE_BROWSER', 'firefox')
-            print(f"cookies.txt not found. Attempting to use {browser} cookies...")
-            ydl_opts['cookiesfrombrowser'] = (browser,)
+            # 2. Fallback to Native Browser (Might fail if browser is open)
+            try:
+                 ydl_opts['cookiesfrombrowser'] = ('chrome', )
+                 print("Attempting to use Chrome cookies...")
+            except:
+                 ydl_opts['cookiesfrombrowser'] = ('firefox', )
+                 print("Attempting to use Firefox cookies...")
         
         if is_audio:
             # AUDIO CONFIGURATION
@@ -128,6 +140,29 @@ def background_download(job_id, url, is_audio=False):
                 
             jobs[job_id]['filename'] = filename
             jobs[job_id]['status'] = 'finished'
+            
+            # Track file for this IP and cleanup old files
+            client_ip = jobs[job_id].get('ip')
+            if client_ip:
+                with ip_files_lock:
+                    if client_ip not in ip_files:
+                        ip_files[client_ip] = []
+                    
+                    ip_files[client_ip].append(filename)
+                    
+                    # If this IP has more than MAX_FILES_PER_IP, delete the oldest ones
+                    if len(ip_files[client_ip]) > MAX_FILES_PER_IP:
+                        files_to_delete = ip_files[client_ip][:-MAX_FILES_PER_IP]
+                        for old_file in files_to_delete:
+                            try:
+                                if os.path.exists(old_file):
+                                    os.remove(old_file)
+                                    print(f"[Cleanup] Deleted old file for IP {client_ip}: {os.path.basename(old_file)}")
+                            except Exception as del_err:
+                                print(f"[Cleanup] Failed to delete {old_file}: {del_err}")
+                        
+                        # Keep only the most recent files in the list
+                        ip_files[client_ip] = ip_files[client_ip][-MAX_FILES_PER_IP:]
             
     except Exception as e:
         # Strip ANSI color codes
@@ -193,6 +228,50 @@ def background_download(job_id, url, is_audio=False):
 def home():
     return "IAmDrCat API Backend is Running!", 200
 
+@app.route('/Downloads/<path:filename>')
+def serve_download(filename):
+    """Serve downloaded files with HTTP 206 partial content support"""
+    file_path = os.path.join(DOWNLOAD_FOLDER, filename)
+    
+    if not os.path.exists(file_path):
+        return jsonify({'error': 'File not found'}), 404
+    
+    range_header = request.headers.get('Range', None)
+    
+    if not range_header:
+        # No range requested, send full file
+        return send_file(file_path)
+    
+    size = os.path.getsize(file_path)
+    byte1, byte2 = 0, None
+    
+    m = re.search(r'(\d+)-(\d*)', range_header)
+    g = m.groups()
+    
+    if g[0]:
+        byte1 = int(g[0])
+    if g[1]:
+        byte2 = int(g[1])
+    
+    length = size - byte1
+    if byte2 is not None:
+        length = byte2 - byte1 + 1
+    
+    data = None
+    with open(file_path, 'rb') as f:
+        f.seek(byte1)
+        data = f.read(length)
+    
+    rv = Response(data,
+                  206,
+                  mimetype='application/octet-stream',
+                  direct_passthrough=True)
+    rv.headers.add('Content-Range', f'bytes {byte1}-{byte1 + length - 1}/{size}')
+    rv.headers.add('Accept-Ranges', 'bytes')
+    rv.headers.add('Content-Length', str(length))
+    
+    return rv
+
 @app.route('/<path:path>')
 def serve_static(path):
     return send_from_directory('.', path)
@@ -208,51 +287,54 @@ def search_media():
 
     def get_meta(search_query):
         try:
-            # OPTION 1: Try fast search (extract_flat=True)
-            # This avoids visiting the video page, reducing bot detection
             opts = {
                 'quiet': True, 
                 'ignoreerrors': True,
-                'extract_flat': True,  # FAST MODE
+                'extract_flat': True,
                 'force_generic_extractor': False
             }
             
             with yt_dlp.YoutubeDL(opts) as ydl:
-                print(f"Executing fast search: ytsearch1:{search_query}")
+                print(f"Executing search: ytsearch1:{search_query}")
                 info = ydl.extract_info(f"ytsearch1:{search_query}", download=False)
                 
                 if 'entries' in info and info['entries']:
                     entry = info['entries'][0]
-                    # Ensure we have a valid URL
                     if not entry.get('url') and entry.get('id'):
                         entry['url'] = f"https://www.youtube.com/watch?v={entry['id']}"
                     
-                    print(f"Found (Fast): {entry.get('title', 'Unknown')}")
+                    print(f"Found: {entry.get('title', 'Unknown')}")
                     return entry
 
-            # OPTION 2: Fallback to slow search if fast failed (unlikely for ytsearch)
-            # Only do this if we really got nothing
-            print(f"Fast search yielded no results for: {search_query}")
+            print(f"No results for: {search_query}")
             return None
 
         except Exception as e:
             print(f"Search error for '{search_query}': {e}")
             return None
-        return None
 
-    # Run searches in parallel threads to be fast
-    # We search for "Query (Official Music Video)" and "Query (Lyrics)"
-    # For Audio, we will reuse the Lyrics result in the frontend
+    # Search for multiple variations and let the results determine what to show
     from concurrent.futures import ThreadPoolExecutor
     
     results = {}
-    with ThreadPoolExecutor(max_workers=2) as executor:
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        # Search for: Music Video, Lyrics, and plain query
         f_mv = executor.submit(get_meta, f"{query} Official Music Video")
         f_lyric = executor.submit(get_meta, f"{query} Lyrics")
+        f_plain = executor.submit(get_meta, query)
         
         mv_meta = f_mv.result()
         lyric_meta = f_lyric.result()
+        plain_meta = f_plain.result()
         
+        # Validate lyric video - must actually contain "lyric" in title
+        if lyric_meta:
+            title_lower = lyric_meta.get('title', '').lower()
+            if 'lyric' not in title_lower and 'lyrics' not in title_lower:
+                print(f"Rejecting fake lyric video: {lyric_meta.get('title')}")
+                lyric_meta = None
+        
+        # Add music video if found
         if mv_meta:
             results['mv'] = {
                 'title': mv_meta.get('title'),
@@ -260,11 +342,28 @@ def search_media():
                 'thumb': mv_meta.get('thumbnails', [{}])[-1].get('url') if mv_meta.get('thumbnails') else None
             }
             
+        # Add lyrics if found and validated
         if lyric_meta:
             results['lyrics'] = {
                 'title': lyric_meta.get('title'),
                 'url': lyric_meta.get('url') or lyric_meta.get('webpage_url'),
                 'thumb': lyric_meta.get('thumbnails', [{}])[-1].get('url') if lyric_meta.get('thumbnails') else None
+            }
+        
+        # If no lyric video found but we have music video, use MV for audio source
+        if not lyric_meta and mv_meta:
+            results['audio_source'] = {
+                'title': mv_meta.get('title'),
+                'url': mv_meta.get('url') or mv_meta.get('webpage_url'),
+                'thumb': mv_meta.get('thumbnails', [{}])[-1].get('url') if mv_meta.get('thumbnails') else None
+            }
+        
+        # Add plain video if found AND if no music results (to avoid duplicates)
+        if plain_meta and not mv_meta and not lyric_meta:
+            results['video'] = {
+                'title': plain_meta.get('title'),
+                'url': plain_meta.get('url') or plain_meta.get('webpage_url'),
+                'thumb': plain_meta.get('thumbnails', [{}])[-1].get('url') if plain_meta.get('thumbnails') else None
             }
 
     return jsonify(results)
@@ -286,13 +385,28 @@ def start_download():
         # Actually safer to convert to search if it slipps through
         url = f"ytsearch1:{url}"
 
+    # 1. IP Rate Limiting
+    # Get real client IP from Cloudflare headers (tunnel masks real IP as 127.0.0.1)
+    client_ip = request.headers.get('CF-Connecting-IP') or request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
+    now = time.time()
+    last_req = ip_last_request.get(client_ip, 0)
+    if now - last_req < IP_RATE_LIMIT_SECONDS:
+        return jsonify({'error': f'Rate limit exceeded. Please wait {IP_RATE_LIMIT_SECONDS} seconds.'}), 429
+    ip_last_request[client_ip] = now
+
+    # 2. Concurrency Limiting
+    active_jobs = sum(1 for j in jobs.values() if j['status'] in ['starting', 'downloading', 'processing'])
+    if active_jobs >= MAX_CONCURRENT_JOBS:
+        return jsonify({'error': 'Server is busy (Max 2 concurrent downloads). Please try again later.'}), 503
+
     job_id = str(uuid.uuid4())
     jobs[job_id] = {
         'status': 'starting',
         'meta': {'raw': 'Initializing...'},
         'filename': None,
         'error': None,
-        'is_audio': is_audio
+        'is_audio': is_audio,
+        'ip': client_ip
     }
     
     thread = threading.Thread(target=background_download, args=(job_id, url, is_audio))
@@ -327,25 +441,38 @@ def serve_file_route(job_id):
         
     return send_file(job['filename'], as_attachment=as_attachment, mimetype=mime_type)
 
+# Anti-Abuse Configuration
+MAX_CONCURRENT_JOBS = 2
+IP_RATE_LIMIT_SECONDS = 3  # Reduced from 10 to 3 seconds
+MAX_FILES_PER_IP = 3  # Keep only the 3 most recent files per IP
+ip_last_request = {} # {ip: timestamp}
+
 def cleanup_monitor():
     """Background thread to clean up old files and jobs"""
     while True:
         time.sleep(60)  # Check every minute
         try:
             now = time.time()
-            retention_period = 600  # 10 minutes in seconds
-
+            
             # 1. Clean up Physical Files
             if os.path.exists(DOWNLOAD_FOLDER):
                 for filename in os.listdir(DOWNLOAD_FOLDER):
                     filepath = os.path.join(DOWNLOAD_FOLDER, filename)
-                    # If file is older than retention period
                     if os.path.isfile(filepath):
+                        # Dynamic Retention Policy
+                        # Small Files (<500MB): 10 Minutes
+                        # Large Files (>500MB): 2 Minutes (Save disk space)
+                        file_size_mb = os.path.getsize(filepath) / (1024 * 1024)
+                        if file_size_mb > 500:
+                            retention_period = 120 # 2 minutes
+                        else:
+                            retention_period = 600 # 10 minutes
+
                         creation_time = os.path.getmtime(filepath)
                         if now - creation_time > retention_period:
                             try:
                                 os.remove(filepath)
-                                print(f"[Cleanup] Deleted old file: {filename}")
+                                print(f"[Cleanup] Deleted old file ({file_size_mb:.1f}MB): {filename}")
                             except Exception as e:
                                 print(f"[Cleanup] Failed to delete {filename}: {e}")
 
