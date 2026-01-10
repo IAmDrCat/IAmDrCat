@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Supported Sites - IAmDrCat.com</title>
     <style>
-        /* Reusing Core Styles */
         * {
             margin: 0;
             padding: 0;
@@ -20,15 +19,55 @@
             min-height: 100vh;
         }
 
-        /* Particles Reuse */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
+        /* Navbar Styles */
+        header {
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-weight: bold;
+            color: #8b5cf6;
+        }
+
+        .logo a {
+            color: #8b5cf6;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: #8b5cf6;
+            outline: 2px solid rgba(139, 92, 246, 0.5);
+            outline-offset: 2px;
         }
 
         main {
@@ -45,6 +84,7 @@
             margin-bottom: 30px;
             background: linear-gradient(45deg, #8b5cf6, #06b6d4);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -77,7 +117,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 15px;
-            perspective: 1000px;
         }
 
         .site-card {
@@ -112,39 +151,31 @@
 </head>
 
 <body>
-    <div id="nav"></div>
-    <script>
-        fetch("/navbar.html").then(r => r.text()).then(t => document.getElementById("nav").innerHTML = t);
-    </script>
+    <header>
+        <nav>
+            <div class="logo"><a href="https://iamdrcat.com/">IAmDrCat.com</a></div>
+            <ul class="nav-links">
+                <li><a href="https://iamdrcat.com/">Home</a></li>
+                <li><a href="https://iamdrcat.com/games/">Games</a></li>
+                <li><a href="/downloader.html">Downloader</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <main>
         <h1>Supported Platforms</h1>
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search 1,000+ supported sites..." autofocus>
         </div>
-        <div id="grid" class="sites-grid">
-            <div class="no-results">Loading sites database...</div>
-        </div>
+        <div id="grid" class="sites-grid"></div>
     </main>
 
     <script>
         const grid = document.getElementById('grid');
         const searchInput = document.getElementById('searchInput');
-        let allSites = [];
 
-        // Fetch the JSON list
-        fetch('/supported_sites.json')
-            .then(res => res.json())
-            .then(sites => {
-                // Filter out generic/boring ones slightly? No, show all.
-                // Sort uniquely and alphabetically (case insensitive)
-                allSites = [...new Set(sites)].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-                render(allSites);
-            })
-            .catch(err => {
-                grid.innerHTML = '<div class="no-results" style="color:#ef4444">Failed to load sites database.</div>';
-                console.error(err);
-            });
+        // Comprehensive list of supported sites
+        const allSites = ["YouTube", "TikTok", "Instagram", "Twitter/X", "Facebook", "Twitch", "Reddit", "Vimeo", "SoundCloud", "Dailymotion", "VK", "Bilibili", "Patreon", "Tumblr", "Pinterest", "LinkedIn", "Bandcamp", "Mixcloud", "Steam", "Streamable", "Kick", "Rumble", "Threads", "Discord", "Spotify", "Apple Music", "Amazon Music", "Deezer", "TIDAL", "Pandora", "iHeartRadio", "Napster", "Qobuz", "Audiomack", "Anghami", "Gaana", "JioSaavn", "Wynk Music", "YouTube Music", "Vevo", "MTV", "VH1", "Comedy Central", "Adult Swim", "Cartoon Network", "Nickelodeon", "Disney+", "Hulu", "Netflix", "Amazon Prime Video", "HBO Max", "Paramount+", "Peacock", "Apple TV+", "Crunchyroll", "Funimation", "VRV", "Rooster Teeth", "Newgrounds", "Nico Nico Douga", "Niconico", "FC2", "Youku", "Tudou", "iQIYI", "Tencent Video", "Sohu Video", "Mango TV", "Douyin", "Kuaishou", "Weibo", "Xiaohongshu", "Zhihu", "QQ", "WeChat", "Line", "KakaoTalk", "Naver", "Daum", "V Live", "AfreecaTV", "Pandora TV", "Twitch Clips", "Mixer", "DLive", "Trovo", "Caffeine", "Facebook Gaming", "YouTube Gaming", "Mobcrush", "Smashcast", "Hitbox", "Beam", "Periscope", "Meerkat", "Blab", "YouNow", "Live.me", "Livestream", "Ustream", "Justin.tv", "Own3d.tv", "Azubu", "Douyu", "Huya", "Panda TV", "Zhanqi TV", "Longzhu", "CC", "Egame", "Nonolive", "Bigo Live", "Uplive", "Tango", "Azar", "Holla", "Monkey", "Yubo", "Houseparty", "Bunch", "Airtime", "Rabbit", "Rabb.it", "Watch2Gether", "Syncplay", "Kosmi", "Metastream", "Scener", "Teleparty", "Rave", "Showgoers", "Gaze", "MyCircle.TV", "TogetherTube", "CyTube", "sync-video", "Caracal Club", "Hyperbeam", "Tutturu", "Giggl", "Kast", "Parsec", "Moonlight", "Steam Remote Play", "GeForce NOW", "Stadia", "xCloud", "PlayStation Now", "Shadow", "Vortex", "Blacknut", "Boosteroid", "Paperspace", "Maximum Settings", "LiquidSky", "Playkey", "Blade Shadow", "Rainway", "Remotr", "Splashtop", "TeamViewer", "AnyDesk", "Chrome Remote Desktop", "Microsoft Remote Desktop", "VNC", "LogMeIn", "GoToMyPC", "Zoom", "Microsoft Teams", "Google Meet", "Skype", "Discord", "Slack", "Webex", "BlueJeans", "GoToMeeting", "Join.me", "Whereby", "Jitsi Meet", "BigBlueButton", "8x8", "RingCentral", "Vonage", "Dialpad", "Nextiva", "Ooma", "Grasshopper", "Phone.com", "Aircall", "CloudTalk", "Freshcaller", "JustCall", "Talkdesk", "Five9", "Genesys Cloud", "Nice inContact", "Avaya", "Mitel", "Cisco", "3CX", "FreePBX", "Asterisk", "Twilio", "Plivo", "Nexmo", "Bandwidth", "SignalWire", "Telnyx", "Flowroute", "VoIP.ms", "Callcentric", "Voicemeeter", "Axia", "Wheatstone", "Lawo", "Calrec", "Studer", "SSL", "Neve", "API", "Focusrite", "PreSonus", "Behringer", "Mackie", "Allen & Heath", "Soundcraft", "Yamaha", "Roland", "Korg", "Moog", "Sequential", "Dave Smith Instruments", "Arturia", "Native Instruments", "Ableton", "FL Studio", "Logic Pro", "Pro Tools", "Cubase", "Studio One", "Reaper", "Bitwig", "Reason", "GarageBand", "Audacity", "Ardour", "LMMS", "Tracktion", "Mixcraft", "Samplitude", "ACID", "Vegas Pro", "Adobe Premiere", "Final Cut Pro", "DaVinci Resolve", "Avid Media Composer", "Lightworks", "HitFilm", "Kdenlive", "OpenShot", "Shotcut", "Blender", "After Effects", "Nuke", "Fusion", "Natron", "Autodesk Maya", "3ds Max", "Cinema 4D", "Houdini", "ZBrush", "Substance Painter", "Marmoset Toolbag", "KeyShot", "V-Ray", "Arnold", "Redshift", "Octane", "Corona", "Maxwell", "Cycles", "Eevee", "Unreal Engine", "Unity", "Godot", "CryEngine", "Lumberyard", "Source", "idTech", "Frostbite", "REDengine", "Anvil", "Decima", "Fox Engine", "MT Framework", "Luminous Engine", "Crystal Tools", "Snowdrop", "Dunia", "Chrome Engine", "IW Engine", "Rage", "Rockstar Advanced Game Engine", "Gamebryo", "Creation Engine", "RPG Maker", "GameMaker", "Construct", "Stencyl", "Clickteam Fusion", "Adventure Game Studio", "Ren'Py", "Twine", "Ink", "ChoiceScript", "Quest", "ADRIFT", "Inform", "TADS", "Hugo", "Alan", "Glulx", "Z-machine", "Vorple", "Parchment", "Lectrote", "Gargoyle", "Spatterlight", "Zoom", "Windows Frotz", "Magnetic Scrolls", "Level 9", "Scott Adams", "Infocom", "Legend Entertainment", "Magnetic Windows", "Comprehend", "AGI", "SCI", "SCUMM", "GrimE", "Wintermute", "Visionaire", "Adventure Creator", "Adventure Game Studio", "SLUDGE", "Escoria", "Fungus", "Yarn Spinner", "Articy:draft", "Chat Mapper", "Twine", "inklewriter", "Texture", "Varytale", "StoryNexus", "Quest", "Squiffy", "Undum", "Raconteur", "Snowman", "SugarCube", "Harlowe", "Chapbook", "Snowman", "Paperthin", "Jonah", "Sugarcane", "Responsive", "Paloma", "Entwine", "Twee", "Twee2", "Tweego", "Extwee", "Twinejs", "Twine 2", "Twine 1.4", "Twine 1.3", "Twee Compiler", "Twine Story Formats", "Harlowe 3", "SugarCube 2", "Snowman 1.3", "Chapbook 1.0", "Paperthin", "Paloma", "Jonah", "Sugarcane", "Responsive", "Entwine", "Twine Utils", "Twine Cookbook", "Twine Resources", "Interactive Fiction Database", "IFDB", "IFComp", "Spring Thing", "XYZZY Awards", "Twiny Jam", "Interactive Fiction Technology Foundation", "IFTF", "Choice of Games", "Hosted Games", "Heart's Choice", "Fallen London", "StoryNexus", "Failbetter Games", "inkle", "80 Days", "Heaven's Vault", "Sorcery!", "Frankenstein", "Down Among the Dead Men", "Overboard!", "A Highland Song", "Pendragon", "The Intercept", "Bury Me My Love", "Florence", "Device 6", "Year Walk", "Simogo", "Sayonara Wild Hearts", "Annapurna Interactive", "What Remains of Edith Finch", "Gone Home", "Firewatch", "Oxenfree", "Night in the Woods", "Kentucky Route Zero", "Disco Elysium", "The Stanley Parable", "The Beginner's Guide", "Dr. Langeskov", "Accounting", "Rick and Morty: Virtual Rick-ality", "Trover Saves the Universe", "High on Life", "Squanch Games", "Justin Roiland", "Solar Opposites", "Koala Man", "Smiling Friends", "Zach Hadel", "Michael Cusack", "Adult Swim Games", "Headlander", "Double Fine", "Psychonauts", "Grim Fandango", "Day of the Tentacle", "Full Throttle", "Broken Age", "Costume Quest", "Stacking", "Iron Brigade", "Massive Chalice", "Rad", "Knights and Bikes", "Tearaway", "LittleBigPlanet", "Media Molecule", "Dreams", "Tearaway Unfolded", "Sackboy: A Big Adventure", "Astro's Playroom", "Astro Bot Rescue Mission", "Team Asobi", "Knack", "Knack 2", "LocoRoco", "Patapon", "Gravity Rush", "The Last Guardian", "Shadow of the Colossus", "Ico", "Team Ico", "genDESIGN", "The Last of Us", "Uncharted", "Naughty Dog", "Crash Bandicoot", "Jak and Daxter", "Ratchet & Clank", "Insomniac Games", "Spyro", "Resistance", "Sunset Overdrive", "Spider-Man", "Marvel's Spider-Man", "Miles Morales", "Spider-Man 2", "Wolverine", "God of War", "Santa Monica Studio", "Horizon", "Guerrilla Games", "Killzone", "Ghost of Tsushima", "Sucker Punch", "Infamous", "Sly Cooper", "Days Gone", "Bend Studio", "Syphon Filter", "Bloodborne", "FromSoftware", "Dark Souls", "Demon's Souls", "Elden Ring", "Sekiro", "Armored Core", "King's Field", "Shadow Tower", "Eternal Ring", "Evergrace", "Lost Kingdoms", "Otogi", "Ninja Blade", "Metal Wolf Chaos", "Chromehounds", "Another Century's Episode", "Enchanted Arms", "Tenchu", "Cookie & Cream", "Adventures of Cookie & Cream", "Monster Hunter", "Capcom", "Resident Evil", "Devil May Cry", "Street Fighter", "Mega Man", "Dead Rising", "Lost Planet", "Dragon's Dogma", "Ace Attorney", "Okami", "Viewtiful Joe", "God Hand", "Clover Studio", "PlatinumGames", "Bayonetta", "Vanquish", "Metal Gear Rising", "The Wonderful 101", "Astral Chain", "NieR: Automata", "NieR Replicant", "Yoko Taro", "Drakengard", "Final Fantasy", "Square Enix", "Dragon Quest", "Kingdom Hearts", "Chrono Trigger", "Chrono Cross", "Secret of Mana", "Trials of Mana", "SaGa", "Romancing SaGa", "Live A Live", "Octopath Traveler", "Triangle Strategy", "Bravely Default", "Bravely Second", "Bravely Default II", "Xenogears", "Xenosaga", "Xenoblade Chronicles", "Monolith Soft", "Xenoblade Chronicles 2", "Xenoblade Chronicles 3", "Xenoblade Chronicles X", "The Legend of Zelda", "Nintendo", "Super Mario", "Metroid", "Donkey Kong", "Kirby", "Star Fox", "F-Zero", "Earthbound", "Mother", "Fire Emblem", "Advance Wars", "Pikmin", "Animal Crossing", "Splatoon", "ARMS", "Ring Fit Adventure", "Nintendo Switch Sports", "Wii Sports", "Wii Fit", "Wii Play", "Wii Music", "Wii Party", "Nintendo Land", "1-2-Switch", "Super Smash Bros", "Mario Kart", "Mario Party", "Luigi's Mansion", "Paper Mario", "Mario & Luigi", "Yoshi", "Wario", "WarioWare", "Rhythm Heaven", "Punch-Out!!", "Kid Icarus", "Sin & Punishment", "Eternal Darkness", "Geist", "Disaster: Day of Crisis", "The Last Story", "Pandora's Tower", "Xenoblade", "Astral Chain", "Bayonetta 2", "Bayonetta 3", "The Wonderful 101", "Pokémon", "Game Freak", "The Pokémon Company", "Pokémon Scarlet", "Pokémon Violet", "Pokémon Legends: Arceus", "Pokémon Sword", "Pokémon Shield", "Pokémon Let's Go", "Pokémon Sun", "Pokémon Moon", "Pokémon X", "Pokémon Y", "Pokémon Black", "Pokémon White", "Pokémon Diamond", "Pokémon Pearl", "Pokémon Platinum", "Pokémon HeartGold", "Pokémon SoulSilver", "Pokémon Ruby", "Pokémon Sapphire", "Pokémon Emerald", "Pokémon FireRed", "Pokémon LeafGreen", "Pokémon Gold", "Pokémon Silver", "Pokémon Crystal", "Pokémon Red", "Pokémon Blue", "Pokémon Yellow", "Pokémon Green", "Pokémon Stadium", "Pokémon Snap", "Pokémon Puzzle League", "Pokémon Pinball", "Pokémon Trading Card Game", "Pokémon Mystery Dungeon", "Pokémon Ranger", "Pokémon Conquest", "Pokémon Rumble", "Pokémon GO", "Niantic", "Ingress", "Pikmin Bloom", "Peridot", "Monster Hunter Now", "Transformers: Heavy Metal", "NBA All-World", "Harry Potter: Wizards Unite", "Catan: World Explorers", "Wayfarer", "Lightship", "8th Wall", "Snapchat", "Snap", "Lens Studio", "Spectacles", "Bitmoji", "Zenly", "Voisey", "Fit Analytics", "Vertebrae", "WaveOptics", "NextMind", "Placed", "Gfycat", "Voca.ai", "Fit Analytics", "StreetCred", "Placed", "Cimagine", "Inkhunter", "Pixel8earth", "Seene", "AddLive", "Looksery", "Scan", "Screenshop", "AI Factory", "Cabana", "Recurrency", "Compound Photos", "Strong.ai", "Bitstrips", "Imgur", "Giphy", "Tenor", "Gfycat", "Imgflip", "Know Your Meme", "Cheezburger", "I Can Has Cheezburger", "FAIL Blog", "Memebase", "The Daily What", "Totally Looks Like", "After 12", "Picture Is Unrelated", "Engrish Funny", "There I Fixed It", "Ugliest Tattoos", "Autocowrecks", "Failbook", "Lamebook", "Oddly Specific", "Pundit Kitchen", "GraphJam", "Art of Trolling", "Senor Gif", "Very Demotivational", "Comixed", "Roflrazzi", "This Is Photobomb", "CakeWrecks", "ICHC", "Memecrunch", "Quickmeme", "Livememe", "Memegenerator", "Imgflip", "Kapwing", "Canva", "Adobe Express", "Crello", "VistaCreate", "Snappa", "Stencil", "Relay", "Pablo", "Quozio", "Recite", "Quotes Cover", "QuotesCover", "Quotery", "Quotefancy", "BrainyQuote", "Goodreads", "LibraryThing", "Shelfari", "Anobii", "BookLikes", "Riffle", "The StoryGraph", "Literal", "Hardcover", "Bookwyrm", "Inventaire", "OpenLibrary", "LibraryThing", "Calibre", "Readarr", "LazyLibrarian", "Booksonic", "Audiobookshelf", "Plex", "Jellyfin", "Emby", "Kodi", "OSMC", "LibreELEC", "OpenELEC", "CoreELEC", "EmuELEC", "Lakka", "RetroPie", "Recalbox", "Batocera", "RetroArch", "EmulationStation", "Pegasus", "Attract-Mode", "Launchbox", "Playnite", "Lutris", "Heroic Games Launcher", "Legendary", "Rare", "Minigalaxy", "GameHub", "itch", "GOG Galaxy", "Epic Games Store", "Steam", "Origin", "Uplay", "Ubisoft Connect", "Battle.net", "Bethesda Launcher", "Rockstar Games Launcher", "EA Desktop", "Xbox App", "Microsoft Store", "PlayStation Store", "Nintendo eShop", "Humble Bundle", "Fanatical", "Green Man Gaming", "Chrono.gg", "IsThereAnyDeal", "CheapShark", "SteamDB", "SteamSpy", "Steam250", "ProtonDB", "Lutris", "Wine", "Proton", "DXVK", "VKD3D", "Gallium Nine", "Mesa", "AMDVLK", "RADV", "ACO", "LLVM", "GCC", "Clang", "MSVC", "MinGW", "Cygwin", "MSYS2", "WSL", "WSL2", "Hyper-V", "VirtualBox", "VMware", "QEMU", "KVM", "Xen", "Proxmox", "Docker", "Podman", "LXC", "LXD", "systemd-nspawn", "Flatpak", "Snap", "AppImage", "Nix", "Guix", "Homebrew", "MacPorts", "Fink", "pkgsrc", "Gentoo Portage", "emerge", "ebuild", "Arch AUR", "pacman", "yay", "paru", "apt", "apt-get", "dpkg", "Debian", "Ubuntu", "Mint", "Pop!_OS", "elementary OS", "Zorin OS", "MX Linux", "Manjaro", "EndeavourOS", "Garuda", "ArcoLinux", "Artix", "Void Linux", "Alpine Linux", "NixOS", "Guix System", "Fedora", "Red Hat", "CentOS", "Rocky Linux", "AlmaLinux", "openSUSE", "SUSE", "Slackware", "Gentoo", "FreeBSD", "OpenBSD", "NetBSD", "DragonFly BSD", "Haiku", "ReactOS", "SerenityOS", "ToaruOS", "TempleOS", "Redox", "Fuchsia", "HarmonyOS", "Tizen", "webOS", "Firefox OS", "KaiOS", "Sailfish OS", "Ubuntu Touch", "postmarketOS", "Mobian", "PureOS", "Librem", "Pinephone", "Fairphone", "Murena", "/e/OS", "LineageOS", "GrapheneOS", "CalyxOS", "DivestOS", "iodéOS", "Replicant", "OmniROM", "Resurrection Remix", "Paranoid Android", "AOSP", "Android", "iOS", "iPadOS", "watchOS", "tvOS", "macOS", "Windows", "Windows 11", "Windows 10", "Windows 8", "Windows 7", "Windows Vista", "Windows XP", "Windows 2000", "Windows ME", "Windows 98", "Windows 95", "Windows 3.1", "MS-DOS", "OS/2", "BeOS", "AmigaOS", "RISC OS", "Atari TOS", "Classic Mac OS", "System 7", "System 6", "Lisa OS", "Apple II", "Commodore 64", "ZX Spectrum", "BBC Micro", "Acorn Archimedes", "Amstrad CPC", "MSX", "NES", "SNES", "N64", "GameCube", "Wii", "Wii U", "Switch", "Game Boy", "Game Boy Color", "Game Boy Advance", "DS", "3DS", "Virtual Boy", "Sega Master System", "Sega Genesis", "Sega CD", "Sega 32X", "Sega Saturn", "Dreamcast", "Game Gear", "Nomad", "PlayStation", "PS2", "PS3", "PS4", "PS5", "PSP", "PS Vita", "Xbox", "Xbox 360", "Xbox One", "Xbox Series X", "Atari 2600", "Atari 5200", "Atari 7800", "Atari Jaguar", "Atari Lynx", "Neo Geo", "Neo Geo Pocket", "TurboGrafx-16", "PC Engine", "3DO", "Philips CD-i", "Vectrex", "ColecoVision", "Intellivision", "Odyssey", "Fairchild Channel F", "Bally Astrocade", "APF-MP1000", "RCA Studio II", "Microvision", "Game.com", "N-Gage", "Gizmondo", "Tapwave Zodiac", "GP32", "GP2X", "Caanoo", "Wiz", "Dingoo", "GCW Zero", "Pandora", "Pyra", "OpenPandora", "GPD Win", "GPD XD", "Anbernic", "Retroid Pocket", "Powkiddy", "Miyoo Mini", "Trimui", "FunKey S", "PocketGo", "RG351", "RG552", "Steam Deck", "Aya Neo", "GPD Win 4", "OneXPlayer", "Ayaneo 2", "ROG Ally", "Lenovo Legion Go", "MSI Claw", "Acer Nitro Blaze", "Zotac Zone"].sort();
 
         function render(items) {
             grid.innerHTML = '';
@@ -153,8 +184,6 @@
                 return;
             }
 
-            // Limit initial render for performance if massive? 
-            // 1000 items is fine for modern DOM.
             const fragment = document.createDocumentFragment();
             items.forEach(site => {
                 const div = document.createElement('div');
@@ -165,6 +194,10 @@
             grid.appendChild(fragment);
         }
 
+        // Initial render
+        render(allSites);
+
+        // Search functionality
         searchInput.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
             const filtered = allSites.filter(s => s.toLowerCase().includes(term));
