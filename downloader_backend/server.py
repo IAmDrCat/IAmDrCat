@@ -205,13 +205,19 @@ def background_download(job_id, url, is_audio=False):
             
             # iTunes Artwork Lookup (High Quality)
             if is_audio:
-                hq_art_url, clean_title, clean_artist = get_itunes_artwork(info.get('title', ''))
+                # Use the search title if available (from frontend search), otherwise use video title
+                search_query = info.get('title', '')
+                print(f"[Metadata] Extracted Title: {search_query}")
+
+                hq_art_url, clean_title, clean_artist = get_itunes_artwork(search_query)
+                
                 if hq_art_url:
                     try:
                         # Overwrite existing or create new
                         if thumb_local_path:
                             target_thumb_path = thumb_local_path
                         else:
+                            # Use jpg extension for cover art
                             target_thumb_path = os.path.splitext(final_filename)[0] + ".jpg"
                         
                         print(f"[Artwork] Downloading HQ cover to {target_thumb_path}")
@@ -221,6 +227,12 @@ def background_download(job_id, url, is_audio=False):
                             f.write(r.read())
                         
                         thumb_local_path = target_thumb_path
+                        
+                        # UPDATE METADATA WITH OFFICIAL INFO
+                        # This fixes "Unknown Track" if YouTube title was messy
+                        if clean_title and clean_artist:
+                            print(f"[Metadata] Updating title to official: {clean_title} - {clean_artist}")
+                            info['title'] = f"{clean_title} - {clean_artist}"
                         
                     except Exception as art_err:
                         print(f"[Artwork] Failed to download HQ cover: {art_err}")
@@ -233,11 +245,11 @@ def background_download(job_id, url, is_audio=False):
                 # Convert absolute path to relative /Downloads/ route
                 thumb_basename = os.path.basename(thumb_local_path)
                 jobs[job_id]['meta']['thumb'] = f"/Downloads/{thumb_basename}"
-                
-                # Add to IP tracking for cleanup below
             else:
                 # Fallback to remote URL
+                print(f"[Metadata] No local thumbnail. Using remote.")
                 jobs[job_id]['meta']['thumb'] = info.get('thumbnails', [{}])[-1].get('url') if info.get('thumbnails') else None
+
 
             # Track file for this IP and cleanup old files
             client_ip = jobs[job_id].get('ip')
