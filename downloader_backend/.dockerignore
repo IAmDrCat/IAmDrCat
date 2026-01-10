@@ -1,0 +1,21 @@
+# Ignore git files
+.git
+.gitignore
+
+# Ignore local binaries (windows specific)
+*.exe
+*.bat
+
+# Ignore compiled python files
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore local downloads and runtime files
+Downloads/
+cookies.txt
+
+# Ignore Docker related files (optional, but good practice if not needed in build context)
+.dockerignore
+Dockerfile

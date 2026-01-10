@@ -1,0 +1,12 @@
+# Temporary
+# Tem__pycache__/
+*.pyc
+*.exe
+*.bat
+Downloads/
+cookies.txt
+.DS_Store
+ry
+
+# Environment Variables
+.env

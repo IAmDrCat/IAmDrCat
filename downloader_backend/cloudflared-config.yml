@@ -1,0 +1,26 @@
+# Cloudflare Tunnel Configuration for Video Downloader API
+# 
+# SETUP INSTRUCTIONS:
+# 1. Run: cloudflared tunnel login
+# 2. Run: cloudflared tunnel create video-downloader-api
+# 3. Copy the tunnel ID from the output
+# 4. Replace <TUNNEL_ID> below with your actual tunnel ID
+# 5. Add DNS record in Cloudflare Dashboard:
+#    - Type: CNAME
+#    - Name: api (or your preferred subdomain)
+#    - Target: <TUNNEL_ID>.cfargotunnel.com
+#    - Proxy: Enabled (orange cloud)
+# 6. Replace <YOUR_DOMAIN> below with your actual domain
+# 7. Run: cloudflared tunnel route dns video-downloader-api api.<YOUR_DOMAIN>
+# 8. Start tunnel: cloudflared tunnel run video-downloader-api
+
+tunnel: <TUNNEL_ID>
+credentials-file: C:\Users\Catis\.cloudflared\<TUNNEL_ID>.json
+
+ingress:
+  # Route all traffic from api.yourdomain.com to local Flask server
+  - hostname: api.<YOUR_DOMAIN>
+    service: http://localhost:8000
+  
+  # Catch-all rule (required)
+  - service: http_status:404
