@@ -122,12 +122,32 @@
 
     <div class="card">
         <h1>Checkpoint 1/2</h1>
-        <p>Please complete this step to proceed to the next stage.</p>
+        <p>Please wait <span id="timer">120</span> seconds before continuing to ensure verification.</p>
+        <p id="waitMsg" style="color: #fbbf24; font-size: 0.9rem; margin-top: -20px; margin-bottom: 20px;">This prevents
+            bypassers and ensures your visit is counted.</p>
         <!-- REPLACE '#' WITH YOUR LINKVERTISE URL FOR STEP 1 -->
-        <a href="https://link-hub.net/3091152/ET9iaYTyK9OE" class="btn">Continue</a>
+        <a id="continueBtn" href="https://link-hub.net/3091152/ET9iaYTyK9OE" class="btn"
+            style="opacity: 0.5; pointer-events: none;">Please Wait...</a>
     </div>
 
     <script>
+        let timeLeft = 120;
+        const timerSpan = document.getElementById('timer');
+        const continueBtn = document.getElementById('continueBtn');
+
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerSpan.innerText = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerSpan.parentElement.innerText = "You can now proceed!";
+                continueBtn.style.opacity = "1";
+                continueBtn.style.pointer_events = "auto";
+                continueBtn.innerText = "Continue";
+            }
+        }, 1000);
+
         const container = document.querySelector('.particles');
         for (let i = 0; i < 80; i++) {
             const p = document.createElement('div');
