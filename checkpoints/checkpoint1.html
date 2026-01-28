@@ -29,6 +29,7 @@
             justify-content: center;
         }
 
+        /* Particle Background Effect */
         .particles {
             position: fixed;
             top: 0;
@@ -54,21 +55,15 @@
                 transform: translateY(100vh) rotate(0deg);
                 opacity: 0;
             }
-
-            10% {
-                opacity: 0.8;
-            }
-
-            90% {
-                opacity: 0.8;
-            }
-
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
             100% {
                 transform: translateY(-100px) rotate(360deg);
                 opacity: 0;
             }
         }
 
+        /* UI Card */
         .card {
             background: rgba(15, 23, 42, 0.8);
             padding: 40px;
@@ -97,6 +92,7 @@
             font-size: 1.1rem;
         }
 
+        /* Button Styling */
         .btn {
             display: inline-block;
             background: linear-gradient(45deg, #8b5cf6, #06b6d4);
@@ -108,6 +104,7 @@
             font-size: 1.2rem;
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+            cursor: pointer;
         }
 
         .btn:hover {
@@ -122,39 +119,49 @@
 
     <div class="card">
         <h1>Checkpoint 1/2</h1>
-        <p>Please wait <span id="timer">120</span> seconds before continuing to ensure verification.</p>
-        <p id="waitMsg" style="color: #fbbf24; font-size: 0.9rem; margin-top: -20px; margin-bottom: 20px;">This prevents
-            bypassers and ensures your visit is counted.</p>
-        <!-- REPLACE '#' WITH YOUR LINKVERTISE URL FOR STEP 1 -->
+        <p id="statusArea">Please wait <span id="timer">1</span> second before continuing.</p>
+        <p id="waitMsg" style="color: #fbbf24; font-size: 0.9rem; margin-top: -20px; margin-bottom: 20px;">
+            Verification in progress...
+        </p>
+        
         <a id="continueBtn" href="https://link-hub.net/3091152/ET9iaYTyK9OE" class="btn"
             style="opacity: 0.5; pointer-events: none;">Please Wait...</a>
     </div>
 
     <script>
-        let timeLeft = 1;
+        // Configuration
+        let timeLeft = 1; 
         const timerSpan = document.getElementById('timer');
+        const statusArea = document.getElementById('statusArea');
         const continueBtn = document.getElementById('continueBtn');
 
+        // Countdown Logic
         const countdown = setInterval(() => {
             timeLeft--;
-            timerSpan.innerText = timeLeft;
+            
+            if (timeLeft > 0) {
+                timerSpan.innerText = timeLeft;
+            }
 
             if (timeLeft <= 0) {
                 clearInterval(countdown);
-                timerSpan.parentElement.innerText = "You can now proceed!";
+                statusArea.innerHTML = "<strong>Verification Complete!</strong>";
+                
+                // Unlock the button
                 continueBtn.style.opacity = "1";
-                continueBtn.style.pointer_events = "auto";
-                continueBtn.innerText = "Continue";
+                continueBtn.style.pointerEvents = "auto"; 
+                continueBtn.innerText = "Continue to Step 2";
             }
         }, 1000);
 
+        // Background Particle Generator
         const container = document.querySelector('.particles');
         for (let i = 0; i < 80; i++) {
             const p = document.createElement('div');
             p.className = 'particle';
             p.style.left = Math.random() * 100 + 'vw';
             p.style.animationDuration = Math.random() * 10 + 5 + 's';
-            p.style.animationDelay = Math.random() * 20 + 's';
+            p.style.animationDelay = Math.random() * 5 + 's';
             container.appendChild(p);
         }
     </script>
