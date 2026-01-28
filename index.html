@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IAmDrCat.com</title>
+  <meta name="description" content="IAmDrCat.com - Home" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5658369692346701"
+    crossorigin="anonymous"></script>
+
+  <!-- ─── Open Graph for Discord/Facebook/etc ─── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://iamdrcat.com/" />
+  <meta property="og:title" content="IAmDrCat.com" />
+  <meta property="og:description" content="IAmDrCat.com - Home" />
+  <meta property="og:image" content="https://iamdrcat.com/pop_drcat.gif" />
+
+  <style>
+    /* Reset & Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #0a0a1a, #0f3460);
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Particles - Staggered Animation */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #a0a0e0;
+      border-radius: 50%;
+      animation: float 10s infinite;
+      opacity: 0;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.8;
+      }
+
+      90% {
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Header/Nav - Mobile Responsive */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .logo {
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
+      font-weight: bold;
+      color: #8b5cf6;
+    }
+
+    /* Mobile Navigation */
+    .nav-links {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .nav-links li {
+      margin: 0;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      cursor: pointer;
+      transition: all 0.3s;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus {
+      color: #8b5cf6;
+      outline: 2px solid rgba(139, 92, 246, 0.5);
+      outline-offset: 2px;
+    }
+
+    .nav-links a[href="/games/"] {
+      background: linear-gradient(45deg, #ec4899, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: bold;
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 2px solid transparent;
+      background-origin: border-box;
+      position: relative;
+    }
+
+    .nav-links a[href="/games/"]:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, #ec4899, #ffffff);
+      border-radius: 20px;
+      z-index: -1;
+      opacity: 0.1;
+    }
+
+    .nav-links a[href="/games/"]:hover {
+      transform: translateY(-2px);
+      filter: drop-shadow(0 4px 8px rgba(236, 72, 153, 0.3));
+    }
+
+    /* Hero - Simple and centered */
+    .hero {
+      position: relative;
+      z-index: 10;
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      line-height: 1.2;
+      background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
+      }
+
+      to {
+        filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
+      }
+    }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 10;
+      padding: 60px 20px 40px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.05));
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(139, 92, 246, 0.2);
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #a0a0b0;
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+
+    .footer-links a:hover {
+      color: #8b5cf6;
+      background: rgba(139, 92, 246, 0.1);
+      border-color: rgba(139, 92, 246, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .footer-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), transparent);
+      margin: 20px 0;
+    }
+
+    .footer-copyright {
+      color: #a0a0b0;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    /* Mobile Specific */
+    @media (max-width: 768px) {
+      .nav-links {
+        justify-content: center;
+      }
+
+      .footer-links {
+        gap: 15px;
+      }
+
+      .footer-links a {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Focus styles for better accessibility */
+    *:focus {
+      outline: 2px solid rgba(139, 92, 246, 0.7);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="particles"></div>
+
+  <div id="nav"></div>
+  <script>
+    fetch("/navbar.html")
+      .then(r => r.text())
+      .then(t => document.getElementById("nav").innerHTML = t);
+  </script>
+
+  <section class="hero">
+    <div>
+      <h1>IAmDrCat.com</h1>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="https://www.instagram.com/iamdrcat/" target="_blank">Instagram</a>
+        <a href="mailto:contact@iamdrcat.com">Email</a>
+        <a href="https://github.com/iamdrcat" target="_blank">GitHub</a>
+      </div>
+      <div class="footer-divider"></div>
+      <div class="footer-copyright">
+        &copy; 2025 IAmDrCat.com
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Particles with staggered timing
+    const container = document.querySelector('.particles');
+    for (let i = 0; i < 80; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = Math.random() * 10 + 5 + 's';
+      p.style.animationDelay = Math.random() * 20 + 's'; // Stagger the start times
+      container.appendChild(p);
+    }    
+  </script>
+</body>
+
+</html>

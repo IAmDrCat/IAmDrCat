@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crossy Road</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            color: #8B5CF6;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav a {
+            color: #94A3B8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: #8B5CF6;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 40px;
+            color: #8B5CF6;
+            text-align: center;
+        }
+
+        .game-container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .settings {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .setting-label {
+            color: #8B5CF6;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .setting-btn {
+            padding: 8px 16px;
+            border: 1px solid #4C1D95;
+            background: transparent;
+            color: #94A3B8;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .setting-btn.active {
+            background: #8B5CF6;
+            color: white;
+            border-color: #8B5CF6;
+        }
+
+        .setting-btn:hover:not(.active) {
+            border-color: #8B5CF6;
+            color: white;
+        }
+
+        .stats {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #8B5CF6;
+        }
+
+        .stat-label {
+            color: #94A3B8;
+            font-size: 0.9rem;
+        }
+
+        .game-board-container {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            min-height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .no-game {
+            color: #64748B;
+            font-size: 1.1rem;
+        }
+
+        .game-board {
+            position: relative;
+            background: #1e293b;
+            border: 2px solid #334155;
+            overflow: hidden;
+        }
+
+        .player {
+            position: absolute;
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            border: 2px solid #FCD34D;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .car {
+            position: absolute;
+            border-radius: 8px;
+            z-index: 5;
+        }
+
+        .car-left {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            border: 2px solid #F87171;
+        }
+
+        .car-right {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            border: 2px solid #60A5FA;
+        }
+
+        .road {
+            position: absolute;
+            background: #374151;
+            border-top: 2px solid #6B7280;
+            border-bottom: 2px solid #6B7280;
+        }
+
+        .safe-zone {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.1));
+            border-top: 2px solid rgba(34, 197, 94, 0.3);
+            border-bottom: 2px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .game-controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .start-text {
+            color: #60A5FA;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .controls-hint {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .controls-hint h3 {
+            color: #8B5CF6;
+            margin-bottom: 10px;
+        }
+
+        .controls-hint p {
+            color: #CBD5E1;
+            margin-bottom: 5px;
+        }
+
+        .mobile-controls {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 200px;
+            margin: 20px auto;
+        }
+
+        .mobile-btn {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid #8B5CF6;
+            color: #8B5CF6;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mobile-btn:hover,
+        .mobile-btn:active {
+            background: rgba(139, 92, 246, 0.4);
+        }
+
+        .mobile-btn:nth-child(1) {
+            grid-column: 2;
+        }
+
+        .mobile-btn:nth-child(2) {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .mobile-btn:nth-child(3) {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        .mobile-btn:nth-child(4) {
+            grid-column: 2;
+            grid-row: 3;
+        }
+
+        .instructions {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .instructions h3 {
+            color: #8B5CF6;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .instruction-item {
+            margin-bottom: 10px;
+            color: #CBD5E1;
+        }
+
+        .instruction-item strong {
+            color: #8B5CF6;
+        }
+
+        .game-over {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid #8B5CF6;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .game-over h2 {
+            margin-bottom: 15px;
+            font-size: 2rem;
+            color: #EF4444;
+        }
+
+        .game-over .final-score {
+            color: #60A5FA;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .game-over button {
+            margin: 5px;
+            background: #8B5CF6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .game-over button:hover {
+            background: #7C3AED;
+        }
+
+        @media (max-width: 768px) {
+            .settings {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .mobile-controls {
+                display: grid;
+            }
+
+            .controls-hint {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="nav"></div>
+    <script>
+        fetch("/navbar.html")
+            .then(r => r.text())
+            .then(t => document.getElementById("nav").innerHTML = t);
+    </script>
+
+    <h1>Crossy Road</h1>
+
+    <div class="game-container">
+        <div class="settings">
+            <div class="setting-group">
+                <div class="setting-label">Difficulty</div>
+                <div class="button-group">
+                    <button class="setting-btn" data-difficulty="easy">Easy</button>
+                    <button class="setting-btn active" data-difficulty="normal">Normal</button>
+                    <button class="setting-btn" data-difficulty="hard">Hard</button>
+                </div>
+            </div>
+            <div class="setting-group">
+                <div class="setting-label">Car Speed</div>
+                <div class="button-group">
+                    <button class="setting-btn" data-speed="slow">Slow</button>
+                    <button class="setting-btn active" data-speed="normal">Normal</button>
+                    <button class="setting-btn" data-speed="fast">Fast</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="distance">0</div>
+                <div class="stat-label">Distance</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="high-score">0</div>
+                <div class="stat-label">High Score</div>
+            </div>
+        </div>
+
+        <div class="game-board-container">
+            <div class="no-game" id="no-game">No game board</div>
+            <div class="game-board" id="game-board" style="display: none;"></div>
+        </div>
+
+        <div class="game-controls">
+            <div class="start-text">Choose settings and click Start Game</div>
+            <button class="start-btn" id="start-btn">Start Game</button>
+        </div>
+
+        <div class="controls-hint">
+            <h3>Controls</h3>
+            <p><strong>Arrow Keys</strong> or <strong>WASD</strong> to move</p>
+        </div>
+
+        <div class="mobile-controls" id="mobile-controls">
+            <button class="mobile-btn" data-direction="up">↑</button>
+            <button class="mobile-btn" data-direction="left">←</button>
+            <button class="mobile-btn" data-direction="right">→</button>
+            <button class="mobile-btn" data-direction="down">↓</button>
+        </div>
+
+        <div class="instructions">
+            <h3>How to Play</h3>
+            <div class="instruction-item"><strong>Goal:</strong> Cross as many roads as possible without getting hit by
+                cars</div>
+            <div class="instruction-item"><strong>Movement:</strong> Use arrow keys or WASD to move one step at a time
+            </div>
+            <div class="instruction-item"><strong>Scoring:</strong> Gain points for each safe zone you reach</div>
+            <div class="instruction-item"><strong>Strategy:</strong> Watch traffic patterns and time your crossings
+                carefully</div>
+        </div>
+    </div>
+
+    <script>
+        class CrossyRoad {
+            constructor() {
+                this.canvas = document.getElementById('game-board');
+                this.gameBoard = document.getElementById('game-board');
+
+                this.difficulty = 'normal';
+                this.carSpeed = 'normal';
+                this.boardWidth = 400;
+                this.boardHeight = 400;
+                this.cellSize = 25;
+
+                this.player = { x: 0, y: 0 };
+                this.score = 0;
+                this.distance = 0;
+                this.highScore = parseInt(localStorage.getItem('crossyRoadHighScore')) || 0;
+                this.gameState = 'waiting';
+                this.gameLoop = null;
+
+                this.cars = [];
+                this.lanes = [];
+                this.viewportY = 0;
+                this.lastMovement = 0;
+
+                this.initializeEventListeners();
+                this.updateStats();
+            }
+
+            initializeEventListeners() {
+                // Setting buttons
+                document.querySelectorAll('.setting-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const group = e.target.closest('.setting-group');
+                        group.querySelectorAll('.setting-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+
+                        if (e.target.dataset.difficulty) {
+                            this.difficulty = e.target.dataset.difficulty;
+                        } else if (e.target.dataset.speed) {
+                            this.carSpeed = e.target.dataset.speed;
+                        }
+                    });
+                });
+
+                // Start button
+                document.getElementById('start-btn').addEventListener('click', () => {
+                    if (this.gameState === 'waiting') {
+                        this.startGame();
+                    } else {
+                        this.resetGame();
+                    }
+                });
+
+                // Keyboard controls
+                document.addEventListener('keydown', (e) => {
+                    this.handleKeyPress(e.key);
+                });
+
+                // Mobile controls
+                document.querySelectorAll('.mobile-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const direction = e.target.dataset.direction;
+                        this.movePlayer(direction);
+                    });
+                });
+            }
+
+            startGame() {
+                this.gameState = 'playing';
+                this.score = 0;
+                this.distance = 0;
+                this.viewportY = 0;
+                this.cars = [];
+                this.lanes = [];
+
+                // Setup game board
+                this.gameBoard.style.width = this.boardWidth + 'px';
+                this.gameBoard.style.height = this.boardHeight + 'px';
+                this.gameBoard.innerHTML = '';
+
+                // Initialize player
+                this.player = {
+                    x: Math.floor(this.boardWidth / 2 / this.cellSize) * this.cellSize,
+                    y: this.boardHeight - this.cellSize * 2
+                };
+
+                this.generateLanes();
+                this.createPlayer();
+                this.updateStats();
+
+                document.getElementById('no-game').style.display = 'none';
+                document.getElementById('game-board').style.display = 'block';
+                document.getElementById('start-btn').textContent = 'Reset Game';
+                document.querySelector('.start-text').textContent = 'Game in progress...';
+
+                this.startGameLoop();
+            }
+
+            generateLanes() {
+                // Generate initial lanes
+                for (let i = 0; i < 20; i++) {
+                    const y = -i * this.cellSize * 2;
+                    const isRoad = Math.random() > 0.3; // 70% chance of road
+
+                    this.lanes.push({
+                        y: y,
+                        isRoad: isRoad,
+                        direction: Math.random() > 0.5 ? 'left' : 'right',
+                        carDensity: isRoad ? this.getCarDensity() : 0
+                    });
+
+                    this.createLaneElement(y, isRoad);
+                }
+            }
+
+            getCarDensity() {
+                const densities = {
+                    easy: 0.3,
+                    normal: 0.5,
+                    hard: 0.7
+                };
+                return densities[this.difficulty] || 0.5;
+            }
+
+            createLaneElement(y, isRoad) {
+                const lane = document.createElement('div');
+                lane.className = isRoad ? 'road' : 'safe-zone';
+                lane.style.width = this.boardWidth + 'px';
+                lane.style.height = (this.cellSize * 2) + 'px';
+                lane.style.top = (y + this.viewportY + this.boardHeight / 2) + 'px';
+                lane.style.left = '0px';
+                this.gameBoard.appendChild(lane);
+            }
+
+            createPlayer() {
+                const playerElement = document.createElement('div');
+                playerElement.className = 'player';
+                playerElement.id = 'player';
+                playerElement.style.width = this.cellSize + 'px';
+                playerElement.style.height = this.cellSize + 'px';
+                playerElement.style.left = this.player.x + 'px';
+                playerElement.style.top = this.player.y + 'px';
+                this.gameBoard.appendChild(playerElement);
+            }
+
+            startGameLoop() {
+                this.gameLoop = setInterval(() => {
+                    this.updateCars();
+                    this.spawnCars();
+                    this.checkCollisions();
+                    this.cleanupElements();
+                    this.updateViewport();
+                }, 50);
+            }
+
+            handleKeyPress(key) {
+                if (this.gameState !== 'playing') return;
+
+                switch (key.toLowerCase()) {
+                    case 'arrowup':
+                    case 'w':
+                        this.movePlayer('up');
+                        break;
+                    case 'arrowdown':
+                    case 's':
+                        this.movePlayer('down');
+                        break;
+                    case 'arrowleft':
+                    case 'a':
+                        this.movePlayer('left');
+                        break;
+                    case 'arrowright':
+                    case 'd':
+                        this.movePlayer('right');
+                        break;
+                }
+            }
+
+            movePlayer(direction) {
+                if (this.gameState !== 'playing') return;
+
+                const now = Date.now();
+                if (now - this.lastMovement < 150) return; // Throttle movement
+                this.lastMovement = now;
+
+                const newPos = { ...this.player };
+
+                switch (direction) {
+                    case 'up':
+                        newPos.y -= this.cellSize;
+                        this.distance++;
+                        this.score += 10;
+                        break;
+                    case 'down':
+                        newPos.y += this.cellSize;
+                        if (this.distance > 0) {
+                            this.distance--;
+                            this.score = Math.max(0, this.score - 5);
+                        }
+                        break;
+                    case 'left':
+                        newPos.x -= this.cellSize;
+                        break;
+                    case 'right':
+                        newPos.x += this.cellSize;
+                        break;
+                }
+
+                // Check boundaries
+                if (newPos.x < 0 || newPos.x >= this.boardWidth ||
+                    newPos.y > this.boardHeight - this.cellSize) {
+                    return;
+                }
+
+                this.player = newPos;
+                this.updatePlayerPosition();
+                this.updateStats();
+
+                // Generate more lanes if moving up
+                if (direction === 'up' && this.distance % 5 === 0) {
+                    this.generateMoreLanes();
+                }
+            }
+
+            updatePlayerPosition() {
+                const playerElement = document.getElementById('player');
+                if (playerElement) {
+                    playerElement.style.left = this.player.x + 'px';
+                    playerElement.style.top = this.player.y + 'px';
+                }
+            }
+
+            generateMoreLanes() {
+                for (let i = 0; i < 5; i++) {
+                    const y = -(this.lanes.length + i) * this.cellSize * 2;
+                    const isRoad = Math.random() > 0.3;
+
+                    this.lanes.push({
+                        y: y,
+                        isRoad: isRoad,
+                        direction: Math.random() > 0.5 ? 'left' : 'right',
+                        carDensity: isRoad ? this.getCarDensity() : 0
+                    });
+
+                    this.createLaneElement(y, isRoad);
+                }
+            }
+
+            spawnCars() {
+                this.lanes.forEach(lane => {
+                    if (lane.isRoad && Math.random() < lane.carDensity * 0.02) {
+                        this.createCar(lane);
+                    }
+                });
+            }
+
+            createCar(lane) {
+                const car = {
+                    x: lane.direction === 'right' ? -this.cellSize * 2 : this.boardWidth,
+                    y: lane.y + this.viewportY + this.boardHeight / 2 + this.cellSize / 2,
+                    direction: lane.direction,
+                    speed: this.getCarSpeed(),
+                    element: null
+                };
+
+                const carElement = document.createElement('div');
+                carElement.className = `car car-${lane.direction}`;
+                carElement.style.width = (this.cellSize * 1.5) + 'px';
+                carElement.style.height = this.cellSize + 'px';
+                carElement.style.left = car.x + 'px';
+                carElement.style.top = car.y + 'px';
+
+                car.element = carElement;
+                this.cars.push(car);
+                this.gameBoard.appendChild(carElement);
+            }
+
+            getCarSpeed() {
+                const speeds = {
+                    slow: 2,
+                    normal: 4,
+                    fast: 6
+                };
+                return speeds[this.carSpeed] || 4;
+            }
+
+            updateCars() {
+                this.cars.forEach(car => {
+                    if (car.direction === 'right') {
+                        car.x += car.speed;
+                    } else {
+                        car.x -= car.speed;
+                    }
+
+                    if (car.element) {
+                        car.element.style.left = car.x + 'px';
+                    }
+                });
+            }
+
+            checkCollisions() {
+                const playerRect = {
+                    x: this.player.x,
+                    y: this.player.y,
+                    width: this.cellSize,
+                    height: this.cellSize
+                };
+
+                this.cars.forEach(car => {
+                    const carRect = {
+                        x: car.x,
+                        y: car.y,
+                        width: this.cellSize * 1.5,
+                        height: this.cellSize
+                    };
+
+                    if (this.isColliding(playerRect, carRect)) {
+                        this.gameOver();
+                    }
+                });
+            }
+
+            isColliding(rect1, rect2) {
+                return rect1.x < rect2.x + rect2.width &&
+                    rect1.x + rect1.width > rect2.x &&
+                    rect1.y < rect2.y + rect2.height &&
+                    rect1.y + rect1.height > rect2.y;
+            }
+
+            cleanupElements() {
+                // Clean up cars
+                this.cars = this.cars.filter(car => {
+                    if (car.x < -this.cellSize * 3 || car.x > this.boardWidth + this.cellSize * 3) {
+                        if (car.element && car.element.parentNode) {
+                            car.element.parentNode.removeChild(car.element);
+                        }
+                        return false;
+                    }
+                    return true;
+                });
+
+                // Clean up logs
+                this.logs = this.logs.filter(log => {
+                    if (log.x < -log.width || log.x > this.boardWidth + log.width) {
+                        if (log.element && log.element.parentNode) {
+                            log.element.parentNode.removeChild(log.element);
+                        }
+                        return false;
+                    }
+                    return true;
+                });
+
+                // Clean up coins and power-ups that are too far behind
+                const cleanupY = this.player.y + this.boardHeight;
+
+                this.coins = this.coins.filter(coin => {
+                    if (coin.y > cleanupY) {
+                        if (coin.element && coin.element.parentNode) {
+                            coin.element.parentNode.removeChild(coin.element);
+                        }
+                        return false;
+                    }
+                    return true;
+                });
+
+                this.powerUps = this.powerUps.filter(powerUp => {
+                    if (powerUp.y > cleanupY) {
+                        if (powerUp.element && powerUp.element.parentNode) {
+                            powerUp.element.parentNode.removeChild(powerUp.element);
+                        }
+                        return false;
+                    }
+                    return true;
+                });
+            }
+
+            updateViewport() {
+                // Keep player centered vertically when moving up
+                if (this.player.y < this.boardHeight / 2) {
+                    const offset = this.boardHeight / 2 - this.player.y;
+                    this.viewportY += offset;
+                    this.player.y = this.boardHeight / 2;
+
+                    // Update all element positions
+                    const allElements = this.gameBoard.children;
+                    for (let element of allElements) {
+                        if (element.id !== 'player') {
+                            const currentTop = parseInt(element.style.top) || 0;
+                            element.style.top = (currentTop + offset) + 'px';
+                        }
+                    }
+
+                    this.updatePlayerPosition();
+                }
+            }
+
+            gameOver() {
+                this.gameState = 'gameOver';
+                clearInterval(this.gameLoop);
+
+                if (this.score > this.highScore) {
+                    this.highScore = this.score;
+                    localStorage.setItem('crossyRoadHighScore', this.highScore.toString());
+                    this.updateStats();
+                }
+
+                this.showGameOver();
+            }
+
+            showGameOver() {
+                const gameOverDiv = document.createElement('div');
+                gameOverDiv.className = 'game-over';
+
+                gameOverDiv.innerHTML = `
+                    <h2>Game Over!</h2>
+                    <div class="final-score">Final Score: ${this.score}</div>
+                    <div class="final-score">Distance: ${this.distance}</div>
+                    ${this.score === this.highScore ? '<div style="color: #10B981;">New High Score!</div>' : ''}
+                    <button onclick="this.parentElement.remove(); game.resetGame();">Play Again</button>
+                    <button onclick="this.parentElement.remove();">Close</button>
+                `;
+
+                document.body.appendChild(gameOverDiv);
+            }
+
+            resetGame() {
+                this.gameState = 'waiting';
+                clearInterval(this.gameLoop);
+
+                document.getElementById('no-game').style.display = 'block';
+                document.getElementById('game-board').style.display = 'none';
+                document.getElementById('start-btn').textContent = 'Start Game';
+                document.querySelector('.start-text').textContent = 'Choose settings and click Start Game';
+
+                this.score = 0;
+                this.distance = 0;
+                this.updateStats();
+            }
+
+            updateStats() {
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('distance').textContent = this.distance;
+                document.getElementById('high-score').textContent = this.highScore;
+            }
+        }
+
+        // Initialize the game
+        const game = new CrossyRoad();
+    </script>
+</body>
+
+</html>

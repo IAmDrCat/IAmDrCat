@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Games - IAmDrCat.com</title>
+  <meta name="description" content="Play games created by IAmDrCat - including Cosmic Minesweeper and more!" />
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5658369692346701"
+    crossorigin="anonymous"></script>
+
+  <!-- Open Graph for Discord/Facebook/etc -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://iamdrcat.com/games/" />
+  <meta property="og:title" content="Games - IAmDrCat.com" />
+  <meta property="og:description" content="Play games created by IAmDrCat - including Cosmic Minesweeper and more!" />
+  <meta property="og:image" content="https://iamdrcat.com/pop_drcat.gif" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #0a0a1a, #0f3460);
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #a0a0e0;
+      border-radius: 50%;
+      animation: float 10s infinite;
+      opacity: 0;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.8;
+      }
+
+      90% {
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .logo {
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
+      font-weight: bold;
+      color: #8b5cf6;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #8b5cf6;
+    }
+
+    .main-content {
+      position: relative;
+      z-index: 10;
+      min-height: 70vh;
+      padding: 40px 20px;
+    }
+
+    .games-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .page-header h1 {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 3s infinite alternate;
+      margin-bottom: 20px;
+    }
+
+    @keyframes glow {
+      from {
+        filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
+      }
+
+      to {
+        filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
+      }
+    }
+
+    .page-header p {
+      font-size: 1.2rem;
+      color: #a0a0e0;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .game-card {
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      transition: 0.4s;
+      position: relative;
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+    }
+
+    .game-title {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .game-description {
+      color: #a0a0e0;
+      margin-bottom: 25px;
+    }
+
+    .game-status {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .status-available {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .status-new {
+      background: rgba(236, 72, 153, 0.2);
+      color: #ec4899;
+      border: 1px solid rgba(236, 72, 153, 0.3);
+    }
+
+    .play-button {
+      display: inline-block;
+      background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .play-button:hover {
+      transform: translateY(-2px);
+    }
+
+    footer {
+      padding: 60px 20px 40px;
+      text-align: center;
+      background: rgba(139, 92, 246, 0.1);
+      border-top: 1px solid rgba(139, 92, 246, 0.2);
+    }
+  </style>
+  <style>
+    .game-card {
+      height: 350px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .game-card button {
+      margin-top: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="particles"></div>
+
+  <header>
+    <div id="nav"></div>
+    <script>
+      fetch("/navbar.html")
+        .then(r => r.text())
+        .then(t => document.getElementById("nav").innerHTML = t);
+    </script>
+  </header>
+
+  <main class="main-content">
+    <div class="games-container">
+      <div class="page-header">
+        <h1>Games</h1>
+        <p>Classic games with a modern UI</p>
+      </div>
+
+      <div class="games-grid">
+        <div class="game-card">
+          <h2 class="game-title">🚀 Stellar Jump</h2>
+          <div class="game-status status-new">✨ NEW</div>
+          <p class="game-description">Endless jumping platformer through the cosmos!</p>
+          <a href="./stellarjump/" class="play-button">🌟 Play Now</a>
+        </div>
+
+        <div class="game-card">
+          <h2 class="game-title">🌟 Cosmic Minesweeper</h2>
+          <div class="game-status status-available">Available</div>
+          <p class="game-description">Classic puzzle game with a cosmic twist.</p>
+          <a href="./minesweeper/" class="play-button">🚀 Play Now</a>
+        </div>
+
+        <div class="game-card">
+          <h2 class="game-title">✨ Cosmic Clicker</h2>
+          <div class="game-status status-available">Available</div>
+          <p class="game-description">Incremental clicker with cosmic energy.</p>
+          <a href="./cosmicclicker/" class="play-button">🎮 Play Now</a>
+        </div>
+
+        <div class="game-card">
+          <h2 class="game-title">🐍 Snake</h2>
+          <div class="game-status status-available">Available</div>
+          <p class="game-description">Simple, fast snake game. Classic arcade fun.</p>
+          <a href="./snake/" class="play-button">🟩 Play Now</a>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="https://discord.com/users/1186509879687528528" target="_blank">Discord</a>
+        <a href="https://www.instagram.com/iamdrcat/" target="_blank">Instagram</a>
+        <a href="mailto:contact@iamdrcat.com">Email</a>
+        <a href="https://github.com/iamdrcat" target="_blank">GitHub</a>
+      </div>
+      <div class="footer-divider"></div>
+      <div class="footer-copyright">© 2025 IAmDrCat.com</div>
+    </div>
+  </footer>
+
+  <script>
+    const container = document.querySelector('.particles');
+    for (let i = 0; i < 80; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = Math.random() * 10 + 5 + 's';
+      p.style.animationDelay = Math.random() * 20 + 's';
+      container.appendChild(p);
+    }
+  </script>
+</body>
+
+</html>

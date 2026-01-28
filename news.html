@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>News & Updates - IAmDrCat.com</title>
+  <meta name="description" content="Latest news and updates from IAmDrCat" />
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5658369692346701"
+    crossorigin="anonymous"></script>
+
+  <style>
+    /* Reset & Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #0a0a1a, #0f3460);
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Particles - Staggered Animation */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #a0a0e0;
+      border-radius: 50%;
+      animation: float 10s infinite;
+      opacity: 0;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.8;
+      }
+
+      90% {
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Header/Nav Styles - These will apply to the injected navbar */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .logo {
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
+      font-weight: bold;
+      color: #8b5cf6;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .nav-links li {
+      margin: 0;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      cursor: pointer;
+      transition: all 0.3s;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus {
+      color: #8b5cf6;
+      outline: 2px solid rgba(139, 92, 246, 0.5);
+      outline-offset: 2px;
+    }
+
+    /* Main Content */
+    main {
+      position: relative;
+      z-index: 10;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: 30px;
+      text-align: center;
+      background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
+      }
+
+      to {
+        filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
+      }
+    }
+
+    /* Filter Buttons */
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #a0a0b0;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    .filter-btn:hover {
+      background: rgba(139, 92, 246, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+      color: white;
+      border-color: transparent;
+    }
+
+    .news-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .news-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .category-tag {
+      font-size: 0.8rem;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .category-tag.news {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+    }
+
+    .category-tag.maps {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+    }
+
+    .category-tag.info {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+    }
+
+    .news-date {
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    .news-title {
+      font-size: 1.5rem;
+      color: #e2e8f0;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+
+    .news-content {
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    .loading {
+      text-align: center;
+      color: #94a3b8;
+      font-style: italic;
+      padding: 40px;
+    }
+
+    /* Mobile Specific */
+    @media (max-width: 768px) {
+      .nav-links {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="particles"></div>
+
+  <div id="nav"></div>
+  <script>
+    fetch("/navbar.html")
+      .then(r => r.text())
+      .then(t => document.getElementById("nav").innerHTML = t);
+  </script>
+
+  <main>
+    <h1>News</h1>
+
+    <div class="filters">
+      <button class="filter-btn active" data-category="all">All</button>
+      <button class="filter-btn" data-category="News">News</button>
+      <button class="filter-btn" data-category="Maps">Maps</button>
+      <button class="filter-btn" data-category="Info">Info</button>
+    </div>
+
+    <div id="news-feed">
+      <!-- Posts will be loaded here -->
+      <div class="loading">Loading news...</div>
+    </div>
+  </main>
+
+  <script>
+    // Particles
+    const container = document.querySelector('.particles');
+    for (let i = 0; i < 80; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = Math.random() * 10 + 5 + 's';
+      p.style.animationDelay = Math.random() * 20 + 's';
+      container.appendChild(p);
+    }
+
+    // Dynamic Post Loader
+    async function loadPosts() {
+      const feed = document.getElementById('news-feed');
+      try {
+        const response = await fetch('posts.json');
+        if (!response.ok) throw new Error('Failed to load posts');
+        const posts = await response.json();
+
+        window.allPosts = posts; // Store for filtering
+        renderPosts(posts);
+      } catch (error) {
+        console.error('Error:', error);
+        feed.innerHTML = '<div class="news-card"><p>Failed to load news. Please refer to console.</p></div>';
+      }
+    }
+
+    function renderPosts(posts) {
+      const feed = document.getElementById('news-feed');
+      if (posts.length === 0) {
+        feed.innerHTML = '<div class="news-card"><p>No news found.</p></div>';
+        return;
+      }
+
+      feed.innerHTML = posts.map(post => `
+        <article class="news-card fade-in">
+          <div class="card-header">
+            <span class="category-tag ${post.category.toLowerCase()}">${post.category}</span>
+            <span class="news-date">${post.date}</span>
+          </div>
+          <h2 class="news-title">${post.title}</h2>
+          <div class="news-content">
+            <p>${post.content}</p>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    // Filter Logic
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        // Update active class
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+
+        const category = e.target.dataset.category;
+        const posts = window.allPosts || [];
+
+        if (category === 'all') {
+          renderPosts(posts);
+        } else {
+          const filtered = posts.filter(post => post.category === category);
+          renderPosts(filtered);
+        }
+      });
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', loadPosts);
+  </script>
+</body>
+
+</html>

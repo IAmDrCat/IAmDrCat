@@ -1,0 +1,2 @@
+-- REPLACE THIS WITH YOUR SCRIPT
+print("Hello World")

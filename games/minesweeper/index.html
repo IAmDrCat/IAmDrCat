@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Minesweeper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a, #0f3460);
+            color: #fff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Particles Background - Same as Furry Clicker */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #a0a0e0;
+            border-radius: 50%;
+            animation: float 10s infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
+            }
+
+            to {
+                filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
+            }
+        }
+
+        /* Board Size Controls */
+        .board-size-controls {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .size-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .size-control label {
+            color: #a0a0b0;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .size-slider {
+            width: 100px;
+            height: 6px;
+            background: rgba(139, 92, 246, 0.3);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.5);
+        }
+
+        .size-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.5);
+        }
+
+        .resize-hint {
+            color: #a0a0b0;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .controls-panel {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 25px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #a0a0b0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select,
+        button {
+            padding: 12px 16px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        select:focus,
+        button:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        select option {
+            background: #2c3e50;
+            color: #fff;
+        }
+
+        button {
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .info-item span {
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            min-width: 70px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Enhanced Game Board with Resizable Container */
+        .game-board {
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .board-container {
+            resize: both;
+            overflow: auto;
+            min-width: 300px;
+            min-height: 300px;
+            max-width: 90vw;
+            max-height: 70vh;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        /* Resize handle indicator */
+        .board-container::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            clip-path: polygon(100% 0%, 0% 100%, 100% 100%);
+            opacity: 0.7;
+            cursor: se-resize;
+        }
+
+        .board {
+            display: grid;
+            gap: 3px;
+            width: 100%;
+            height: 100%;
+            min-height: 200px;
+        }
+
+        /* Enhanced Cell Styling with Better Visual Distinction */
+        .cell {
+            min-width: 20px;
+            min-height: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+            border: 2px solid rgba(139, 92, 246, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: clamp(10px, 2.5vw, 16px);
+            transition: all 0.3s ease;
+            user-select: none;
+            border-radius: 6px;
+            color: #fff;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Unclicked cells - More distinct and cosmic */
+        .cell:not(.revealed) {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            box-shadow:
+                inset 0 2px 4px rgba(0, 0, 0, 0.3),
+                0 4px 8px rgba(139, 92, 246, 0.2);
+        }
+
+        .cell:not(.revealed):hover {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.4) 0%, rgba(59, 130, 246, 0.3) 100%);
+            border-color: #06b6d4;
+            transform: scale(1.05);
+            box-shadow:
+                inset 0 2px 4px rgba(0, 0, 0, 0.3),
+                0 6px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Clicked/revealed cells - More distinct */
+        .cell.revealed {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            cursor: default;
+            animation: revealCell 0.4s ease;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes revealCell {
+            0% {
+                transform: scale(0.7);
+                opacity: 0;
+                background: rgba(139, 92, 246, 0.3);
+            }
+
+            50% {
+                transform: scale(1.1);
+                background: rgba(59, 130, 246, 0.2);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .cell.revealed:hover {
+            transform: none;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .cell.mine {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            animation: mineReveal 0.5s ease;
+        }
+
+        @keyframes mineReveal {
+            0% {
+                transform: scale(0.5) rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.2) rotate(180deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(360deg);
+            }
+        }
+
+        .cell.flagged {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            animation: flagWave 0.5s ease;
+        }
+
+        @keyframes flagWave {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(-10deg);
+            }
+
+            75% {
+                transform: rotate(10deg);
+            }
+        }
+
+        .cell.question {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+        }
+
+        /* Number colors with enhanced glow effect */
+        .cell.number-1 {
+            color: #3498db;
+            text-shadow: 0 0 15px rgba(52, 152, 219, 1);
+        }
+
+        .cell.number-2 {
+            color: #27ae60;
+            text-shadow: 0 0 15px rgba(39, 174, 96, 1);
+        }
+
+        .cell.number-3 {
+            color: #e74c3c;
+            text-shadow: 0 0 15px rgba(231, 76, 60, 1);
+        }
+
+        .cell.number-4 {
+            color: #9b59b6;
+            text-shadow: 0 0 15px rgba(155, 89, 182, 1);
+        }
+
+        .cell.number-5 {
+            color: #f39c12;
+            text-shadow: 0 0 15px rgba(243, 156, 18, 1);
+        }
+
+        .cell.number-6 {
+            color: #1abc9c;
+            text-shadow: 0 0 15px rgba(26, 188, 156, 1);
+        }
+
+        .cell.number-7 {
+            color: #34495e;
+            text-shadow: 0 0 15px rgba(52, 73, 94, 1);
+        }
+
+        .cell.number-8 {
+            color: #e67e22;
+            text-shadow: 0 0 15px rgba(230, 126, 34, 1);
+        }
+
+        .game-over {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 26, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-over-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 50px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            backdrop-filter: blur(20px);
+            max-width: 450px;
+        }
+
+        .game-over h2 {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .win {
+            color: #27ae60;
+            text-shadow: 0 0 20px rgba(39, 174, 96, 0.8);
+        }
+
+        .lose {
+            color: #e74c3c;
+            text-shadow: 0 0 20px rgba(231, 76, 60, 0.8);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .custom-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .custom-controls input {
+            padding: 10px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .custom-controls input::placeholder {
+            color: #a0a0b0;
+        }
+
+        .stats-panel {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 25px;
+            border-top: 1px solid rgba(139, 92, 246, 0.15);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #8b5cf6;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+
+        .stat-label {
+            color: #a0a0b0;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .game-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .board-size-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .board-container {
+                min-width: 250px;
+                min-height: 250px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        *:focus {
+            outline: 2px solid rgba(139, 92, 246, 0.7);
+            outline-offset: 2px;
+        }
+
+        /* Loading animation */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #a0a0b0;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        /* Theme variations */
+        body.classic {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        body.dark {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+
+        /* Enhanced animations */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+            }
+        }
+
+        .cell.winning {
+            animation: pulse 1s infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Particles Background - Same as Furry Clicker -->
+    <div class="particles"></div>
+
+    <div id="nav"></div>
+    <script>
+        fetch("/navbar.html")
+            .then(r => r.text())
+            .then(t => document.getElementById("nav").innerHTML = t);
+    </script>
+
+    <div class="game-container">
+        <div class="header">
+            <h1>🌌 Cosmic Minesweeper</h1>
+            <p>Navigate the cosmic minefield in deep space</p>
+        </div>
+
+        <!-- Enhanced Board Size Controls -->
+        <div class="board-size-controls">
+            <div class="size-control">
+                <label for="cell-size">Cell Size:</label>
+                <input type="range" id="cell-size" class="size-slider" min="20" max="40" value="28">
+                <span id="cell-size-value">28px</span>
+            </div>
+            <div class="size-control">
+                <label for="board-zoom">Board Zoom:</label>
+                <input type="range" id="board-zoom" class="size-slider" min="0.5" max="2" step="0.1" value="1">
+                <span id="board-zoom-value">100%</span>
+            </div>
+            <div class="resize-hint">
+                💡 Drag the bottom-right corner of the game board to resize manually
+            </div>
+        </div>
+
+        <div class="controls-panel">
+            <div class="controls-grid">
+                <div class="control-group">
+                    <label for="difficulty">Difficulty Level</label>
+                    <select id="difficulty">
+                        <option value="beginner">🟢 Beginner (9×9, 10 mines)</option>
+                        <option value="intermediate">🟡 Intermediate (16×16, 40 mines)</option>
+                        <option value="expert">🔴 Expert (30×16, 99 mines)</option>
+                        <option value="custom">🟣 Custom Settings</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="board-type">Board Generation</label>
+                    <select id="board-type">
+                        <option value="random">🎲 Fully Random</option>
+                        <option value="safe-first">🛡️ Safe First Click</option>
+                        <option value="no-guess">🧠 Pure Logic (No Guess)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="flag-mode">Flag Mode</label>
+                    <select id="flag-mode">
+                        <option value="normal">🚩 Normal (Right-click)</option>
+                        <option value="question">❓ Question Marks</option>
+                        <option value="swap">🔄 Swap Buttons</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="theme">Theme</label>
+                    <select id="theme">
+                        <option value="modern">✨ Cosmic Gradient</option>
+                        <option value="classic">🎨 Classic Colors</option>
+                        <option value="dark">🌙 Dark Space</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <button onclick="game.newGame()">🎮 New Game</button>
+                </div>
+
+                <div class="control-group">
+                    <button onclick="game.togglePause()">⏸️ Pause</button>
+                </div>
+            </div>
+
+            <div id="custom-settings" class="custom-controls hidden">
+                <input type="number" id="custom-rows" placeholder="Rows (5-50)" min="5" max="50" value="10">
+                <input type="number" id="custom-cols" placeholder="Cols (5-50)" min="5" max="50" value="10">
+                <input type="number" id="custom-mines" placeholder="Mines" min="1" max="200" value="15">
+                <button onclick="game.applyCustomSettings()">Apply</button>
+            </div>
+        </div>
+
+        <div class="game-info">
+            <div class="info-item">
+                💣 Mines: <span id="mine-count">10</span>
+            </div>
+            <div class="info-item">
+                ⏱️ Time: <span id="timer">000</span>
+            </div>
+            <div class="info-item">
+                🏆 Best: <span id="best-time">--</span>
+            </div>
+            <div class="info-item">
+                📊 Win Rate: <span id="win-rate">0%</span>
+            </div>
+        </div>
+
+        <div class="game-board">
+            <div class="board-container">
+                <div id="board" class="board"></div>
+            </div>
+        </div>
+
+        <div class="stats-panel">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="games-played">0</div>
+                    <div class="stat-label">Games Played</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="games-won">0</div>
+                    <div class="stat-label">Games Won</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="total-time">0</div>
+                    <div class="stat-label">Total Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="best-streak">0</div>
+                    <div class="stat-label">Best Streak</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-over" class="game-over hidden">
+        <div class="game-over-content">
+            <h2 id="game-result"></h2>
+            <p id="game-stats"></p>
+            <button onclick="game.newGame()">Play Again</button>
+            <button onclick="game.closeGameOver()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Create particles - Same as Furry Clicker
+        const container = document.querySelector('.particles');
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = Math.random() * 10 + 5 + 's';
+            p.style.animationDelay = Math.random() * 20 + 's';
+            container.appendChild(p);
+        }
+
+        class CosmicMinesweeper {
+            constructor() {
+                this.board = [];
+                this.rows = 9;
+                this.cols = 9;
+                this.mines = 10;
+                this.flagged = 0;
+                this.revealed = 0;
+                this.gameOver = false;
+                this.gameStarted = false;
+                this.startTime = null;
+                this.currentTime = 0;
+                this.timer = null;
+                this.firstClick = true;
+                this.difficulty = 'beginner';
+                this.boardType = 'random';
+                this.flagMode = 'normal';
+                this.theme = 'modern';
+
+                // Board sizing
+                this.cellSize = 28;
+                this.boardZoom = 1;
+
+                this.stats = this.loadStats();
+                this.currentStats = {
+                    startTime: null,
+                    endTime: null,
+                    clicks: 0,
+                    flags: 0
+                };
+
+                this.initializeControls();
+                this.setupBoardSizing();
+                this.newGame();
+            }
+
+            initializeControls() {
+                document.getElementById('difficulty').addEventListener('change', (e) => {
+                    this.difficulty = e.target.value;
+                    if (e.target.value === 'custom') {
+                        document.getElementById('custom-settings').classList.remove('hidden');
+                    } else {
+                        document.getElementById('custom-settings').classList.add('hidden');
+                        this.setDifficulty(e.target.value);
+                    }
+                });
+
+                document.getElementById('board-type').addEventListener('change', (e) => {
+                    this.boardType = e.target.value;
+                });
+
+                document.getElementById('flag-mode').addEventListener('change', (e) => {
+                    this.flagMode = e.target.value;
+                });
+
+                document.getElementById('theme').addEventListener('change', (e) => {
+                    this.theme = e.target.value;
+                    this.applyTheme();
+                });
+
+                // Board sizing controls
+                document.getElementById('cell-size').addEventListener('input', (e) => {
+                    this.cellSize = parseInt(e.target.value);
+                    document.getElementById('cell-size-value').textContent = this.cellSize + 'px';
+                    this.updateBoardSize();
+                });
+
+                document.getElementById('board-zoom').addEventListener('input', (e) => {
+                    this.boardZoom = parseFloat(e.target.value);
+                    document.getElementById('board-zoom-value').textContent = Math.round(this.boardZoom * 100) + '%';
+                    this.updateBoardSize();
+                });
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'n' || e.key === 'N') {
+                        this.newGame();
+                    } else if (e.key === 'p' || e.key === 'P') {
+                        this.togglePause();
+                    } else if (e.key === 'r' || e.key === 'R') {
+                        this.restartGame();
+                    }
+                });
+            }
+
+            setupBoardSizing() {
+                // Make board container resizable
+                const boardContainer = document.querySelector('.board-container');
+
+                // Add resize event listener
+                const resizeObserver = new ResizeObserver(() => {
+                    this.adjustBoardToContainer();
+                });
+                resizeObserver.observe(boardContainer);
+
+                // Initial size update
+                this.updateBoardSize();
+            }
+
+            updateBoardSize() {
+                const board = document.getElementById('board');
+                const cells = board.querySelectorAll('.cell');
+
+                const adjustedSize = this.cellSize * this.boardZoom;
+
+                cells.forEach(cell => {
+                    cell.style.width = adjustedSize + 'px';
+                    cell.style.height = adjustedSize + 'px';
+                    cell.style.fontSize = Math.max(10, adjustedSize * 0.4) + 'px';
+                });
+            }
+
+            adjustBoardToContainer() {
+                const container = document.querySelector('.board-container');
+                const board = document.getElementById('board');
+                const containerRect = container.getBoundingClientRect();
+
+                // Calculate optimal cell size based on container
+                const availableWidth = container.clientWidth - 40; // Subtract padding
+                const availableHeight = container.clientHeight - 40;
+
+                const optimalCellWidth = Math.floor(availableWidth / this.cols);
+                const optimalCellHeight = Math.floor(availableHeight / this.rows);
+
+                const optimalSize = Math.min(optimalCellWidth, optimalCellHeight, 40); // Max 40px
+
+                if (optimalSize >= 20) { // Min 20px
+                    this.cellSize = optimalSize;
+                    document.getElementById('cell-size').value = optimalSize;
+                    document.getElementById('cell-size-value').textContent = optimalSize + 'px';
+                    this.updateBoardSize();
+                }
+            }
+
+            setDifficulty(difficulty) {
+                const difficulties = {
+                    beginner: { rows: 9, cols: 9, mines: 10 },
+                    intermediate: { rows: 16, cols: 16, mines: 40 },
+                    expert: { rows: 16, cols: 30, mines: 99 }
+                };
+
+                const config = difficulties[difficulty];
+                this.rows = config.rows;
+                this.cols = config.cols;
+                this.mines = config.mines;
+            }
+
+            applyCustomSettings() {
+                const rows = parseInt(document.getElementById('custom-rows').value);
+                const cols = parseInt(document.getElementById('custom-cols').value);
+                const mines = parseInt(document.getElementById('custom-mines').value);
+
+                if (rows < 5 || rows > 50 || cols < 5 || cols > 50) {
+                    alert('Board dimensions must be between 5x5 and 50x50');
+                    return;
+                }
+
+                const maxMines = (rows * cols) - 1;
+                if (mines < 1 || mines > maxMines) {
+                    alert(`Number of mines must be between 1 and ${maxMines}`);
+                    return;
+                }
+
+                this.rows = rows;
+                this.cols = cols;
+                this.mines = mines;
+                this.newGame();
+            }
+
+            newGame() {
+                this.gameOver = false;
+                this.gameStarted = false;
+                this.firstClick = true;
+                this.flagged = 0;
+                this.revealed = 0;
+                this.startTime = null;
+                this.currentTime = 0;
+                this.currentStats = {
+                    startTime: null,
+                    endTime: null,
+                    clicks: 0,
+                    flags: 0
+                };
+
+                if (this.timer) {
+                    clearInterval(this.timer);
+                }
+
+                this.createBoard();
+                this.renderBoard();
+                this.updateDisplay();
+                this.updateStats();
+            }
+
+            createBoard() {
+                this.board = [];
+                for (let i = 0; i < this.rows; i++) {
+                    this.board[i] = [];
+                    for (let j = 0; j < this.cols; j++) {
+                        this.board[i][j] = {
+                            isMine: false,
+                            revealed: false,
+                            flagged: false,
+                            questioned: false,
+                            neighborMines: 0
+                        };
+                    }
+                }
+            }
+
+            placeMines(excludeRow, excludeCol) {
+                let minesPlaced = 0;
+                const excludeCells = new Set();
+
+                if (this.boardType === 'safe-first' && excludeRow !== undefined) {
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            const newRow = excludeRow + dr;
+                            const newCol = excludeCol + dc;
+                            if (newRow >= 0 && newRow < this.rows && newCol >= 0 && newCol < this.cols) {
+                                excludeCells.add(`${newRow},${newCol}`);
+                            }
+                        }
+                    }
+                }
+
+                while (minesPlaced < this.mines) {
+                    const row = Math.floor(Math.random() * this.rows);
+                    const col = Math.floor(Math.random() * this.cols);
+
+                    if (!this.board[row][col].isMine && !excludeCells.has(`${row},${col}`)) {
+                        this.board[row][col].isMine = true;
+                        minesPlaced++;
+                    }
+                }
+
+                this.calculateNeighborMines();
+            }
+
+            calculateNeighborMines() {
+                for (let i = 0; i < this.rows; i++) {
+                    for (let j = 0; j < this.cols; j++) {
+                        if (!this.board[i][j].isMine) {
+                            let count = 0;
+                            for (let di = -1; di <= 1; di++) {
+                                for (let dj = -1; dj <= 1; dj++) {
+                                    const ni = i + di;
+                                    const nj = j + dj;
+                                    if (ni >= 0 && ni < this.rows && nj >= 0 && nj < this.cols && this.board[ni][nj].isMine) {
+                                        count++;
+                                    }
+                                }
+                            }
+                            this.board[i][j].neighborMines = count;
+                        }
+                    }
+                }
+            }
+
+            renderBoard() {
+                const boardElement = document.getElementById('board');
+                boardElement.innerHTML = '';
+                boardElement.style.gridTemplateColumns = `repeat(${this.cols}, 1fr)`;
+                boardElement.style.gridTemplateRows = `repeat(${this.rows}, 1fr)`;
+
+                for (let i = 0; i < this.rows; i++) {
+                    for (let j = 0; j < this.cols; j++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.dataset.row = i;
+                        cell.dataset.col = j;
+
+                        this.updateCellDisplay(cell, this.board[i][j]);
+
+                        cell.addEventListener('click', (e) => this.handleCellClick(e, i, j));
+                        cell.addEventListener('contextmenu', (e) => this.handleRightClick(e, i, j));
+                        cell.addEventListener('mousedown', (e) => this.handleMouseDown(e, i, j));
+
+                        boardElement.appendChild(cell);
+                    }
+                }
+
+                this.updateBoardSize();
+            }
+
+            updateCellDisplay(cell, cellData) {
+                cell.className = 'cell';
+
+                if (cellData.revealed) {
+                    cell.classList.add('revealed');
+                    if (cellData.isMine) {
+                        cell.classList.add('mine');
+                        cell.textContent = '💣';
+                    } else if (cellData.neighborMines > 0) {
+                        cell.classList.add(`number-${cellData.neighborMines}`);
+                        cell.textContent = cellData.neighborMines;
+                    }
+                } else if (cellData.flagged) {
+                    cell.classList.add('flagged');
+                    cell.textContent = this.flagMode === 'swap' ? '🚩' : '🚩';
+                } else if (cellData.questioned && this.flagMode === 'question') {
+                    cell.classList.add('question');
+                    cell.textContent = '❓';
+                }
+            }
+
+            handleCellClick(e, row, col) {
+                e.preventDefault();
+                if (this.gameOver) return;
+
+                this.currentStats.clicks++;
+
+                if (!this.gameStarted) {
+                    this.startGame(row, col);
+                }
+
+                if (this.board[row][col].flagged || this.board[row][col].revealed) return;
+
+                if (this.flagMode === 'swap') {
+                    this.toggleFlag(row, col);
+                } else {
+                    this.revealCell(row, col);
+                }
+            }
+
+            handleRightClick(e, row, col) {
+                e.preventDefault();
+                if (this.gameOver || this.board[row][col].revealed) return;
+
+                if (this.flagMode === 'swap') {
+                    this.revealCell(row, col);
+                } else {
+                    this.toggleFlag(row, col);
+                }
+            }
+
+            handleMouseDown(e, row, col) {
+                if (e.button === 1) { // Middle mouse button
+                    e.preventDefault();
+                    this.chord(row, col);
+                }
+            }
+
+            startGame(firstRow, firstCol) {
+                this.gameStarted = true;
+                this.startTime = Date.now();
+                this.currentStats.startTime = this.startTime;
+
+                this.placeMines(firstRow, firstCol);
+                this.revealCell(firstRow, firstCol);
+
+                this.timer = setInterval(() => {
+                    this.currentTime = Math.floor((Date.now() - this.startTime) / 1000);
+                    document.getElementById('timer').textContent = this.currentTime.toString().padStart(3, '0');
+                }, 1000);
+            }
+
+            revealCell(row, col) {
+                if (row < 0 || row >= this.rows || col < 0 || col >= this.cols) return;
+                if (this.board[row][col].revealed || this.board[row][col].flagged) return;
+
+                this.board[row][col].revealed = true;
+                this.revealed++;
+
+                const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                this.updateCellDisplay(cell, this.board[row][col]);
+
+                if (this.board[row][col].isMine) {
+                    this.endGame(false);
+                    return;
+                }
+
+                if (this.board[row][col].neighborMines === 0) {
+                    for (let di = -1; di <= 1; di++) {
+                        for (let dj = -1; dj <= 1; dj++) {
+                            this.revealCell(row + di, col + dj);
+                        }
+                    }
+                }
+
+                this.checkWin();
+            }
+
+            toggleFlag(row, col) {
+                const cell = this.board[row][col];
+
+                if (this.flagMode === 'question') {
+                    if (!cell.flagged && !cell.questioned) {
+                        cell.flagged = true;
+                        this.flagged++;
+                        this.currentStats.flags++;
+                    } else if (cell.flagged) {
+                        cell.flagged = false;
+                        cell.questioned = true;
+                        this.flagged--;
+                    } else if (cell.questioned) {
+                        cell.questioned = false;
+                    }
+                } else {
+                    cell.flagged = !cell.flagged;
+                    this.flagged += cell.flagged ? 1 : -1;
+                    if (cell.flagged) this.currentStats.flags++;
+                }
+
+                const cellElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                this.updateCellDisplay(cellElement, cell);
+                this.updateDisplay();
+            }
+
+            chord(row, col) {
+                if (!this.board[row][col].revealed || this.board[row][col].neighborMines === 0) return;
+
+                let flaggedNeighbors = 0;
+                const neighbors = [];
+
+                for (let di = -1; di <= 1; di++) {
+                    for (let dj = -1; dj <= 1; dj++) {
+                        const ni = row + di;
+                        const nj = col + dj;
+                        if (ni >= 0 && ni < this.rows && nj >= 0 && nj < this.cols) {
+                            neighbors.push([ni, nj]);
+                            if (this.board[ni][nj].flagged) flaggedNeighbors++;
+                        }
+                    }
+                }
+
+                if (flaggedNeighbors === this.board[row][col].neighborMines) {
+                    neighbors.forEach(([ni, nj]) => {
+                        if (!this.board[ni][nj].flagged && !this.board[ni][nj].revealed) {
+                            this.revealCell(ni, nj);
+                        }
+                    });
+                }
+            }
+
+            checkWin() {
+                if (this.revealed === (this.rows * this.cols) - this.mines) {
+                    this.endGame(true);
+                }
+            }
+
+            endGame(won) {
+                this.gameOver = true;
+                this.currentStats.endTime = Date.now();
+
+                if (this.timer) {
+                    clearInterval(this.timer);
+                }
+
+                // Reveal all mines with enhanced animation
+                for (let i = 0; i < this.rows; i++) {
+                    for (let j = 0; j < this.cols; j++) {
+                        if (this.board[i][j].isMine && !this.board[i][j].flagged) {
+                            this.board[i][j].revealed = true;
+                            const cell = document.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+                            this.updateCellDisplay(cell, this.board[i][j]);
+
+                            // Add winning animation for winning cells
+                            if (won) {
+                                cell.classList.add('winning');
+                            }
+                        }
+                    }
+                }
+
+                this.updateStats(won);
+                this.showGameOver(won);
+            }
+
+            showGameOver(won) {
+                const gameOverElement = document.getElementById('game-over');
+                const resultElement = document.getElementById('game-result');
+                const statsElement = document.getElementById('game-stats');
+
+                resultElement.textContent = won ? '🎉 Cosmic Victory!' : '💥 Space Explosion!';
+                resultElement.className = won ? 'win' : 'lose';
+
+                const time = this.currentTime;
+                const clicks = this.currentStats.clicks;
+                const flags = this.currentStats.flags;
+
+                statsElement.innerHTML = `
+                    <p>Time: ${time} seconds</p>
+                    <p>Clicks: ${clicks}</p>
+                    <p>Flags used: ${flags}</p>
+                    <p>Efficiency: ${won ? Math.round((this.mines / flags) * 100) : 0}%</p>
+                `;
+
+                gameOverElement.classList.remove('hidden');
+            }
+
+            closeGameOver() {
+                document.getElementById('game-over').classList.add('hidden');
+            }
+
+            updateDisplay() {
+                document.getElementById('mine-count').textContent = this.mines - this.flagged;
+                document.getElementById('timer').textContent = this.currentTime.toString().padStart(3, '0');
+            }
+
+            updateStats(won) {
+                const difficulty = this.difficulty;
+                if (!this.stats[difficulty]) {
+                    this.stats[difficulty] = {
+                        gamesPlayed: 0,
+                        gamesWon: 0,
+                        bestTime: null,
+                        totalTime: 0
+                    };
+                }
+
+                this.stats[difficulty].gamesPlayed++;
+                if (won) {
+                    this.stats[difficulty].gamesWon++;
+                    if (!this.stats[difficulty].bestTime || this.currentTime < this.stats[difficulty].bestTime) {
+                        this.stats[difficulty].bestTime = this.currentTime;
+                    }
+                }
+                this.stats[difficulty].totalTime += this.currentTime;
+
+                this.saveStats();
+                this.displayStats();
+            }
+
+            displayStats() {
+                const difficulty = this.difficulty;
+                const stats = this.stats[difficulty] || { gamesPlayed: 0, gamesWon: 0, bestTime: null, totalTime: 0 };
+
+                document.getElementById('games-played').textContent = stats.gamesPlayed;
+                document.getElementById('games-won').textContent = stats.gamesWon;
+                document.getElementById('total-time').textContent = stats.totalTime;
+                document.getElementById('best-time').textContent = stats.bestTime ? stats.bestTime + 's' : '--';
+
+                const winRate = stats.gamesPlayed > 0 ? Math.round((stats.gamesWon / stats.gamesPlayed) * 100) : 0;
+                document.getElementById('win-rate').textContent = winRate + '%';
+
+                let bestStreak = 0;
+                Object.values(this.stats).forEach(stat => {
+                    if (stat.gamesWon > bestStreak) {
+                        bestStreak = stat.gamesWon;
+                    }
+                });
+                document.getElementById('best-streak').textContent = bestStreak;
+            }
+
+            loadStats() {
+                try {
+                    const saved = localStorage.getItem('cosmic-minesweeper-stats');
+                    return saved ? JSON.parse(saved) : {};
+                } catch (e) {
+                    return {};
+                }
+            }
+
+            saveStats() {
+                try {
+                    localStorage.setItem('cosmic-minesweeper-stats', JSON.stringify(this.stats));
+                } catch (e) {
+                    console.log('Could not save stats');
+                }
+            }
+
+            togglePause() {
+                if (this.gameOver) return;
+
+                if (this.timer) {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                    alert('Game Paused - Press OK to continue');
+                    this.timer = setInterval(() => {
+                        this.currentTime = Math.floor((Date.now() - this.startTime) / 1000);
+                        document.getElementById('timer').textContent = this.currentTime.toString().padStart(3, '0');
+                    }, 1000);
+                }
+            }
+
+            restartGame() {
+                this.newGame();
+            }
+
+            applyTheme() {
+                document.body.className = this.theme;
+            }
+        }
+
+        // Initialize game with new name
+        let game;
+        window.addEventListener('load', () => {
+            game = new CosmicMinesweeper();
+        });
+
+        // Prevent context menu on game board
+        document.addEventListener('contextmenu', (e) => {
+            if (e.target.classList.contains('cell')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+
+</html>

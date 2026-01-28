@@ -1,0 +1,1580 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Clicker - IAmDrCat.com</title>
+
+    <div id="nav"></div>
+<script>
+fetch("/navbar.html")
+  .then(r => r.text())
+  .then(t => document.getElementById("nav").innerHTML = t);
+</script>
+
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5658369692346701 "
+     crossorigin="anonymous"></script>
+
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a, #0f3460);
+            color: #fff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Particles Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #a0a0e0;
+            border-radius: 50%;
+            animation: float 10s infinite;
+            opacity: 0.8;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Header/Nav */
+        header {
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-weight: bold;
+            color: #8b5cf6;
+        }
+        
+        .logo a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .nav-links li {
+            margin: 0;
+        }
+        
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+        
+        .nav-links a:hover, .nav-links a:focus {
+            color: #8b5cf6;
+            outline: 2px solid rgba(139, 92, 246, 0.5);
+            outline-offset: 2px;
+        }
+
+        /* Game Container */
+        .game-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 1200px;
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        h1 {
+            text-align: center;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            font-size: clamp(2rem, 6vw, 3rem);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
+            }
+            to {
+                filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
+            }
+        }
+
+        /* Stats Display */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: bold;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: #a0a0b0;
+            font-size: 0.9em;
+        }
+
+        /* Main Game Area */
+        .main-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .clicker-area {
+            text-align: center;
+        }
+
+        .Furry-character {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            border: 3px solid #8b5cf6;
+            position: relative;
+            user-select: none;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6em;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .Furry-character:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .Furry-character:active {
+            transform: scale(0.95);
+        }
+
+        .click-effect {
+            position: absolute;
+            color: #06b6d4;
+            font-weight: bold;
+            font-size: 1.5em;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+        }
+
+        /* Upgrades Section */
+        .upgrades {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+        }
+
+        .upgrades h3 {
+            color: #8b5cf6;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .upgrade {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upgrade:hover {
+            background: rgba(139, 92, 246, 0.1);
+            transform: translateX(5px);
+            border-color: #8b5cf6;
+        }
+
+        .upgrade.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .upgrade.disabled:hover {
+            transform: none;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .upgrade-info {
+            flex: 1;
+        }
+
+        .upgrade-name {
+            font-weight: bold;
+            color: #06b6d4;
+            margin-bottom: 5px;
+        }
+
+        .upgrade-description {
+            font-size: 0.8em;
+            color: #a0a0b0;
+        }
+
+        .upgrade-cost {
+            font-weight: bold;
+            color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+            padding: 8px 12px;
+            border-radius: 15px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        /* Achievements */
+        .achievements {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .achievements h3 {
+            color: #8b5cf6;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .achievement {
+            display: inline-block;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin: 5px;
+            font-size: 0.8em;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #a0a0b0;
+        }
+
+        .achievement.unlocked {
+            background: rgba(6, 182, 212, 0.2);
+            border-color: #06b6d4;
+            color: #06b6d4;
+        }
+
+        /* Progression Systems */
+        .progression-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .progression-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+        }
+
+        .progression-card h3 {
+            color: #8b5cf6;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* Skill Tree */
+        .skill-tree {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .skill-node {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .skill-node:hover {
+            border-color: #8b5cf6;
+            transform: scale(1.05);
+        }
+
+        .skill-node.unlocked {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+        }
+
+        .skill-node.locked {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .skill-name {
+            font-weight: bold;
+            color: #06b6d4;
+            font-size: 0.9em;
+        }
+
+        .skill-cost {
+            color: #8b5cf6;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            height: 20px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        /* Research Tree */
+        .research-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .research-item:hover {
+            background: rgba(6, 182, 212, 0.1);
+            border-color: #06b6d4;
+        }
+
+        .research-item.completed {
+            background: rgba(6, 182, 212, 0.2);
+            border-color: #06b6d4;
+        }
+
+        .research-item.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .research-name {
+            font-weight: bold;
+            color: #06b6d4;
+            margin-bottom: 5px;
+        }
+
+        .research-description {
+            font-size: 0.8em;
+            color: #a0a0b0;
+            margin-bottom: 5px;
+        }
+
+        .research-cost {
+            color: #8b5cf6;
+            font-size: 0.8em;
+        }
+
+        /* Prestige Section */
+        .prestige-section {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 140, 0, 0.1));
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .prestige-section h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .prestige-button {
+            background: linear-gradient(45deg, #ffd700, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .prestige-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .prestige-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .multiplier-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        /* Game Controls */
+        .game-controls {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn.danger {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+        }
+
+        .btn.danger:hover {
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        #save-status {
+            margin-top: 10px;
+            color: #06b6d4;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 10;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            text-align: center;
+            color: #a0a0b0;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .main-area {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .Furry-character {
+                width: 150px;
+                height: 150px;
+                font-size: 4em;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .progression-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .skill-tree {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .nav-links {
+                justify-content: center;
+            }
+            
+            .game-container {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        *:focus {
+            outline: 2px solid rgba(139, 92, 246, 0.7);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+    
+    <header>
+
+    </header>
+
+    <div class="game-container">
+        <h1>✨ Cosmic Clicker ✨</h1>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="energy-count">0</div>
+                <div class="stat-label">Energy</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="energy-per-second">0</div>
+                <div class="stat-label">Energy/sec</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="total-clicks">0</div>
+                <div class="stat-label">Total Clicks</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="ascension-level">0</div>
+                <div class="stat-label">Ascension</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="skill-points">0</div>
+                <div class="stat-label">Skill Points</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="research-points">0</div>
+                <div class="stat-label">Research</div>
+            </div>
+        </div>
+
+        <div class="main-area">
+            <div class="clicker-area">
+                <div class="Furry-character" id="main-character">
+                    🐱
+                </div>
+                <p style="color: #a0a0b0; margin-top: 15px;">Click the cosmic core to generate energy!</p>
+            </div>
+
+            <div class="upgrades">
+                <h3>⚡ Power Upgrades</h3>
+                <div class="upgrade" id="upgrade-click">
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">Enhanced Focus</div>
+                        <div class="upgrade-description">+1 energy per click</div>
+                    </div>
+                    <div class="upgrade-cost">15 energy</div>
+                </div>
+                
+                <div class="upgrade" id="upgrade-auto1">
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">Energy Generator</div>
+                        <div class="upgrade-description">+1 energy per second</div>
+                    </div>
+                    <div class="upgrade-cost">75 energy</div>
+                </div>
+                
+                <div class="upgrade" id="upgrade-auto2">
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">Power Amplifier</div>
+                        <div class="upgrade-description">+5 energy per second</div>
+                    </div>
+                    <div class="upgrade-cost">300 energy</div>
+                </div>
+                
+                <div class="upgrade" id="upgrade-auto3">
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">Energy Core</div>
+                        <div class="upgrade-description">+15 energy per second</div>
+                    </div>
+                    <div class="upgrade-cost">1500 energy</div>
+                </div>
+                
+                <div class="upgrade" id="upgrade-mega">
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">Quantum Engine</div>
+                        <div class="upgrade-description">+50 energy per second</div>
+                    </div>
+                    <div class="upgrade-cost">7500 energy</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="achievements">
+            <h3>🏆 Achievements</h3>
+            <div class="achievement" id="achievement-first">First Click</div>
+            <div class="achievement" id="achievement-100">Energy Collector</div>
+            <div class="achievement" id="achievement-1000">Power User</div>
+            <div class="achievement" id="achievement-clicker">Speed Demon</div>
+            <div class="achievement" id="achievement-idle">Automation Master</div>
+            <div class="achievement" id="achievement-ascended">Ascended Being</div>
+            <div class="achievement" id="achievement-researcher">Research Pioneer</div>
+        </div>
+
+        <!-- Progression Systems -->
+        <div class="progression-grid">
+            <!-- Skill Tree -->
+            <div class="progression-card">
+                <h3>🌟 Skills</h3>
+                <div class="skill-tree">
+                    <div class="skill-node unlocked" id="skill-efficiency">
+                        <div class="skill-name">Efficiency</div>
+                        <div class="skill-cost">5 SP</div>
+                    </div>
+                    <div class="skill-node locked" id="skill-power">
+                        <div class="skill-name">Power Boost</div>
+                        <div class="skill-cost">10 SP</div>
+                    </div>
+                    <div class="skill-node locked" id="skill-automation">
+                        <div class="skill-name">Automation</div>
+                        <div class="skill-cost">15 SP</div>
+                    </div>
+                    <div class="skill-node locked" id="skill-synergy">
+                        <div class="skill-name">Synergy</div>
+                        <div class="skill-cost">20 SP</div>
+                    </div>
+                    <div class="skill-node locked" id="skill-mastery">
+                        <div class="skill-name">Mastery</div>
+                        <div class="skill-cost">25 SP</div>
+                    </div>
+                    <div class="skill-node locked" id="skill-transcendence">
+                        <div class="skill-name">Transcendence</div>
+                        <div class="skill-cost">50 SP</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Research Tree -->
+            <div class="progression-card">
+                <h3>🔬 Research</h3>
+                <div class="research-tree">
+                    <div class="research-item" id="research-basic">
+                        <div class="research-name">Basic Theory</div>
+                        <div class="research-description">Unlocks advanced upgrades</div>
+                        <div class="research-cost">100 RP</div>
+                    </div>
+                    <div class="research-item locked" id="research-advanced">
+                        <div class="research-name">Advanced Physics</div>
+                        <div class="research-description">+25% energy generation</div>
+                        <div class="research-cost">500 RP</div>
+                    </div>
+                    <div class="research-item locked" id="research-quantum">
+                        <div class="research-name">Quantum Mechanics</div>
+                        <div class="research-description">Unlocks quantum upgrades</div>
+                        <div class="research-cost">2000 RP</div>
+                    </div>
+                    <div class="research-item locked" id="research-dimensional">
+                        <div class="research-name">Dimensional Theory</div>
+                        <div class="research-description">+100% click power</div>
+                        <div class="research-cost">10000 RP</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Level -->
+        <div class="progression-card">
+            <h3>📊 Player Level: <span id="player-level">1</span></h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="xp-progress" style="width: 0%"></div>
+            </div>
+            <p style="color: #a0a0b0;"><span id="current-xp">0</span> / <span id="needed-xp">100</span> XP</p>
+            <p style="color: #8b5cf6;">Next Level: +<span id="next-reward">10</span>% efficiency</p>
+        </div>
+
+        <!-- Ascension System -->
+        <div class="prestige-section" id="ascension-section" style="display: none;">
+            <h3>✨ Ascension System</h3>
+            <p style="color: #a0a0b0;">Transcend your current form for permanent bonuses!</p>
+            <div class="multiplier-display">
+                Current Multiplier: <span id="ascension-multiplier">1.0</span>x
+            </div>
+            <p style="color: #a0a0b0;">Ascending will give you +<span id="ascension-gain">0</span> ascension levels</p>
+            <button class="prestige-button" id="ascension-btn" disabled>
+                🌟 ASCEND 🌟
+            </button>
+        </div>
+
+        <!-- Save/Load Controls -->
+        <div class="game-controls">
+            <button class="btn" onclick="game.saveGame()">💾 Save Game</button>
+            <button class="btn danger" onclick="if(confirm('Are you sure you want to reset all progress?')) game.resetGame()">🗑️ Reset Game</button>
+            <div id="save-status"></div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 IAmDrCat.com
+    </footer>
+
+    <script>
+        // Particles with staggered timing
+        const container = document.querySelector('.particles');
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = Math.random() * 10 + 5 + 's';
+            p.style.animationDelay = Math.random() * 20 + 's';
+            container.appendChild(p);
+        }
+
+        class CosmicClicker {
+            constructor() {
+                // Base stats
+                this.energy = 0;
+                this.energyPerClick = 1;
+                this.energyPerSecond = 0;
+                this.totalClicks = 0;
+                
+                // Progression systems
+                this.playerLevel = 1;
+                this.currentXP = 0;
+                this.ascensionLevel = 0;
+                this.ascensionMultiplier = 1.0;
+                this.skillPoints = 0;
+                this.researchPoints = 0;
+                
+                // Skills system
+                this.skills = {
+                    efficiency: { level: 0, maxLevel: 10, cost: 5 },
+                    power: { level: 0, maxLevel: 10, cost: 10, requires: ['efficiency'] },
+                    automation: { level: 0, maxLevel: 5, cost: 15, requires: ['power'] },
+                    synergy: { level: 0, maxLevel: 5, cost: 20, requires: ['automation'] },
+                    mastery: { level: 0, maxLevel: 3, cost: 25, requires: ['synergy'] },
+                    transcendence: { level: 0, maxLevel: 1, cost: 50, requires: ['mastery'] }
+                };
+                
+                // Research system
+                this.research = {
+                    basic: { completed: false, cost: 100, unlocked: true },
+                    advanced: { completed: false, cost: 500, unlocked: false, requires: ['basic'] },
+                    quantum: { completed: false, cost: 2000, unlocked: false, requires: ['advanced'] },
+                    dimensional: { completed: false, cost: 10000, unlocked: false, requires: ['quantum'] }
+                };
+                
+                this.upgrades = {
+                    click: { cost: 15, purchased: 0 },
+                    auto1: { cost: 75, purchased: 0 },
+                    auto2: { cost: 300, purchased: 0 },
+                    auto3: { cost: 1500, purchased: 0 },
+                    mega: { cost: 7500, purchased: 0 }
+                };
+                
+                this.achievements = {
+                    first: false,
+                    hundred: false,
+                    thousand: false,
+                    clicker: false,
+                    idle: false,
+                    ascended: false,
+                    researcher: false
+                };
+                
+                // Character system
+                this.Furrys = ['🐱', '🐶', '🐰', '🐻', '🦊', '🐼', '🐨', '🐯', '🦁', '🐸'];
+                this.currentFurryIndex = 0;
+                
+                this.FurryImages = [
+                    'Furry1.png', 'Furry2.png', 'Furry3.png', 'Furry4.png',
+                    'Furry5.png', 'Furry6.png', 'Furry7.png', 'Furry8.png',
+                    'Furry9.png', 'Furry10.png'
+                ];
+                this.imagesLoaded = false;
+                
+                this.saveData = null;
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.preloadImages();
+                this.loadGame();
+                this.startGameLoop();
+                this.startAutoSave();
+                this.updateDisplay();
+                this.updateProgressionDisplays();
+            }
+
+            initializeElements() {
+                this.energyElement = document.getElementById('energy-count');
+                this.energyPerSecondElement = document.getElementById('energy-per-second');
+                this.totalClicksElement = document.getElementById('total-clicks');
+                this.ascensionLevelElement = document.getElementById('ascension-level');
+                this.skillPointsElement = document.getElementById('skill-points');
+                this.researchPointsElement = document.getElementById('research-points');
+                this.mainCharacter = document.getElementById('main-character');
+                
+                this.playerLevelElement = document.getElementById('player-level');
+                this.currentXPElement = document.getElementById('current-xp');
+                this.neededXPElement = document.getElementById('needed-xp');
+                this.xpProgressElement = document.getElementById('xp-progress');
+                this.nextRewardElement = document.getElementById('next-reward');
+                this.ascensionMultiplierElement = document.getElementById('ascension-multiplier');
+                this.ascensionGainElement = document.getElementById('ascension-gain');
+                this.ascensionButton = document.getElementById('ascension-btn');
+                this.ascensionSection = document.getElementById('ascension-section');
+                
+                this.upgradeElements = {
+                    click: document.getElementById('upgrade-click'),
+                    auto1: document.getElementById('upgrade-auto1'),
+                    auto2: document.getElementById('upgrade-auto2'),
+                    auto3: document.getElementById('upgrade-auto3'),
+                    mega: document.getElementById('upgrade-mega')
+                };
+            }
+
+            bindEvents() {
+                this.mainCharacter.addEventListener('click', (e) => this.clickFurry(e));
+                
+                Object.keys(this.upgradeElements).forEach(key => {
+                    this.upgradeElements[key].addEventListener('click', () => this.buyUpgrade(key));
+                });
+                
+                this.ascensionButton.addEventListener('click', () => this.doAscension());
+                
+                // Skill tree events
+                Object.keys(this.skills).forEach(skill => {
+                    const element = document.getElementById(`skill-${skill}`);
+                    if (element) {
+                        element.addEventListener('click', () => this.upgradeSkill(skill));
+                    }
+                });
+                
+                // Research events
+                Object.keys(this.research).forEach(research => {
+                    const element = document.getElementById(`research-${research}`);
+                    if (element) {
+                        element.addEventListener('click', () => this.completeResearch(research));
+                    }
+                });
+            }
+
+            preloadImages() {
+                let loadedCount = 0;
+                this.FurryImages.forEach((src, index) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        loadedCount++;
+                        if (loadedCount === this.FurryImages.length) {
+                            this.imagesLoaded = true;
+                            this.updateCharacterDisplay();
+                        }
+                    };
+                    img.onerror = () => {
+                        console.log(`Failed to load image: ${src}`);
+                    };
+                    img.src = src;
+                });
+            }
+
+            updateCharacterDisplay() {
+                if (this.imagesLoaded) {
+                    this.mainCharacter.style.backgroundImage = `url('${this.FurryImages[this.currentFurryIndex]}')`;
+                    this.mainCharacter.textContent = '';
+                } else {
+                    this.mainCharacter.style.backgroundImage = 'none';
+                    this.mainCharacter.textContent = this.Furrys[this.currentFurryIndex];
+                }
+            }
+
+            // Progression calculations
+            getNeededXP() {
+                return this.playerLevel * 100;
+            }
+
+            getLevelMultiplier() {
+                return 1 + (this.playerLevel - 1) * 0.1;
+            }
+
+            getSkillMultiplier() {
+                let multiplier = 1;
+                multiplier += this.skills.efficiency.level * 0.15;
+                multiplier += this.skills.power.level * 0.25;
+                multiplier += this.skills.mastery.level * 0.5;
+                return multiplier;
+            }
+
+            getResearchMultiplier() {
+                let multiplier = 1;
+                if (this.research.advanced.completed) multiplier *= 1.25;
+                if (this.research.dimensional.completed) multiplier *= 2.0;
+                return multiplier;
+            }
+
+            // Skill system
+            upgradeSkill(skillName) {
+                const skill = this.skills[skillName];
+                if (!skill || skill.level >= skill.maxLevel) return;
+                
+                // Check if skill is unlocked
+                if (skill.requires) {
+                    const canUnlock = skill.requires.every(req => this.skills[req].level > 0);
+                    if (!canUnlock) return;
+                }
+                
+                const cost = skill.cost + (skill.level * 5);
+                if (this.skillPoints >= cost) {
+                    this.skillPoints -= cost;
+                    skill.level++;
+                    this.updateProgressionDisplays();
+                    this.updateDisplay();
+                }
+            }
+
+            // Research system
+            completeResearch(researchName) {
+                const research = this.research[researchName];
+                if (!research || research.completed || !research.unlocked) return;
+                
+                if (this.researchPoints >= research.cost) {
+                    this.researchPoints -= research.cost;
+                    research.completed = true;
+                    
+                    // Unlock next research
+                    Object.keys(this.research).forEach(key => {
+                        const r = this.research[key];
+                        if (r.requires && r.requires.includes(researchName)) {
+                            r.unlocked = true;
+                        }
+                    });
+                    
+                    this.updateProgressionDisplays();
+                    this.updateDisplay();
+                }
+            }
+
+            checkLevelUp() {
+                const neededXP = this.getNeededXP();
+                if (this.currentXP >= neededXP) {
+                    this.currentXP -= neededXP;
+                    this.playerLevel++;
+                    this.skillPoints += 2; // Gain skill points on level up
+                    this.createLevelUpEffect();
+                }
+            }
+
+            createLevelUpEffect() {
+                const effect = document.createElement('div');
+                effect.className = 'click-effect';
+                effect.textContent = `LEVEL UP! +2 SP`;
+                effect.style.fontSize = '2em';
+                effect.style.color = '#8b5cf6';
+                
+                this.mainCharacter.appendChild(effect);
+                
+                setTimeout(() => {
+                    if (effect.parentNode) {
+                        effect.parentNode.removeChild(effect);
+                    }
+                }, 1500);
+            }
+
+            checkMilestones() {
+                if (this.energy >= 100000 && !this.ascensionSection.style.display) {
+                    this.ascensionSection.style.display = 'block';
+                }
+            }
+
+            calculateAscensionGain() {
+                if (this.energy < 100000) return 0;
+                return Math.floor(Math.sqrt(this.energy / 100000));
+            }
+
+            doAscension() {
+                const ascensionGain = this.calculateAscensionGain();
+                if (ascensionGain > 0) {
+                    this.ascensionLevel += ascensionGain;
+                    this.ascensionMultiplier = 1 + (this.ascensionLevel * 0.5);
+                    
+                    // Reset progress but keep some things
+                    this.energy = 0;
+                    this.energyPerClick = 1;
+                    this.energyPerSecond = 0;
+                    this.playerLevel = 1;
+                    this.currentXP = 0;
+                    this.skillPoints = this.ascensionLevel * 5; // Bonus skill points
+                    
+                    // Reset upgrades
+                    Object.keys(this.upgrades).forEach(key => {
+                        this.upgrades[key].purchased = 0;
+                        this.upgrades[key].cost = this.getBaseUpgradeCost(key);
+                    });
+                    
+                    // Keep skills and research
+                    this.updateDisplay();
+                    this.updateAllUpgradeDisplays();
+                    this.updateProgressionDisplays();
+                    
+                    // Mark ascension achievement
+                    if (!this.achievements.ascended) {
+                        this.achievements.ascended = true;
+                        this.unlockAchievement('achievement-ascended');
+                    }
+                }
+            }
+
+            getBaseUpgradeCost(type) {
+                const baseCosts = {
+                    click: 15,
+                    auto1: 75,
+                    auto2: 300,
+                    auto3: 1500,
+                    mega: 7500
+                };
+                return baseCosts[type];
+            }
+
+            clickFurry(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Calculate energy gain with all multipliers
+                const baseEnergy = this.energyPerClick;
+                const levelBonus = this.getLevelMultiplier();
+                const skillBonus = this.getSkillMultiplier();
+                const ascensionBonus = this.ascensionMultiplier;
+                const researchBonus = this.getResearchMultiplier();
+                
+                const actualEnergyGain = Math.floor(baseEnergy * levelBonus * skillBonus * ascensionBonus * researchBonus);
+                
+                this.energy += actualEnergyGain;
+                this.totalClicks++;
+                this.currentXP += 1;
+                this.researchPoints += Math.max(1, Math.floor(actualEnergyGain / 10));
+                
+                this.createClickEffect(e, actualEnergyGain);
+                
+                // Change Furry occasionally
+                if (Math.random() < 0.08) {
+                    this.changeFurry();
+                }
+                
+                this.checkLevelUp();
+                this.checkMilestones();
+                this.checkAchievements();
+                this.updateDisplay();
+            }
+
+            createClickEffect(e, energyAmount = null) {
+                const effect = document.createElement('div');
+                effect.className = 'click-effect';
+                effect.textContent = `+${energyAmount || this.energyPerClick}`;
+                
+                const x = (Math.random() - 0.5) * 100;
+                const y = (Math.random() - 0.5) * 100;
+                
+                effect.style.left = '50%';
+                effect.style.top = '50%';
+                effect.style.transform = `translate(${x}px, ${y}px)`;
+                effect.style.color = energyAmount > 50 ? '#06b6d4' : '#8b5cf6';
+                effect.style.fontSize = energyAmount > 100 ? '2em' : '1.5em';
+                
+                this.mainCharacter.appendChild(effect);
+                
+                setTimeout(() => {
+                    if (effect.parentNode) {
+                        effect.parentNode.removeChild(effect);
+                    }
+                }, 1000);
+            }
+
+            changeFurry() {
+                this.currentFurryIndex = (this.currentFurryIndex + 1) % this.Furrys.length;
+                
+                this.mainCharacter.style.transform = 'scale(0.8) rotate(360deg)';
+                
+                setTimeout(() => {
+                    this.updateCharacterDisplay();
+                    this.mainCharacter.style.transform = '';
+                }, 150);
+            }
+
+            buyUpgrade(type) {
+                const upgrade = this.upgrades[type];
+                if (this.energy >= upgrade.cost) {
+                    this.energy -= upgrade.cost;
+                    upgrade.purchased++;
+                    
+                    switch(type) {
+                        case 'click':
+                            this.energyPerClick += 1;
+                            upgrade.cost = Math.floor(upgrade.cost * 1.5);
+                            break;
+                        case 'auto1':
+                            this.energyPerSecond += 1;
+                            upgrade.cost = Math.floor(upgrade.cost * 1.3);
+                            break;
+                        case 'auto2':
+                            this.energyPerSecond += 5;
+                            upgrade.cost = Math.floor(upgrade.cost * 1.3);
+                            break;
+                        case 'auto3':
+                            this.energyPerSecond += 15;
+                            upgrade.cost = Math.floor(upgrade.cost * 1.3);
+                            break;
+                        case 'mega':
+                            this.energyPerSecond += 50;
+                            upgrade.cost = Math.floor(upgrade.cost * 1.3);
+                            break;
+                    }
+                    
+                    this.updateUpgradeDisplay(type);
+                    this.checkAchievements();
+                    this.updateDisplay();
+                }
+            }
+
+            updateUpgradeDisplay(type) {
+                const element = this.upgradeElements[type];
+                const cost = this.upgrades[type].cost;
+                const costElement = element.querySelector('.upgrade-cost');
+                costElement.textContent = `${cost} energy`;
+            }
+
+            updateAllUpgradeDisplays() {
+                Object.keys(this.upgradeElements).forEach(key => {
+                    this.updateUpgradeDisplay(key);
+                });
+            }
+
+            checkAchievements() {
+                if (!this.achievements.first && this.totalClicks >= 1) {
+                    this.achievements.first = true;
+                    this.unlockAchievement('achievement-first');
+                }
+                
+                if (!this.achievements.hundred && this.energy >= 100) {
+                    this.achievements.hundred = true;
+                    this.unlockAchievement('achievement-100');
+                }
+                
+                if (!this.achievements.thousand && this.energy >= 1000) {
+                    this.achievements.thousand = true;
+                    this.unlockAchievement('achievement-1000');
+                }
+                
+                if (!this.achievements.clicker && this.totalClicks >= 500) {
+                    this.achievements.clicker = true;
+                    this.unlockAchievement('achievement-clicker');
+                }
+                
+                if (!this.achievements.idle && this.energyPerSecond >= 25) {
+                    this.achievements.idle = true;
+                    this.unlockAchievement('achievement-idle');
+                }
+                
+                if (!this.achievements.researcher && this.research.basic.completed) {
+                    this.achievements.researcher = true;
+                    this.unlockAchievement('achievement-researcher');
+                }
+            }
+
+            unlockAchievement(id) {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.classList.add('unlocked');
+                    if (!element.textContent.includes('✓')) {
+                        element.textContent += ' ✓';
+                    }
+                }
+            }
+
+            updateDisplay() {
+                this.energyElement.textContent = Math.floor(this.energy).toLocaleString();
+                this.energyPerSecondElement.textContent = Math.floor(this.energyPerSecond * this.ascensionMultiplier).toLocaleString();
+                this.totalClicksElement.textContent = this.totalClicks.toLocaleString();
+                this.ascensionLevelElement.textContent = this.ascensionLevel.toLocaleString();
+                this.skillPointsElement.textContent = this.skillPoints.toLocaleString();
+                this.researchPointsElement.textContent = this.researchPoints.toLocaleString();
+                
+                // Update level display
+                this.playerLevelElement.textContent = this.playerLevel;
+                this.currentXPElement.textContent = Math.floor(this.currentXP);
+                const neededXP = this.getNeededXP();
+                this.neededXPElement.textContent = neededXP;
+                const xpProgress = (this.currentXP / neededXP) * 100;
+                this.xpProgressElement.style.width = `${xpProgress}%`;
+                this.nextRewardElement.textContent = (this.playerLevel * 10);
+                
+                // Update ascension display
+                this.ascensionMultiplierElement.textContent = this.ascensionMultiplier.toFixed(1);
+                const ascensionGain = this.calculateAscensionGain();
+                this.ascensionGainElement.textContent = ascensionGain;
+                this.ascensionButton.disabled = ascensionGain <= 0;
+                
+                // Update upgrade availability
+                Object.keys(this.upgradeElements).forEach(key => {
+                    const element = this.upgradeElements[key];
+                    const cost = this.upgrades[key].cost;
+                    
+                    if (this.energy >= cost) {
+                        element.classList.remove('disabled');
+                    } else {
+                        element.classList.add('disabled');
+                    }
+                });
+            }
+
+            updateProgressionDisplays() {
+                // Update skill tree
+                Object.keys(this.skills).forEach(skillName => {
+                    const element = document.getElementById(`skill-${skillName}`);
+                    const skill = this.skills[skillName];
+                    
+                    if (element) {
+                        // Check if skill can be unlocked
+                        let canUnlock = true;
+                        if (skill.requires) {
+                            canUnlock = skill.requires.every(req => this.skills[req].level > 0);
+                        }
+                        
+                        if (skill.level > 0) {
+                            element.classList.add('unlocked');
+                            element.classList.remove('locked');
+                        } else if (canUnlock) {
+                            element.classList.remove('locked');
+                        } else {
+                            element.classList.add('locked');
+                        }
+                        
+                        const costElement = element.querySelector('.skill-cost');
+                        if (costElement) {
+                            const cost = skill.cost + (skill.level * 5);
+                            costElement.textContent = skill.level >= skill.maxLevel ? 'MAX' : `${cost} SP`;
+                        }
+                    }
+                });
+                
+                // Update research tree
+                Object.keys(this.research).forEach(researchName => {
+                    const element = document.getElementById(`research-${researchName}`);
+                    const research = this.research[researchName];
+                    
+                    if (element) {
+                        if (research.completed) {
+                            element.classList.add('completed');
+                            element.classList.remove('locked');
+                        } else if (research.unlocked) {
+                            element.classList.remove('locked');
+                        } else {
+                            element.classList.add('locked');
+                        }
+                    }
+                });
+            }
+
+            startGameLoop() {
+                setInterval(() => {
+                    if (this.energyPerSecond > 0) {
+                        const basePassive = this.energyPerSecond / 10;
+                        const passiveBonus = this.ascensionMultiplier;
+                        const automationBonus = 1 + (this.skills.automation.level * 0.2);
+                        const actualPassiveGain = basePassive * passiveBonus * automationBonus;
+                        
+                        this.energy += actualPassiveGain;
+                        this.currentXP += 0.1;
+                        this.researchPoints += Math.max(0.1, actualPassiveGain / 50);
+                        
+                        this.checkLevelUp();
+                        this.checkMilestones();
+                        this.checkAchievements();
+                        this.updateDisplay();
+                    }
+                }, 100);
+            }
+
+            // Save/Load system (simplified for display)
+            saveGame() {
+                const saveData = {
+                    energy: this.energy,
+                    energyPerClick: this.energyPerClick,
+                    energyPerSecond: this.energyPerSecond,
+                    totalClicks: this.totalClicks,
+                    playerLevel: this.playerLevel,
+                    currentXP: this.currentXP,
+                    ascensionLevel: this.ascensionLevel,
+                    ascensionMultiplier: this.ascensionMultiplier,
+                    skillPoints: this.skillPoints,
+                    researchPoints: this.researchPoints,
+                    skills: this.skills,
+                    research: this.research,
+                    upgrades: this.upgrades,
+                    achievements: this.achievements,
+                    currentFurryIndex: this.currentFurryIndex,
+                    lastSave: Date.now()
+                };
+                
+                try {
+                    if (typeof(Storage) !== "undefined") {
+                        localStorage.setItem('FurryClickerSave', JSON.stringify(saveData));
+                    }
+                } catch(e) {
+                    console.log('localStorage not available');
+                }
+                
+                this.saveData = saveData;
+                this.showSaveStatus('Game Saved! 💾');
+                return saveData;
+            }
+
+            loadGame() {
+                let savedData = null;
+                
+                try {
+                    if (typeof(Storage) !== "undefined") {
+                        const localData = localStorage.getItem('FurryClickerSave');
+                        if (localData) {
+                            savedData = localData;
+                        }
+                    }
+                } catch(e) {
+                    console.log('localStorage not available');
+                }
+                
+                if (!savedData) {
+                    savedData = this.saveData;
+                }
+                
+                if (savedData) {
+                    try {
+                        const data = typeof savedData === 'string' ? JSON.parse(savedData) : savedData;
+                        
+                        // Load all data
+                        Object.keys(data).forEach(key => {
+                            if (this.hasOwnProperty(key) && key !== 'saveData') {
+                                this[key] = data[key];
+                            }
+                        });
+                        
+                        this.updateAllUpgradeDisplays();
+                        this.restoreAchievements();
+                        this.updateCharacterDisplay();
+                        this.updateProgressionDisplays();
+                        
+                        if (this.energy >= 100000) {
+                            this.ascensionSection.style.display = 'block';
+                        }
+                        
+                        this.showSaveStatus('Game Loaded! ✅');
+                    } catch (e) {
+                        console.error('Failed to load save:', e);
+                        this.showSaveStatus('Failed to load save! ❌');
+                    }
+                }
+            }
+
+            resetGame() {
+                try {
+                    if (typeof(Storage) !== "undefined") {
+                        localStorage.removeItem('FurryClickerSave');
+                    }
+                } catch(e) {
+                    console.log('localStorage not available');
+                }
+                
+                this.saveData = null;
+                
+                // Reset everything to default
+                this.energy = 0;
+                this.energyPerClick = 1;
+                this.energyPerSecond = 0;
+                this.totalClicks = 0;
+                this.playerLevel = 1;
+                this.currentXP = 0;
+                this.ascensionLevel = 0;
+                this.ascensionMultiplier = 1.0;
+                this.skillPoints = 0;
+                this.researchPoints = 0;
+                
+                // Reset skills
+                Object.keys(this.skills).forEach(key => {
+                    this.skills[key].level = 0;
+                });
+                
+                // Reset research
+                Object.keys(this.research).forEach(key => {
+                    this.research[key].completed = false;
+                    this.research[key].unlocked = key === 'basic';
+                });
+                
+                // Reset upgrades
+                this.upgrades = {
+                    click: { cost: 15, purchased: 0 },
+                    auto1: { cost: 75, purchased: 0 },
+                    auto2: { cost: 300, purchased: 0 },
+                    auto3: { cost: 1500, purchased: 0 },
+                    mega: { cost: 7500, purchased: 0 }
+                };
+                
+                // Reset achievements
+                Object.keys(this.achievements).forEach(key => {
+                    this.achievements[key] = false;
+                });
+                
+                // Reset UI
+                document.querySelectorAll('.achievement').forEach(a => {
+                    a.classList.remove('unlocked');
+                    if (a.textContent.includes('✓')) {
+                        a.textContent = a.textContent.replace(' ✓', '');
+                    }
+                });
+                
+                this.ascensionSection.style.display = 'none';
+                this.currentFurryIndex = 0;
+                this.updateCharacterDisplay();
+                this.updateAllUpgradeDisplays();
+                this.updateDisplay();
+                this.updateProgressionDisplays();
+                this.showSaveStatus('Game Reset! 🔄');
+            }
+
+            startAutoSave() {
+                setInterval(() => {
+                    this.saveGame();
+                }, 30000);
+            }
+
+            showSaveStatus(message) {
+                const statusElement = document.getElementById('save-status');
+                if (statusElement) {
+                    statusElement.textContent = message;
+                    statusElement.style.opacity = '1';
+                    setTimeout(() => {
+                        statusElement.style.opacity = '0.5';
+                    }, 3000);
+                }
+            }
+
+            restoreAchievements() {
+                Object.keys(this.achievements).forEach(key => {
+                    if (this.achievements[key]) {
+                        const id = `achievement-${key.replace('hundred', '100').replace('thousand', '1000')}`;
+                        const element = document.getElementById(id);
+                        if (element) {
+                            element.classList.add('unlocked');
+                            if (!element.textContent.includes('✓')) {
+                                element.textContent += ' ✓';
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Start the game
+        let game;
+        window.addEventListener('load', () => {
+            game = new CosmicClicker();
+        });
+    </script>
+</body>
+</html>
