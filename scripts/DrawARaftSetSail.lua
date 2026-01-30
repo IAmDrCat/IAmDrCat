@@ -40,7 +40,7 @@ Frame.Parent = ScreenGui
 Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Frame.BorderColor3 = Color3.fromRGB(89, 89, 89)
 Frame.BorderSizePixel = 0
-Frame.Position = UDim2.new(0.626645386, 0, 0.0163934417, 0)
+Frame.Position = UDim2.new(0.62, 0, 0.02, 0)
 Frame.Size = UDim2.new(0, 304, 0, 100)
 Frame.Active = true
 Frame.Draggable = true
@@ -49,14 +49,14 @@ TextButton.Parent = Frame
 TextButton.BackgroundColor3 = Color3.fromRGB(119, 41, 255)
 TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 TextButton.BorderSizePixel = 0
-TextButton.Position = UDim2.new(0.171052635, 0, 0.25, 0)
+TextButton.Position = UDim2.new(0.17, 0, 0.25, 0)
 TextButton.Size = UDim2.new(0, 200, 0, 50)
 TextButton.Font = Enum.Font.SourceSans
 TextButton.Text = "Loop TP to End"
 TextButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 TextButton.TextSize = 14.000
 
-local TargetPosition = CFrame.new(-1926.07764, 4.82699966, -54.3953018) 
+local TargetPosition = CFrame.new(-1927.07764, 17.2699966, -63.3953018) 
 local tpActive = false
 
 TextButton.MouseButton1Click:Connect(function()
@@ -70,9 +70,11 @@ TextButton.MouseButton1Click:Connect(function()
             while tpActive do
                 local char = game.Players.LocalPlayer.Character
                 if char and char:FindFirstChild("HumanoidRootPart") then
-                    char.HumanoidRootPart.CFrame = TargetPosition
+                    if (char.HumanoidRootPart.Position - TargetPosition.Position).Magnitude > 5 then
+                        char.HumanoidRootPart.CFrame = TargetPosition
+                    end
                 end
-                task.wait(0.5)
+                task.wait(1)
             end
         end)
     else
