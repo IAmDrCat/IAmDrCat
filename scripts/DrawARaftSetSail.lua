@@ -72,7 +72,7 @@ TextButton.MouseButton1Click:Connect(function()
                 if char and char:FindFirstChild("HumanoidRootPart") then
                     char.HumanoidRootPart.CFrame = TargetPosition
                 end
-                task.wait()
+                task.wait(0.5)
             end
         end)
     else
