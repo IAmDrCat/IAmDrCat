@@ -24,7 +24,22 @@ task.spawn(function()
 
         local args3 = {{type="PaddleBoost", rarity="Common", color=Color3.new(0.83,0.83,0.83), value=1, icon="⚡", displayName="Paddle Boost"}}
         game:GetService("ReplicatedStorage"):WaitForChild("GrantReward"):InvokeServer(unpack(args3))
+
+        local args4 = {{type="SeaCreature", rarity="Common", creatureId=1, color=Color3.new(0.83,0.83,0.83), value=1, icon="🐋", displayName="Megalodon"}}
+        game:GetService("ReplicatedStorage"):WaitForChild("GrantReward"):InvokeServer(unpack(args4))
+
+        local args5 = {{type="SeaCreature", rarity="Common", creatureId=1, color=Color3.new(0.83,0.83,0.83), value=1, icon="🐋", displayName="Basilosaurus"}}
+        game:GetService("ReplicatedStorage"):WaitForChild("GrantReward"):InvokeServer(unpack(args5))
+
+        local args6 = {{type="SeaCreature", rarity="Common", creatureId=1, color=Color3.new(0.83,0.83,0.83), value=1, icon="🐋", displayName="Liopleurodon"}}
+        game:GetService("ReplicatedStorage"):WaitForChild("GrantReward"):InvokeServer(unpack(args6))
+
+        local args7 = {{type="SeaCreature", rarity="Common", creatureId=1, color=Color3.new(0.83,0.83,0.83), value=1, icon="🐋", displayName="Shastasaurus"}}
+        game:GetService("ReplicatedStorage"):WaitForChild("GrantReward"):InvokeServer(unpack(args7))
         
+        local args8 = {{type="SeaCreature", rarity="Common", creatureId=1, color=Color3.new(0.83,0.83,0.83), value=1, icon="🐋", displayName="Plesiosaurus"}}
+        game:GetService("ReplicatedStorage"):WaitForChild("GrantReward"):InvokeServer(unpack(args8))
+            
         task.wait()
     end
 end)
