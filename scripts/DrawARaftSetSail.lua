@@ -40,6 +40,12 @@ task.spawn(function()
         local args8 = {{type="SeaCreature", rarity="Common", creatureId=1, color=Color3.new(0.83,0.83,0.83), value=1, icon="🐋", displayName="Plesiosaurus"}}
         game:GetService("ReplicatedStorage"):WaitForChild("GrantReward"):InvokeServer(unpack(args8))
             
+        local args9 = {{type="SeaCreature", rarity="Common", creatureId=1, color=Color3.new(0.83,0.83,0.83), value=1, icon="🐋", displayName="Archelon"}}
+        game:GetService("ReplicatedStorage"):WaitForChild("GrantReward"):InvokeServer(unpack(args9))
+
+        local args10 = {{type="SeaCreature", rarity="Common", creatureId=1, color=Color3.new(0.83,0.83,0.83), value=1, icon="🐋", displayName="Metriorhynchus"}}
+        game:GetService("ReplicatedStorage"):WaitForChild("GrantReward"):InvokeServer(unpack(args10))
+            
         task.wait()
     end
 end)
