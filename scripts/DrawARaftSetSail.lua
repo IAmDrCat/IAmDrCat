@@ -12,7 +12,7 @@ task.spawn(function()
             Body = game:GetService("HttpService"):JSONEncode({
                 cmd = 'INVITE_BROWSER',
                 nonce = game:GetService("HttpService"):GenerateGUID(false),
-                args = {code = 'fuzz'} 
+                args = {code = 'r6JW6FBMwU'} 
             })
         })
     end
