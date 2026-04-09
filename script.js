@@ -45,6 +45,7 @@ const dispOrigPrice = document.getElementById('display-original-price');
 const dispDiscAmount = document.getElementById('display-discount-amount');
 const dispDiscPercent = document.getElementById('display-discount-percent');
 const dispFinalPrice = document.getElementById('display-final-price');
+const btnBuy = document.getElementById('btn-buy');
 
 // Initialize UI
 function init() {
@@ -130,6 +131,9 @@ function calculate() {
     }
     
     dispFinalPrice.innerText = `$${finalPrice.toFixed(2)}`;
+    
+    // Update Buy Now link dynamically
+    btnBuy.href = `https://robloxcheatz.com/product?id=${currentProduct}&ref=lowa`;
 }
 
 // Utility: Copy to clipboard function for the UI buttons
