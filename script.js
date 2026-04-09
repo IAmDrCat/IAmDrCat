@@ -27,6 +27,14 @@ const productsData = {
             // Updated to $24 based on user's spec
             { name: 'Potassium Executor Lifetime', price: 24.00 }
         ]
+    },
+    matcha: {
+        id: 'matcha',
+        name: 'Matcha Executor',
+        variants: [
+            { name: 'Matcha Lifetime', price: 10.00 },
+            { name: 'Matcha Beta Lifetime', price: 27.00 }
+        ]
     }
 };
 

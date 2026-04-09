@@ -325,7 +325,10 @@ body {
     gap: 0.75rem;
 }
 @media (min-width: 640px) {
-    .product-selector { grid-template-columns: repeat(3, 1fr); }
+    .product-selector { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+    .product-selector { grid-template-columns: repeat(4, 1fr); }
 }
 
 .btn-product {
@@ -459,7 +462,10 @@ body {
     gap: 1.5rem;
 }
 @media (min-width: 768px) {
-    .tier-grid { grid-template-columns: repeat(3, 1fr); }
+    .tier-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+    .tier-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
 .tier-card {
@@ -483,6 +489,7 @@ body {
 .tier-card:nth-child(1) .tier-banner { background: linear-gradient(to bottom right, #1e3a8a, #111827); }
 .tier-card:nth-child(2) .tier-banner { background: linear-gradient(to bottom right, #581c87, #111827); }
 .tier-card:nth-child(3) .tier-banner { background: linear-gradient(to bottom right, #312e81, #111827); }
+.tier-card:nth-child(4) .tier-banner { background: linear-gradient(to bottom right, #065f46, #111827); }
 
 .tier-rank {
     font-size: 0.75rem;
@@ -497,6 +504,7 @@ body {
 .tier-card:nth-child(1) .tier-rank { background-color: rgba(59, 130, 246, 0.2); color: #93c5fd; }
 .tier-card:nth-child(2) .tier-rank { background-color: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
 .tier-card:nth-child(3) .tier-rank { background-color: rgba(99, 102, 241, 0.2); color: #a5b4fc; }
+.tier-card:nth-child(4) .tier-rank { background-color: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
 
 .tier-name {
     font-size: 1.5rem;
