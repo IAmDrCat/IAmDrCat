@@ -32,8 +32,8 @@ const productsData = {
         id: 'matcha',
         name: 'Matcha Executor',
         variants: [
-            { name: 'Matcha Lifetime', price: 10.00 },
-            { name: 'Matcha Beta Lifetime', price: 27.00 }
+            { name: 'Matcha Lifetime', price: 9.99 },
+            { name: 'Matcha Beta Lifetime', price: 26.99 }
         ]
     }
 };
