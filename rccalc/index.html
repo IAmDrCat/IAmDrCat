@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculate your total discount on top-tier Executors with the RobloxCheatz referral calculator.">
+    <title>RobloxCheatz Discount Calculator & Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=2">
+    <script src="script.js?v=2" defer></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="logo-badge">RC</div>
+                <h1 class="brand-name">Discount<span class="brand-accent">Calc</span></h1>
+            </div>
+            <nav class="nav-links">
+                <a href="#guide">How to get 10% Off</a>
+                <a href="#calculator">Calculator</a>
+                <a href="#tierlist">Rankings & Reviews</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-content">
+
+        <!-- Guide Section -->
+        <section id="guide" class="guide-card">
+            <div class="glow-decoration"></div>
+            
+            <div class="grid guide-grid">
+                <div>
+                    <h2 class="section-title">Max Out Your Discount</h2>
+                    <p class="section-subtitle" style="margin-bottom: 2rem;">
+                        Never pay full price. By combining my referral link with a secret promo code, you can get 
+                        <span style="color: var(--pink); font-weight: 700;">10% off</span> your entire RobloxCheatz order instantly.
+                    </p>
+                    
+                    <div class="flex-col gap-4">
+                        <!-- Step 1 -->
+                        <div class="step-card">
+                            <div>
+                                <span class="step-label">Step 1: Get 5% Off</span>
+                                <p class="step-title">Use Referral Link</p>
+                            </div>
+                            <button onclick="copyText('https://robloxcheatz.com/?ref=lowa', this)" class="btn-copy">
+                                <span>robloxcheatz.com/?ref=lowa</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="step-card">
+                            <div>
+                                <span class="step-label">Step 2: Get Another 5% Off</span>
+                                <p class="step-title">Apply Promo Code at Checkout</p>
+                            </div>
+                            <button onclick="copyText('okeydokey', this)" class="btn-copy accent">
+                                <span>okeydokey</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <!-- Visual representation of savings -->
+                    <div class="discount-summary-card">
+                        <h3 class="summary-heading">Discount Stacking</h3>
+                        
+                        <div class="summary-row">
+                            <span style="color: var(--muted);">Referral Link (<span style="color: white;">lowa</span>)</span>
+                            <span style="color: var(--success); font-weight: 500;">- 5%</span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <span style="color: var(--muted);">Promo Code (<span style="color: white;">okeydokey</span>)</span>
+                            <span style="color: var(--success); font-weight: 500;">- 5%</span>
+                        </div>
+                        
+                        <div class="summary-divider"></div>
+                        
+                        <div class="summary-row total">
+                            <span style="color: white; font-weight: 700; font-size: 1.125rem;">Total Savings</span>
+                            <span style="color: var(--pink); font-weight: 700; font-size: 1.25rem;">10% OFF</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calculator Section -->
+        <section id="calculator">
+            <div style="text-align: center; margin-bottom: 2.5rem;">
+                <h2 class="section-title">Price Calculator</h2>
+                <p class="section-subtitle">Select your desired executor and duration to see exactly how much you'll pay.</p>
+            </div>
+
+            <div class="grid calc-grid">
+                <!-- Inputs -->
+                <div class="calc-inputs">
+                    
+                    <div class="input-group">
+                        <label class="input-label">1. Select Product</label>
+                        <div class="product-selector" id="product-selector">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">2. Select Variant</label>
+                        <div style="position: relative;">
+                            <select id="variant-select" class="variant-select">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="input-label">3. Apply Discounts</label>
+                        <div class="checkbox-container">
+                            <label class="checkbox-label">
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="check-ref" checked class="checkbox-input">
+                                    <div>
+                                        <div style="color: white; font-weight: 500;">Use Ref Link (?ref=lowa)</div>
+                                        <div style="font-size: 0.875rem; color: var(--muted);">5% Discount</div>
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <label class="checkbox-label">
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="check-code" checked class="checkbox-input">
+                                    <div>
+                                        <div style="color: white; font-weight: 500;">Use Promo Code (okeydokey)</div>
+                                        <div style="font-size: 0.875rem; color: var(--muted);">5% Discount</div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Output Display -->
+                <div>
+                    <div class="calc-output-wrapper">
+                        <h3 class="output-title" id="display-product-name">Wave Executor</h3>
+                        
+                        <div style="margin-bottom: 2rem;">
+                            <div class="output-row">
+                                <span style="color: var(--muted);">Original Price</span>
+                                <span class="original-price-val" id="display-original-price">$0.00</span>
+                            </div>
+                            <div class="output-row">
+                                <span>Total Discount (<span id="display-discount-percent">10</span>%)</span>
+                                <span id="display-discount-amount" style="color: var(--success);">-$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="final-price-card">
+                            <div class="input-label" style="font-size: 0.75rem; margin-bottom: 0.5rem;">Final Price</div>
+                            <div class="final-price-val" id="display-final-price">$0.00</div>
+                        </div>
+
+                        <a href="https://robloxcheatz.com/product?id=wave&ref=lowa" target="_blank" class="btn-buy" id="btn-buy">
+                            Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Details / Tier List -->
+        <section id="tierlist" style="padding-top: 2rem; border-top: 1px solid var(--border);">
+            <div class="tier-header">
+                <h2 class="section-title">Rankings & Reviews</h2>
+                <p class="section-subtitle">Real feedback and recommendations for each executor.</p>
+            </div>
+
+            <div class="grid tier-grid">
+                <!-- Wave Card -->
+                <div class="tier-card">
+                    <div class="tier-banner">
+                        <span class="tier-rank">Not Recommended</span>
+                        <h3 class="tier-name">Wave 🌊</h3>
+                    </div>
+                    <div class="tier-body">
+                        <h4 class="tier-subtitle">Lowa's Take:</h4>
+                        <p class="tier-desc">Wave is just mid and not recommended.</p>
+                    </div>
+                </div>
+
+                <!-- Volt Card -->
+                <div class="tier-card">
+                    <div class="tier-banner">
+                        <span class="tier-rank">Costly</span>
+                        <h3 class="tier-name">Volt ⚡</h3>
+                    </div>
+                    <div class="tier-body">
+                        <h4 class="tier-subtitle">Lowa's Take:</h4>
+                        <p class="tier-desc">Volt is feature packed but very pricey and is often down.</p>
+                    </div>
+                </div>
+
+                <!-- Potassium Card -->
+                <div class="tier-card">
+                    <div class="tier-banner">
+                        <span class="tier-rank">Lifetime</span>
+                        <h3 class="tier-name">Potassium 🍌</h3>
+                    </div>
+                    <div class="tier-body">
+                        <h4 class="tier-subtitle">Lowa's Take:</h4>
+                        <p class="tier-desc">Potassium is $24 lifetime but is barebones and lacks UI features.</p>
+                    </div>
+                </div>
+
+                <!-- Matcha Card -->
+                <div class="tier-card">
+                    <div class="tier-banner">
+                        <span class="tier-rank">External</span>
+                        <h3 class="tier-name">Matcha 🍵</h3>
+                    </div>
+                    <div class="tier-body">
+                        <h4 class="tier-subtitle">Lowa's Take:</h4>
+                        <p class="tier-desc">Matcha is an external executor. Getting banned is MUCH more unlikely, but it's less effective and used for certain simple cheats. I will give more info after I buy it.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Not affiliated with Roblox. Use executors responsibly.</p>
+    </footer>
+
+</body>
+</html>
