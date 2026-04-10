@@ -1,15 +1,5 @@
 // Data derived from product catalog and user specifications
 const productsData = {
-    wave: {
-        id: 'wave',
-        name: 'Wave Executor',
-        variants: [
-            { name: 'Wave 1 Day Key', price: 2.49 },
-            { name: 'Wave 7 Day Key', price: 5.99 },
-            { name: 'Wave 30 Day Key', price: 18.99 },
-            { name: 'Wave 90 Day Key', price: 39.99 }
-        ]
-    },
     volt: {
         id: 'volt',
         name: 'Volt Executor',
@@ -39,7 +29,7 @@ const productsData = {
 };
 
 // State
-let currentProduct = 'wave';
+let currentProduct = 'volt';
 let currentVariantIndex = 0;
 
 // DOM Elements
