@@ -1,5 +1,21 @@
 // Data derived from product catalog and user specifications
 const productsData = {
+    potassium: {
+        id: 'potassium',
+        name: 'Potassium Executor',
+        variants: [
+            // Updated to $22.99 based on user's spec
+            { name: 'Potassium Executor Lifetime', price: 22.99 }
+        ]
+    },
+    synapsez: {
+        id: 'synapsez',
+        name: 'Synapse Z',
+        variants: [
+            { name: 'Synapse Z 7 Day Key', price: 3.99 },
+            { name: 'Synapse Z 30 Day Key', price: 11.99 }
+        ]
+    },
     volt: {
         id: 'volt',
         name: 'Volt Executor',
@@ -8,14 +24,6 @@ const productsData = {
             { name: 'Volt 7 Day Farmer Key', price: 9.99 },
             { name: 'Volt 30 Day Key', price: 19.99 },
             { name: 'Volt 90 Day Key', price: 49.99 }
-        ]
-    },
-    potassium: {
-        id: 'potassium',
-        name: 'Potassium Executor',
-        variants: [
-            // Updated to $22.99 based on user's spec
-            { name: 'Potassium Executor Lifetime', price: 22.99 }
         ]
     },
     matcha: {
@@ -29,7 +37,7 @@ const productsData = {
 };
 
 // State
-let currentProduct = 'volt';
+let currentProduct = 'potassium';
 let currentVariantIndex = 0;
 
 // DOM Elements
