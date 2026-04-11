@@ -1,21 +1,5 @@
 // Data derived from product catalog and user specifications
 const productsData = {
-    potassium: {
-        id: 'potassium',
-        name: 'Potassium Executor',
-        variants: [
-            // Updated to $22.99 based on user's spec
-            { name: 'Potassium Executor Lifetime', price: 22.99 }
-        ]
-    },
-    synapsez: {
-        id: 'synapsez',
-        name: 'Synapse Z',
-        variants: [
-            { name: 'Synapse Z 7 Day Key', price: 3.99 },
-            { name: 'Synapse Z 30 Day Key', price: 11.99 }
-        ]
-    },
     volt: {
         id: 'volt',
         name: 'Volt Executor',
@@ -24,6 +8,14 @@ const productsData = {
             { name: 'Volt 7 Day Farmer Key', price: 9.99 },
             { name: 'Volt 30 Day Key', price: 19.99 },
             { name: 'Volt 90 Day Key', price: 49.99 }
+        ]
+    },
+    potassium: {
+        id: 'potassium',
+        name: 'Potassium Executor',
+        variants: [
+            // Updated to $22.99 based on user's spec
+            { name: 'Potassium Executor Lifetime', price: 22.99 }
         ]
     },
     matcha: {
@@ -37,14 +29,14 @@ const productsData = {
 };
 
 // State
-let currentProduct = 'potassium';
+let currentProduct = 'volt';
 let currentVariantIndex = 0;
 
 // DOM Elements
 const productSelector = document.getElementById('product-selector');
 const variantSelect = document.getElementById('variant-select');
 const checkRef = document.getElementById('check-ref');
-const checkCode = document.getElementById('check-code');
+const promoSelect = document.getElementById('promo-select');
 
 const dispName = document.getElementById('display-product-name');
 const dispOrigPrice = document.getElementById('display-original-price');
@@ -66,7 +58,7 @@ function init() {
     });
 
     checkRef.addEventListener('change', calculate);
-    checkCode.addEventListener('change', calculate);
+    promoSelect.addEventListener('change', calculate);
 }
 
 // Render Product Selection Buttons
@@ -75,14 +67,14 @@ function renderProductButtons() {
     Object.values(productsData).forEach(prod => {
         const isSelected = prod.id === currentProduct;
         const btn = document.createElement('button');
-        
+
         btn.className = 'btn-product';
         if (isSelected) {
             btn.classList.add('active');
         }
-        
+
         btn.innerText = prod.name.split(' ')[0]; // Just Wave, Volt, Potassium
-        
+
         btn.onclick = () => {
             currentProduct = prod.id;
             currentVariantIndex = 0; // reset variant when switching product
@@ -98,7 +90,7 @@ function renderProductButtons() {
 function renderVariants() {
     variantSelect.innerHTML = '';
     const variants = productsData[currentProduct].variants;
-    
+
     variants.forEach((v, index) => {
         const option = document.createElement('option');
         option.value = index;
@@ -112,12 +104,13 @@ function renderVariants() {
 function calculate() {
     const product = productsData[currentProduct];
     const variant = product.variants[currentVariantIndex];
-    
+
     const origPrice = variant.price;
     let discountPercent = 0;
 
     if (checkRef.checked) discountPercent += 5;
-    if (checkCode.checked) discountPercent += 5;
+    const promoVal = parseInt(promoSelect.value) || 0;
+    discountPercent += promoVal;
 
     // Stackable additive discounts
     const discountAmount = origPrice * (discountPercent / 100);
@@ -127,17 +120,17 @@ function calculate() {
     dispName.innerText = variant.name;
     dispOrigPrice.innerText = `$${origPrice.toFixed(2)}`;
     dispDiscPercent.innerText = discountPercent;
-    
+
     dispDiscAmount.innerText = `-$${discountAmount.toFixed(2)}`;
-    
+
     if (discountAmount > 0) {
         dispDiscAmount.style.color = 'var(--success)';
     } else {
         dispDiscAmount.style.color = 'var(--text)';
     }
-    
+
     dispFinalPrice.innerText = `$${finalPrice.toFixed(2)}`;
-    
+
     // Update Buy Now link dynamically
     btnBuy.href = `https://robloxcheatz.com/product?id=${currentProduct}&ref=lowa`;
 }
@@ -146,7 +139,7 @@ function calculate() {
 function copyText(text, btnElement) {
     navigator.clipboard.writeText(text).then(() => {
         const originalHtml = btnElement.innerHTML;
-        
+
         // Show success state
         btnElement.innerHTML = `
             <span>Copied!</span>
@@ -155,7 +148,7 @@ function copyText(text, btnElement) {
             </svg>
         `;
         btnElement.classList.add('copied-state');
-        
+
         // Reset after 2 seconds
         setTimeout(() => {
             btnElement.innerHTML = originalHtml;
