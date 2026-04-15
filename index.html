@@ -3,127 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Midnight Glass Notes</title>
-         <style>
-        /* --- CSS DESIGN (The "Glass" Magic) --- */
+    <title>Glass Notes</title>
+    <style>
         :root {
             --bg-color: #0a0a0c;
             --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --accent-color: #a855f7; /* Soft Purple */
-            --text-main: #e2e8f0;
-            --text-dim: #94a3b8;
+            --text-main: #ffffff;
+            --text-dim: #b0b0b0;
+            --accent: #7c4dff;
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
-            /* This creates the colorful blobs behind the glass */
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.15) 0%, transparent 40%);
             color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            min-height: 100vh;
-            padding: 2rem 1rem;
+            align-items: flex-start;
+            padding: 40px 20px;
+            overflow-x: hidden;
         }
 
-        .app-container {
+        /* Animated Background Blobs to make the glass effect visible */
+        .blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #7c4dff 0%, #448aff 100%);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.15;
+            animation: move 20s infinite alternate;
+        }
+
+        .blob-2 {
+            right: -100px;
+            top: -100px;
+            background: #ff448a;
+            animation-delay: -5s;
+        }
+
+        @keyframes move {
+            from { transform: translate(-10%, -10%); }
+            to { transform: translate(20%, 20%); }
+        }
+
+        .container {
             width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
+            max-width: 900px;
+            z-index: 1;
         }
 
-        header h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-monkey-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
             letter-spacing: -1px;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
         }
 
-        header p {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-        }
-
-        /* --- The Glass Input Card --- */
-        .input-card {
+        /* Glass Button */
+        .btn-add {
             background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
-            padding: 1.5rem;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        textarea {
-            background: transparent;
-            border: none;
-            outline: none;
-            color: var(--text-main);
-            font-size: 1rem;
-            resize: none;
-            min-height: 80px;
-        }
-
-        textarea::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        .input-actions {
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        button#add-btn {
-            background: var(--accent-color);
             color: white;
-            border: none;
-            padding: 0.6rem 1.5rem;
+            padding: 10px 20px;
             border-radius: 12px;
-            font-weight: 600;
             cursor: pointer;
+            backdrop-filter: blur(10px);
             transition: all 0.3s ease;
+            font-weight: 600;
         }
 
-        button#add-btn:hover {
+        .btn-add:hover {
+            background: var(--accent);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4);
+            box-shadow: 0 5px 15px rgba(124, 77, 255, 0.4);
         }
 
-        /* --- The Notes Grid --- */
-        #notes-grid {
+        /* Notes Grid */
+        .notes-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
         }
 
+        /* Glass Note Card */
         .note-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
-            padding: 1.5rem;
-            border-radius: 18px;
+            padding: 25px;
+            border-radius: 24px;
             position: relative;
-            animation: fadeIn 0.4s ease forwards;
-            transition: transform 0.2s ease;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            animation: fadeIn 0.5s ease forwards;
         }
 
         @keyframes fadeIn {
@@ -132,149 +123,216 @@
         }
 
         .note-card:hover {
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
         }
 
-        .note-content {
-            font-size: 1rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-            white-space: pre-wrap; /* Preserves line breaks */
-            word-wrap: break-word;
+        .note-card h3 {
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            color: var(--text-main);
         }
 
-        .note-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem;
+        .note-card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
             color: var(--text-dim);
+            white-space: pre-wrap;
+        }
+
+        .note-card .date {
+            margin-top: 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            display: block;
         }
 
         .delete-btn {
-            background: rgba(239, 68, 68, 0.1);
-            color: #f87171;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
             border: none;
-            padding: 5px 10px;
-            border-radius: 8px;
+            color: #ff4d4d;
             cursor: pointer;
-            transition: all 0.2s ease;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .delete-btn:hover {
-            background: rgba(239, 6망, 68, 0.2);
-            color: #ef4444;
+        .note-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal {
+            background: #1a1a1e;
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal h2 { margin-bottom: 20px; }
+
+        input, textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-save {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: var(--text-dim);
+            border: none;
+            padding: 10px 25px;
+            cursor: pointer;
         }
 
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+    <div class="blob"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="container">
         <header>
-            <h1>Midnight</h1>
-            <p>Your thoughts, etched in glass.</p>
-        </header>
-
-        <!-- Input Section -->
-        <div class="input-card">
-            <textarea id="noteInput" placeholder="Write a new thought..."></textarea>
-            <div class="input-actions">
-                <button id="add-btn">Save Note</button>
-            </div>
-        </div>
-
-        <!-- Notes Display Section -->
-        <div id="notes-grid">
+            <h1>Glass Notes</h1>
+            <button class="btn-add" onclick="openModal()">+ New Note</button>
+        </to>
+        <div class="notes-grid" id="notesGrid">
             <!-- Notes will appear here -->
         </div>
     </div>
 
+    <!-- Modal for creating notes -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2>Create Note</h2>
+            <input typeype="text" id="noteTitle" placeholder="Title">
+            <textarea id="noteContent" rows="5" placeholder="Write your thoughts..."></textarea>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-save" onclick="saveNote()">Save Note</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        /* --- JAVASCRIPT LOGIC (The "Brain") --- */
-        const noteInput = document.getElementById('noteInput');
-        const addBtn = document.getElementById('add-btn');
-        const notesGrid = document.getElementById('notes-grid');
+        let notes = JSON.parse(localStorage.getItem('glass_notes')) || [];
 
-        // Load notes from localStorage on startup
-        let notes = JSON.parse(localStorage.getItem('midnight_notes')) || [];
+        const modalOverlay = document.getElementById('modalOverlay');
+        const notesGrid = document.getElementById('notesGrid');
+        const noteTitle = document.getElementById('noteTitle');
+        const noteContent = document.getElementById('noteContent');
 
-        function saveToLocalStorage() {
-            localStorage.setItem('midnight_notes', JSON.stringify(notes));
+        function openModal() {
+            modalOverlay.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modalOverlay.style.display = 'none';
+            noteTitle.value = '';
+            noteContent.value = '';
+        }
+
+        function saveNote() {
+            const title = noteTitle.value;
+            const content = noteContent.value;
+
+            if (!title || !content) {
+                alert("Please fill in both fields");
+                return;
+            }
+
+            const newNote = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+            };
+
+            notes.unshift(newNote);
+            localStorage.setItem('glass_notes', JSON.stringify(notes));
+            renderNotes();
+            closeModal();
+        }
+
+        function deleteNote(id) {
+            notes = notes.filter(note => note.id !== id);
+            localStorage.setItem('glass_notes', JSON.stringify(notes));
+            renderNotes();
         }
 
         function renderNotes() {
             notesGrid.innerHTML = '';
-            
+
             if (notes.length === 0) {
-                notesGrid.innerHTML = `<p style="text-align: center; color: var(--text-dim); margin-top: 2rem;">No notes yet. Start writing.</p>`;
+                notesGrid.innerHTML = `<p style="color: var(--text-dim); grid-column: 1/-1; text-align: center; margin-top: 50px;">No notes found. Start by adding one!</p>`;
                 return;
             }
 
-            // Render from newest to oldest
-            [...notes].reverse().forEach((note, index) => {
-                const actualIndex = notes.length - 1 - index; // Get original array index
-                
+            notes.forEach(note => {
                 const card = document.createElement('div');
                 card.className = 'note-card';
-                
                 card.innerHTML = `
-                    <div class="note-content">${escapeHTML(note.text)}</div>
-                    <div class="note-footer">
-                        <span>${note.date}</span>
-                        <button class="delete-btn" onclick="deleteNote(${actualIndex})">Delete</button>
-                    </div>
+                    <button class="delete-btn" onclick="deleteNote(${note.id})">✕</button>
+                    <h3>${note.title}</h3>
+                    <p>${note.content}</p>
+                    <span class="date">${note.date}</span>
                 `;
                 notesGrid.appendChild(card);
             });
         }
 
-        function addNote() {
-            const text = noteInput.value.trim();
-            if (!text) return;
-
-            const newNote = {
-                text: text,
-                date: new Date().toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-            };
-
-            notes.push(newNote);
-            saveToLocalStorage();
-            renderNotes();
-            noteInput.value = ''; // Clear input
-        }
-
-        function deleteNote(index) {
-            notes.splice(index, 1);
-            saveToLocalStorage();
-            renderNotes();
-        }
-
-        // Helper to prevent XSS (Security)
-        function escapeHTML(str) {
-            return str.replace(/[&<>"']/g, function(m) {
-                return {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                }[m];
-            });
-        }
-
-        // Event Listeners
-        addBtn.addEventListener('click', addNote);
-        
-        noteInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault(); // Prevent newline on Enter
-                addNote();
-            }
-        });
-
         // Initial Render
         renderNotes();
+
+        // Close modal if clicking outside the box
+        window.onclick = function(event) {
+            if (event.target == modalOverlay) closeModal();
+        }
     </script>
 </body>
 </html>
