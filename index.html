@@ -3,142 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Task Manager</title>
-    <style>
-        /* CSS - The Design */
+    <title>Midnight Glass Notes</title>
+         <style>
+        /* --- CSS DESIGN (The "Glass" Magic) --- */
+        :root {
+            --bg-color: #0a0a0c;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-color: #a855f7; /* Soft Purple */
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: var(--bg-color);
+            /* This creates the colorful blobs behind the glass */
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.15) 0%, transparent 40%);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
+            padding: 2rem 1rem;
         }
 
         .app-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-lag: 0 10px 25px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 400px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-        }
-
-        h1 { color: #333; text-align: center; margin-bottom: 1.5rem; }
-
-        .input-group {
+            max-width: 600px;
             display: flex;
-            gap: 10px;
-            margin-bottom: 1.5rem;
+            flex-direction: column;
+            gap: 2rem;
         }
 
-        input[type="text"] {
-            flex-grow: 1;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* --- The Glass Input Card --- */
+        .input-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        textarea {
+            background: transparent;
+            border: none;
             outline: none;
-            transition: border-color 0.3s;
+            color: var(--text-main);
+            font-size: 1rem;
+            resize: none;
+            min-height: 80px;
         }
 
-        input[type="text"]:focus { border-color: #764ba2; }
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .input-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
 
         button#add-btn {
-            padding: 12px 20px;
-            background-color: #764ba2;
+            background: var(--accent-color);
             color: white;
             border: none;
-            border-radius: 8px;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
             cursor: pointer;
-            font-weight: bold;
+            transition: all 0.3s ease;
         }
 
-        button#add-btn:hover { background-color: #5a377d; }
+        button#add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4);
+        }
 
-        ul { list-style: none; padding: 0; }
+        /* --- The Notes Grid --- */
+        #notes-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
 
-        li {
-            background: #f9f9f9;
-            margin-bottom: 10px;
-            padding: 12px;
-            border-radius: 8px;
+        .note-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.4s ease forwards;
+            transition: transform 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .note-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .note-content {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            white-space: pre-wrap; /* Preserves line breaks */
+            word-wrap: break-word;
+        }
+
+        .note-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: transform 0.2s;
+            font-size: 0.75rem;
+            color: var(--text-dim);
         }
-
-        li:hover { transform: scale(1.02); }
-
-        .task-text { flex-grow: 1; cursor: pointer; }
-
-        .completed { text-decoration: line-through; color: #888; }
 
         .delete-btn {
-            background: #ff4d4d;
-            color: white;
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
             border: none;
             padding: 5px 10px;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
+
+        .delete-btn:hover {
+            background: rgba(239, 6망, 68, 0.2);
+            color: #ef4444;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <h1>My Tasks</h1>
-        
-        <div class="input-group">
-            <input type="text" id="taskInput" placeholder="What needs to be done?">
-            <button id="add-btn">Add</button>
+        <header>
+            <h1>Midnight</h1>
+            <p>Your thoughts, etched in glass.</p>
+        </header>
+
+        <!-- Input Section -->
+        <div class="input-card">
+            <textarea id="noteInput" placeholder="Write a new thought..."></textarea>
+            <div class="input-actions">
+                <button id="add-btn">Save Note</button>
+            </div>
         </div>
 
-        <ul id="taskList"></ul>
+        <!-- Notes Display Section -->
+        <div id="notes-grid">
+            <!-- Notes will appear here -->
+        </div>
     </div>
 
     <script>
-        // JavaScript - The Logic
-        const input = document.getElementById('taskInput');
+        /* --- JAVASCRIPT LOGIC (The "Brain") --- */
+        const noteInput = document.getElementById('noteInput');
         const addBtn = document.getElementById('add-btn');
-        const taskList = document.getElementById('taskList');
+        const notesGrid = document.getElementById('notes-grid');
 
-        function addTask() {
-            const text = input.value.trim();
-            if (text === "") return;
+        // Load notes from localStorage on startup
+        let notes = JSON.parse(localStorage.getItem('midnight_notes')) || [];
 
-            // Create list item
-            const li = document.createElement('li');
-            
-            li.innerHTML = `
-                <span class="task-text">${text}</span>
-                <button class="delete-btn">Delete</button>
-            `;
-
-            // Toggle Complete logic
-            const taskText = li.querySelector('.task-text');
-            taskText.addEventListener('click', () => {
-                taskText.classList.toggle('completed');
-            });
-
-            // Delete logic
-            const delBtn = li.querySelector('.delete-btn');
-            delBtn.addEventListener('click', () => {
-                li.remove();
-            });
-
-            taskList.appendChild(li);
-            input.value = ""; // Clear input
+        function saveToLocalStorage() {
+            localStorage.setItem('midnight_notes', JSON.stringify(notes));
         }
 
-        addBtn.addEventListener('click', addTask);
+        function renderNotes() {
+            notesGrid.innerHTML = '';
+            
+            if (notes.length === 0) {
+                notesGrid.innerHTML = `<p style="text-align: center; color: var(--text-dim); margin-top: 2rem;">No notes yet. Start writing.</p>`;
+                return;
+            }
 
-        // Allow "Enter" key to work
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addTask();
+            // Render from newest to oldest
+            [...notes].reverse().forEach((note, index) => {
+                const actualIndex = notes.length - 1 - index; // Get original array index
+                
+                const card = document.createElement('div');
+                card.className = 'note-card';
+                
+                card.innerHTML = `
+                    <div class="note-content">${escapeHTML(note.text)}</div>
+                    <div class="note-footer">
+                        <span>${note.date}</span>
+                        <button class="delete-btn" onclick="deleteNote(${actualIndex})">Delete</button>
+                    </div>
+                `;
+                notesGrid.appendChild(card);
+            });
+        }
+
+        function addNote() {
+            const text = noteInput.value.trim();
+            if (!text) return;
+
+            const newNote = {
+                text: text,
+                date: new Date().toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+
+            notes.push(newNote);
+            saveToLocalStorage();
+            renderNotes();
+            noteInput.value = ''; // Clear input
+        }
+
+        function deleteNote(index) {
+            notes.splice(index, 1);
+            saveToLocalStorage();
+            renderNotes();
+        }
+
+        // Helper to prevent XSS (Security)
+        function escapeHTML(str) {
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+
+        // Event Listeners
+        addBtn.addEventListener('click', addNote);
+        
+        noteInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); // Prevent newline on Enter
+                addNote();
+            }
         });
+
+        // Initial Render
+        renderNotes();
     </script>
 </body>
 </html>
