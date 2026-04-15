@@ -3,54 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOWA</title>
-    <!-- Add SEO Meta Tags -->
-    <meta name="description" content="Lowa Concept Space. A sleek, minimal placeholder for upcoming projects.">
-    
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Preconnect for Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- To completely stray from AI aesthetic, we use an editorial/fashion inspired font pairing -->
-    <!-- Bodoni Moda for elegant serif, Inter for sleek minimalist sans-serif -->
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Modern Task Manager</title>
+    <style>
+        /* CSS - The Design */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .app-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-lag: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        h1 { color: #333; text-align: center; margin-bottom: 1.5rem; }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus { border-color: #764ba2; }
+
+        button#add-btn {
+            padding: 12px 20px;
+            background-color: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button#add-btn:hover { background-color: #5a377d; }
+
+        ul { list-style: none; padding: 0; }
+
+        li {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        li:hover { transform: scale(1.02); }
+
+        .task-text { flex-grow: 1; cursor: pointer; }
+
+        .completed { text-decoration: line-through; color: #888; }
+
+        .delete-btn {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <div class="loader">
-        <span class="loader-text" id="loader-brand">LOWA</span>
+
+    <div class="app-container">
+        <h1>My Tasks</h1>
+        
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="What needs to be done?">
+            <button id="add-btn">Add</button>
+        </div>
+
+        <ul id="taskList"></ul>
     </div>
 
-    <main class="content">
-        <header>
-            <nav class="navbar">
-                <div class="logo">L.</div>
-                <div class="menu-wrap">
-                    <a href="#" class="nav-link">Index</a>
-                    <a href="#" class="nav-link">About</a>
-                    <button class="menu-btn" aria-label="Menu">
-                        <span></span>
-                        <span></span>
-                    </button>
-                </div>
-            </nav>
-        </header>
+    <script>
+        // JavaScript - The Logic
+        const input = document.getElementById('taskInput');
+        const addBtn = document.getElementById('add-btn');
+        const taskList = document.getElementById('taskList');
 
-        <section class="hero">
-            <h1 class="hero-title" id="main-heading">LOWA</h1>
-            <p class="hero-subtitle">Concept Space / Uncharted</p>
-        </section>
-        
-        <footer class="footer">
-            <p>&copy; 2026 Lowa. All rights reserved.</p>
-            <div class="footer-links">
-                <a href="#">Archive</a>
-                <a href="#">Contact</a>
-            </div>
-        </footer>
-    </main>
+        function addTask() {
+            const text = input.value.trim();
+            if (text === "") return;
 
-    <script src="script.js"></script>
+            // Create list item
+            const li = document.createElement('li');
+            
+            li.innerHTML = `
+                <span class="task-text">${text}</span>
+                <button class="delete-btn">Delete</button>
+            `;
+
+            // Toggle Complete logic
+            const taskText = li.querySelector('.task-text');
+            taskText.addEventListener('click', () => {
+                taskText.classList.toggle('completed');
+            });
+
+            // Delete logic
+            const delBtn = li.querySelector('.delete-btn');
+            delBtn.addEventListener('click', () => {
+                li.remove();
+            });
+
+            taskList.appendChild(li);
+            input.value = ""; // Clear input
+        }
+
+        addBtn.addEventListener('click', addTask);
+
+        // Allow "Enter" key to work
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+    </script>
 </body>
 </html>
